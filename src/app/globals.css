@@ -24,3 +24,38 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes slide {
+  0% {
+    transform: translateX(0%);
+  }
+
+  30% {
+    transform: translateX(0%);
+  }
+
+  35% {
+    transform: translateX(-100%);
+  }
+
+  65% {
+    transform: translateX(-100%);
+  }
+
+  70% {
+    transform: translateX(-200%);
+  }
+
+  95% {
+    transform: translateX(-200%);
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-slide {
+  width: 300%;
+  animation: slide 15s infinite ease-in-out;
+}

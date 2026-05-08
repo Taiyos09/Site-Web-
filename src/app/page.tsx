@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import { useEffect, useState } from "react"
 
 const navigation = [
   { name: "Accueil", href: "/" },
@@ -8,14 +11,31 @@ const navigation = [
   { name: "Contact", href: "#contact" },
 ]
 
+const images = [
+  "/images/image1.jpg",
+  "/images/image2.jpg",
+  "/images/image3.jpg",
+]
+
 export default function AubergeSaintAubinHomepage() {
+  const [currentImage, setCurrentImage] = useState(0)
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentImage((prev) =>
+      prev === images.length - 1 ? 0 : prev + 1
+    )
+  }, 4000)
+
+  return () => clearInterval(interval)
+}, [])
   return (
-    <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
+    <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d] font-serif">
       {/* NAVBAR */}
       <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-black/30 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 text-white">
+        <div className="flex items-center justify-between px-3 py-4 text-white">
           <div>
-            <h1 className="text-2xl font-bold">L&apos;auberge de St Aubin</h1>
+            <h1 className="text-lg font-semibold tracking-wide">L&apos;Auberge de St Aubin</h1>
           </div>
 
           <nav className="hidden gap-8 md:flex">
@@ -40,30 +60,24 @@ export default function AubergeSaintAubinHomepage() {
         className="relative h-screen bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop')",
+            "url('/images/auberge-de-saint-aubin.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-black/45" />
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-center gap-1">
   <img
     src="/images/logo.png"
     alt="Logo Auberge St Aubin"
     className="h-150 w-auto drop-shadow-2xl"
   />
+            <p className="mt-1 mb-8 max-w-3xl text-lg md:text-xl text-white/90">
+              Une auberge chaleureuse entre authenticité, convivialité et
+              traditionnelle.
+            </p>
 </div>
-
-          <p className="mb-8 max-w-2xl text-lg md:text-2xl">
-            Bar • Restaurant •  Hôtel
-          </p>
-
-          <p className="mb-10 max-w-3xl text-base md:text-lg text-white/90">
-            Une auberge chaleureuse entre authenticité, convivialité et
-            gastronomie.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-4">
+       <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/hotel"
               className="rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-white shadow-xl transition hover:scale-105"
@@ -79,77 +93,144 @@ export default function AubergeSaintAubinHomepage() {
       </section>
 
       {/* PRESENTATION */}
-      <section id="restaurant" className="mx-auto max-w-7xl px-6 py-24">
-        <div className="grid gap-12 md:grid-cols-2 items-center">
-          <div>
-            <h2 className="mb-6 text-4xl font-bold">
-              Une auberge authentique
-            </h2>
+<section
+  id="restaurant"
+  className="mx-auto max-w-7xl px-6 py-24"
+>
+  <div className="grid items-center gap-12 md:grid-cols-2">
+    <div>
+      <h2 className="mb-6 text-4xl font-bold">
+        Une auberge authentique
+      </h2>
 
-            <p className="mb-4 text-lg leading-relaxed text-[#5a4c42]">
-              Située dans un cadre chaleureux et convivial, L&apos;auberge de St
-              Aubin vous accueille pour un séjour reposant, un repas gourmand
-              ou une soirée animée.
-            </p>
+      <p className="mb-4 text-lg leading-relaxed text-[#5a4c42]">
+        Située au cœur de la campagne bourbonnaise, dans un cadre calme et
+        authentique, l’Auberge de St Aubin vous accueille pour partager un
+        moment convivial autour d’une cuisine généreuse et traditionnelle.
+        Que ce soit pour une pause au bar, un repas en famille ou un séjour
+        au calme dans l’Allier, l’auberge vous ouvre ses portes dans une
+        ambiance chaleureuse et familiale.
+      </p>
 
-            <p className="text-lg leading-relaxed text-[#5a4c42]">
-              Entre chambres confortables, cuisine maison et événements du
-              vendredi soir, découvrez une ambiance rustique moderne pensée
-              pour tous.
-            </p>
+      <p className="text-lg leading-relaxed text-[#5a4c42]">
+        Entre chambres confortables, cuisine maison et événements du vendredi
+        soir, découvrez une ambiance rustique moderne pensée pour tous.
+      </p>
+    </div>
+
+    <div className="overflow-hidden rounded-3xl shadow-2xl bg-[#f5f1ea]">
+  <img
+    src={images[currentImage]}
+    alt="Auberge"
+    className="w-full h-auto rounded-3xl"
+  />
+</div>
+  </div>
+</section>
+      {/* HORAIRES */}
+<section id="horaires" className="bg-white py-24">
+  <div className="mx-auto max-w-7xl px-6">
+    <div className="mb-14 text-center">
+      <h2 className="mb-4 text-4xl font-bold">
+        Nos horaires
+      </h2>
+
+      <p className="text-lg text-[#6b5b4f]">
+        Retrouvez les horaires du bar et du restaurant.
+      </p>
+    </div>
+
+    <div className="grid gap-8 md:grid-cols-2">
+      {/* BAR */}
+      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl">
+        <h3 className="mb-6 text-3xl font-bold text-[#2f241d]">
+          🍷 Bar
+        </h3>
+
+        <div className="space-y-4 text-lg">
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Lundi</span>
+            <span>7h00 - 22h00</span>
           </div>
 
-          <div>
-            <img
-              src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop"
-              alt="Auberge"
-              className="rounded-3xl shadow-2xl"
-            />
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Mardi</span>
+            <span>7h00 - 22h00</span>
+          </div>
+
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Mercredi</span>
+            <span>7h00 - 22h00</span>
+          </div>
+
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Jeudi</span>
+            <span>7h00 - 22h00</span>
+          </div>
+
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Vendredi</span>
+            <span>7h00 - 01h00</span>
+          </div>
+
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Samedi</span>
+            <span>8h00 - 01h00</span>
+          </div>
+
+          <div className="flex justify-between">
+            <span>Dimanche</span>
+            <span>8h00 - 20h00</span>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* HOTEL */}
-      <section id="hotel" className="bg-white py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-14 text-center">
-            <h2 className="mb-4 text-4xl font-bold">Nos chambres</h2>
-            <p className="text-lg text-[#6b5b4f]">
-              Trois chambres confortables dans une ambiance chaleureuse.
-            </p>
+      {/* RESTAURANT */}
+      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl">
+        <h3 className="mb-6 text-3xl font-bold text-[#2f241d]">
+          🍽️ Restaurant
+        </h3>
+
+        <div className="space-y-4 text-lg">
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Lundi</span>
+            <span>12h00 - 14h00</span>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-3">
-            {[1, 2, 3].map((room) => (
-              <div
-                key={room}
-                className="overflow-hidden rounded-3xl bg-[#faf7f2] shadow-lg"
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1974&auto=format&fit=crop"
-                  alt="Chambre"
-                  className="h-64 w-full object-cover"
-                />
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Mardi</span>
+            <span>12h00 - 14h00</span>
+          </div>
 
-                <div className="p-6">
-                  <h3 className="mb-3 text-2xl font-semibold">
-                    Chambre {room}
-                  </h3>
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Mercredi</span>
+            <span>12h00 - 14h00</span>
+          </div>
 
-                  <p className="mb-5 text-[#6b5b4f]">
-                    Chambre confortable avec ambiance chaleureuse et vue sur les
-                    alentours.
-                  </p>
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Jeudi</span>
+            <span>12h00 - 14h00</span>
+          </div>
 
-                  <button className="w-full rounded-2xl bg-[#2f241d] py-3 text-white transition hover:bg-[#43352c]">
-                    Réserver
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Vendredi</span>
+            <span>12h00 - 14h00 / 19h00 - 22h00</span>
+          </div>
+
+          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
+            <span>Samedi</span>
+            <span>12h00 - 14h00 /19h00 - 22h00</span>
+          </div>
+
+          <div className="flex justify-between">
+            <span>Dimanche</span>
+            <span>Fermé</span>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* RESTAURANT */}
       <section className="mx-auto max-w-7xl px-6 py-24">
