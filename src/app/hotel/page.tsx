@@ -132,12 +132,15 @@ const extraBedTotal = hasExtraBed
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div>
             <h2 className="mb-6 text-4xl font-bold">
-              Un séjour convivial et reposant
+              Un séjour au calme au cœur de la campagne bourbonnaise
             </h2>
 
             <p className="mb-5 text-lg leading-relaxed text-[#5a4c42]">
-              Nos chambres offrent une ambiance chaleureuse
-              dans un cadre calme et authentique.
+              Nos chambres vous accueillent dans une ambiance simple, chaleureuse et authentique, idéale pour se reposer loin de l’agitation.
+            </p>
+
+            <p className="mb-5 text-lg leading-relaxed text-[#5a4c42]">
+              Que vous soyez de passage dans l’Allier, en déplacement ou en séjour dans la région, l’auberge vous propose différentes formules avec possibilité de petit déjeuner et de restauration sur place selon vos envies.
             </p>
 
             <p className="text-lg leading-relaxed text-[#5a4c42]">
@@ -148,7 +151,7 @@ const extraBedTotal = hasExtraBed
           </div>
 
           <img
-            src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1974&auto=format&fit=crop"
+            src="/images/gab1.jpeg"
             alt="Chambre"
             className="rounded-3xl shadow-2xl"
           />
@@ -198,8 +201,7 @@ const extraBedTotal = hasExtraBed
                   </div>
 
                   <p className="mb-6 text-[#5a4c42]">
-                    Chambre confortable avec salle de bain
-                    privée, télévision et ambiance
+                    Chambre avec salle de bain privée et placard, télévision et ambiance
                     chaleureuse.
                   </p>
 
@@ -220,14 +222,20 @@ const extraBedTotal = hasExtraBed
       </section>
 
       {/* RESERVATION */}
-      <section className="bg-white py-24">
-        <div className="mx-auto max-w-5xl px-6">
+      <section
+  className="relative bg-cover bg-center py-24"
+  style={{
+    backgroundImage: "url('/images/campagne.jpeg')",
+  }}
+>
+  <div className="absolute inset-0 bg-black/40"></div>
+  <div className="relative mx-auto max-w-7xl px-6">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 text-4xl font-bold">
+            <h2 className="mb-4 text-4xl font-bold text-white">
               Réserver votre séjour
             </h2>
 
-            <p className="text-lg text-[#6b5b4f]">
+            <p className="text-lg text-white">
               Sélectionnez vos dates et personnalisez votre
               réservation.
             </p>
