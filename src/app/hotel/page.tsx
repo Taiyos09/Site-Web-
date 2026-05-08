@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { HOTEL_CONFIG } from "@/data/hotel"
 
 export default function HotelPage() {
+  const [hotelConfig, setHotelConfig] = useState(HOTEL_CONFIG)
   const [selectedRoom, setSelectedRoom] = useState("")
 
   const [breakfast, setBreakfast] = useState(false)
@@ -15,8 +16,7 @@ export default function HotelPage() {
   const [babyBed, setBabyBed] = useState(false)
   const [highChair, setHighChair] = useState(false)
 
-  const [roomConfiguration, setRoomConfiguration] =
-    useState("single")
+  const [roomConfiguration, setRoomConfiguration] = useState("single")
 
   const [people, setPeople] = useState(0)
 
@@ -36,71 +36,53 @@ export default function HotelPage() {
     return total > 0 ? total : 1
   }, [checkIn, checkOut])
 
-  let baseRoomPrice = HOTEL_CONFIG.roomPrices.onePerson
+  useEffect(() => {
+    const readHotelConfig = () => {
+      const savedHotel = localStorage.getItem("hotelData")
+      if (!savedHotel) return
+
+      setHotelConfig(JSON.parse(savedHotel))
+    }
+
+    readHotelConfig()
+
+    window.addEventListener("pricesUpdated", readHotelConfig)
+    return () => {
+      window.removeEventListener("pricesUpdated", readHotelConfig)
+    }
+  }, [])
+
+  let baseRoomPrice = hotelConfig.roomPrices.onePerson
 
   if (people >= 1) {
-    baseRoomPrice = HOTEL_CONFIG.roomPrices.onePerson
+    baseRoomPrice = hotelConfig.roomPrices.onePerson
   }
 
   if (people >= 2) {
-  baseRoomPrice =
-    HOTEL_CONFIG.roomPrices.twoPeople
+    baseRoomPrice = hotelConfig.roomPrices.twoPeople
   }
 
-  if (
-    people >= 3 &&
-    roomConfiguration === "double"
-  ) {
-    baseRoomPrice =
-      HOTEL_CONFIG.roomPrices.doubleRoom
+  if (people >= 3 && roomConfiguration === "double") {
+    baseRoomPrice = hotelConfig.roomPrices.doubleRoom
   }
 
   const roomTotal = baseRoomPrice * nights
 
-  const breakfastTotal = breakfast
-    ? HOTEL_CONFIG.options.breakfast *
-      people *
-      nights
-    : 0
+  const breakfastTotal = breakfast ? hotelConfig.options.breakfast * people * nights : 0
 
-  const lunchTotal = lunch
-    ? HOTEL_CONFIG.options.lunch *
-      people *
-      nights
-    : 0
+  const lunchTotal = lunch ? hotelConfig.options.lunch * people * nights : 0
 
-  const dinnerTotal = dinner
-    ? HOTEL_CONFIG.options.dinner *
-      people *
-      nights
-    : 0
+  const dinnerTotal = dinner ? hotelConfig.options.dinner * people * nights : 0
 
-  const hasExtraBed =
-  extraBed ||
-  (people >= 3 &&
-    roomConfiguration === "single")
+  const hasExtraBed = extraBed || (people >= 3 && roomConfiguration === "single")
 
-const extraBedTotal = hasExtraBed
-  ? HOTEL_CONFIG.options.extraBed * nights
-  : 0
+  const extraBedTotal = hasExtraBed ? hotelConfig.options.extraBed * nights : 0
 
-  const petTotal = pet
-    ? HOTEL_CONFIG.options.pet * nights
-    : 0
+  const petTotal = pet ? hotelConfig.options.pet * nights : 0
 
-  const touristTaxTotal =
-    HOTEL_CONFIG.options.touristTax *
-    people *
-    nights
+  const touristTaxTotal = hotelConfig.options.touristTax * people * nights
 
-  const totalPrice =
-    roomTotal +
-    breakfastTotal +
-    lunchTotal +
-    dinnerTotal +
-    extraBedTotal +
-    petTotal +
-    touristTaxTotal
+  const totalPrice = roomTotal + breakfastTotal + lunchTotal + dinnerTotal + extraBedTotal + petTotal + touristTaxTotal
 
   return (
     <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
@@ -108,8 +90,7 @@ const extraBedTotal = hasExtraBed
       <section
         className="relative flex h-[60vh] items-center justify-center bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url('/images/hotel/HERO.jpg')",
+          backgroundImage: "url('/images/hotel/HERO.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-black/50" />
@@ -120,9 +101,7 @@ const extraBedTotal = hasExtraBed
           </h1>
 
           <p className="mx-auto max-w-2xl text-lg text-white/90 md:text-xl">
-            Découvrez nos chambres chaleureuses et profitez
-            d&apos;un séjour confortable à
-            L&apos;auberge de St Aubin.
+            Découvrez nos chambres chaleureuses et profitez d'un séjour confortable à L'auberge de St Aubin.
           </p>
         </div>
       </section>
@@ -144,9 +123,7 @@ const extraBedTotal = hasExtraBed
             </p>
 
             <p className="text-lg leading-relaxed text-[#5a4c42]">
-              Lors de votre réservation, vous pourrez
-              ajouter différentes options comme le petit
-              déjeuner ou les repas du midi et du soir.
+              Lors de votre réservation, vous pourrez ajouter différentes options comme le petit déjeuner ou les repas du midi et du soir.
             </p>
           </div>
 
@@ -160,12 +137,11 @@ const extraBedTotal = hasExtraBed
 
       {/* CHAMBRES */}
       <section
-  className="bg-cover bg-center py-24"
-  style={{
-    backgroundImage:
-      "url('/images/hotel/bois.jpg')",
-  }}
->
+        className="bg-cover bg-center py-24"
+        style={{
+          backgroundImage: "url('/images/hotel/bois.jpg')",
+        }}
+      >
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-14 text-center">
             <h2 className="mb-4 text-4xl font-bold">
@@ -178,7 +154,7 @@ const extraBedTotal = hasExtraBed
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
-            {HOTEL_CONFIG.rooms.map((room) => (
+            {hotelConfig.rooms.map((room) => (
               <div
                 key={room.id}
                 className="overflow-hidden rounded-3xl bg-[#f3ede3] shadow-xl"
@@ -201,13 +177,12 @@ const extraBedTotal = hasExtraBed
                   </div>
 
                   <p className="mb-6 text-[#5a4c42]">
-                    Chambre avec salle de bain privée et placard, télévision et ambiance
-                    chaleureuse.
+                    Chambre avec salle de bain privée et placard, télévision et ambiance chaleureuse.
                   </p>
 
                   <div className="mb-6 flex items-center justify-between">
                     <span className="text-2xl font-bold">
-                      {HOTEL_CONFIG.roomPrices.onePerson}€
+                      {hotelConfig.roomPrices.onePerson}€
                     </span>
                   </div>
 
@@ -223,21 +198,20 @@ const extraBedTotal = hasExtraBed
 
       {/* RESERVATION */}
       <section
-  className="relative bg-cover bg-center py-24"
-  style={{
-    backgroundImage: "url('/images/campagne.jpeg')",
-  }}
->
-  <div className="absolute inset-0 bg-black/40"></div>
-  <div className="relative mx-auto max-w-7xl px-6">
+        className="relative bg-cover bg-center py-24"
+        style={{
+          backgroundImage: "url('/images/campagne.jpeg')",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="relative mx-auto max-w-7xl px-6">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-4xl font-bold text-white">
               Réserver votre séjour
             </h2>
 
             <p className="text-lg text-white">
-              Sélectionnez vos dates et personnalisez votre
-              réservation.
+              Sélectionnez vos dates et personnalisez votre réservation.
             </p>
           </div>
 
@@ -258,9 +232,7 @@ const extraBedTotal = hasExtraBed
                     <input
                       type="date"
                       value={checkIn}
-                      onChange={(e) =>
-                        setCheckIn(e.target.value)
-                      }
+                      onChange={(e) => setCheckIn(e.target.value)}
                       className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
                     />
                   </div>
@@ -273,9 +245,7 @@ const extraBedTotal = hasExtraBed
                     <input
                       type="date"
                       value={checkOut}
-                      onChange={(e) =>
-                        setCheckOut(e.target.value)
-                      }
+                      onChange={(e) => setCheckOut(e.target.value)}
                       className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
                     />
                   </div>
@@ -291,9 +261,7 @@ const extraBedTotal = hasExtraBed
 
                   <select
                     value={selectedRoom}
-                    onChange={(e) =>
-                      setSelectedRoom(e.target.value)
-                    }
+                    onChange={(e) => setSelectedRoom(e.target.value)}
                     className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
                   >
                     <option value="">
@@ -312,9 +280,7 @@ const extraBedTotal = hasExtraBed
 
                   <select
                     value={people}
-                    onChange={(e) =>
-                      setPeople(Number(e.target.value))
-                    }
+                    onChange={(e) => setPeople(Number(e.target.value))}
                     className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
                   >
                     <option value={0}>
@@ -347,11 +313,7 @@ const extraBedTotal = hasExtraBed
 
                     <select
                       value={roomConfiguration}
-                      onChange={(e) =>
-                        setRoomConfiguration(
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => setRoomConfiguration(e.target.value)}
                       className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
                     >
                       <option value="single">
@@ -377,9 +339,7 @@ const extraBedTotal = hasExtraBed
                     <input
                       type="checkbox"
                       checked={breakfast}
-                      onChange={(e) =>
-                        setBreakfast(e.target.checked)
-                      }
+                      onChange={(e) => setBreakfast(e.target.checked)}
                       className="h-5 w-5"
                     />
 
@@ -389,12 +349,7 @@ const extraBedTotal = hasExtraBed
                       </p>
 
                       <p className="text-sm text-[#6b5b4f]">
-                        +
-                        {
-                          HOTEL_CONFIG.options
-                            .breakfast
-                        }
-                        €
+                        +{hotelConfig.options.breakfast}€
                       </p>
                     </div>
                   </label>
@@ -403,9 +358,7 @@ const extraBedTotal = hasExtraBed
                     <input
                       type="checkbox"
                       checked={lunch}
-                      onChange={(e) =>
-                        setLunch(e.target.checked)
-                      }
+                      onChange={(e) => setLunch(e.target.checked)}
                       className="h-5 w-5"
                     />
 
@@ -415,8 +368,7 @@ const extraBedTotal = hasExtraBed
                       </p>
 
                       <p className="text-sm text-[#6b5b4f]">
-                        +
-                        {HOTEL_CONFIG.options.lunch}€
+                        +{hotelConfig.options.lunch}€
                       </p>
                     </div>
                   </label>
@@ -425,9 +377,7 @@ const extraBedTotal = hasExtraBed
                     <input
                       type="checkbox"
                       checked={dinner}
-                      onChange={(e) =>
-                        setDinner(e.target.checked)
-                      }
+                      onChange={(e) => setDinner(e.target.checked)}
                       className="h-5 w-5"
                     />
 
@@ -437,135 +387,122 @@ const extraBedTotal = hasExtraBed
                       </p>
 
                       <p className="text-sm text-[#6b5b4f]">
-                        +
-                        {
-                          HOTEL_CONFIG.options.dinner
-                        }
-                        €
+                        +{hotelConfig.options.dinner}€
                       </p>
                     </div>
                   </label>
                 </div>
-                </div>
+              </div>
 
-                {/* OPTIONS SUPP */}
-<div className="mt-6 grid gap-4 md:grid-cols-2">
-  <label className="flex cursor-pointer items-center gap-3 rounded-2xl bg-white p-5 shadow-sm transition hover:shadow-md">
-    <input
-      type="checkbox"
-      checked={hasExtraBed}
-      onChange={(e) =>
-        setExtraBed(e.target.checked)
-      }
-      className="h-5 w-5"
-      disabled={
-  people >= 3 &&
-  roomConfiguration === "single"
-}
-    />
+              {/* OPTIONS SUPP */}
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                <label className="flex cursor-pointer items-center gap-3 rounded-2xl bg-white p-5 shadow-sm transition hover:shadow-md">
+                  <input
+                    type="checkbox"
+                    checked={hasExtraBed}
+                    onChange={(e) => setExtraBed(e.target.checked)}
+                    className="h-5 w-5"
+                    disabled={people >= 3 && roomConfiguration === "single"}
+                  />
 
-    <div>
-      <p className="font-semibold">
-        Lit supplémentaire
-      </p>
+                  <div>
+                    <p className="font-semibold">
+                      Lit supplémentaire
+                    </p>
 
-      <p className="text-sm text-[#6b5b4f]">
-        +{HOTEL_CONFIG.options.extraBed}€
-      </p>
-    </div>
-  </label>
+                    <p className="text-sm text-[#6b5b4f]">
+                      +{hotelConfig.options.extraBed}€
+                    </p>
+                  </div>
+                </label>
 
-  <label className="flex cursor-pointer items-center gap-3 rounded-2xl bg-white p-5 shadow-sm transition hover:shadow-md">
-    <input
-      type="checkbox"
-      checked={pet}
-      onChange={(e) =>
-        setPet(e.target.checked)
-      }
-      className="h-5 w-5"
-    />
+                <label className="flex cursor-pointer items-center gap-3 rounded-2xl bg-white p-5 shadow-sm transition hover:shadow-md">
+                  <input
+                    type="checkbox"
+                    checked={pet}
+                    onChange={(e) => setPet(e.target.checked)}
+                    className="h-5 w-5"
+                  />
 
-    <div>
-      <p className="font-semibold">
-        Supplément animal
-      </p>
+                  <div>
+                    <p className="font-semibold">
+                      Supplément animal
+                    </p>
 
-      <p className="text-sm text-[#6b5b4f]">
-        +{HOTEL_CONFIG.options.pet}€
-      </p>
-    </div>
-  </label>
-</div>
+                    <p className="text-sm text-[#6b5b4f]">
+                      +{hotelConfig.options.pet}€
+                    </p>
+                  </div>
+                </label>
+              </div>
 
-{/* ENFANT BAS AGE */}
-<div className="mt-6 rounded-3xl bg-white p-6 shadow-sm">
-  <label className="flex cursor-pointer items-start gap-4">
-    <input
-      type="checkbox"
-      checked={baby}
-      onChange={(e) =>
-        setBaby(e.target.checked)
-      }
-      className="mt-1 h-5 w-5"
-    />
+              {/* ENFANT BAS AGE */}
+              <div className="mt-6 rounded-3xl bg-white p-6 shadow-sm">
+                <label className="flex cursor-pointer items-start gap-4">
+                  <input
+                    type="checkbox"
+                    checked={baby}
+                    onChange={(e) => setBaby(e.target.checked)}
+                    className="mt-1 h-5 w-5"
+                  />
 
-    <div>
-      <p className="text-lg font-semibold">
-        Enfant bas âge
-      </p>
+                  <div>
+                    <p className="text-lg font-semibold">
+                      Enfant bas âge
+                    </p>
 
-      <p className="text-sm text-[#6b5b4f]">
-        Lit parapluie et chaise haute disponibles
-      </p>
-    </div>
-  </label>
+                    <p className="text-sm text-[#6b5b4f]">
+                      Lit parapluie et chaise haute disponibles
+                    </p>
+                  </div>
+                </label>
 
-  {baby && (
-    <div className="mt-6 grid gap-4 md:grid-cols-2">
-      <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[#e5ddd2] p-4">
-        <input
-          type="checkbox"
-          checked={babyBed}
-          onChange={(e) =>
-            setBabyBed(e.target.checked)
-          }
-          className="h-5 w-5"
-        />
+                {baby && (
+                  <div className="mt-6 grid gap-4 md:grid-cols-2">
+                    <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[#e5ddd2] p-4">
+                      <input
+                        type="checkbox"
+                        checked={babyBed}
+                        onChange={(e) =>
+                          setBabyBed(e.target.checked)
+                        }
+                        className="h-5 w-5"
+                      />
 
-        <div>
-          <p className="font-semibold">
-            Lit parapluie
-          </p>
+                      <div>
+                        <p className="font-semibold">
+                          Lit parapluie
+                        </p>
 
-          <p className="text-sm text-[#6b5b4f]">
-            Gratuit
-          </p>
-        </div>
-      </label>
+                        <p className="text-sm text-[#6b5b4f]">
+                          Gratuit
+                        </p>
+                      </div>
+                    </label>
 
-      <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[#e5ddd2] p-4">
-        <input
-          type="checkbox"
-          checked={highChair}
-          onChange={(e) =>
-            setHighChair(e.target.checked)
-          }
-          className="h-5 w-5"
-        />
+                    <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[#e5ddd2] p-4">
+                      <input
+                        type="checkbox"
+                        checked={highChair}
+                        onChange={(e) =>
+                          setHighChair(e.target.checked)
+                        }
+                        className="h-5 w-5"
+                      />
 
-        <div>
-          <p className="font-semibold">
-            Chaise haute
-          </p>
+                      <div>
+                        <p className="font-semibold">
+                          Chaise haute
+                        </p>
 
-          <p className="text-sm text-[#6b5b4f]">
-            Gratuit
-          </p>
-        </div>
-      </label>
-    </div>
-  )}
-</div>
+                        <p className="text-sm text-[#6b5b4f]">
+                          Gratuit
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+                )}
+              </div>
 
               <button className="w-full rounded-2xl bg-[#c89b5f] py-5 text-lg font-semibold text-white transition hover:scale-[1.01]">
                 Continuer vers le paiement

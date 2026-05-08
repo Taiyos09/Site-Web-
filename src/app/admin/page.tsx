@@ -109,6 +109,8 @@ const saveChanges = () => {
     JSON.stringify(restaurantData)
   )
 
+  window.dispatchEvent(new Event("pricesUpdated"))
+
   alert("Modifications sauvegardées")
 }
 

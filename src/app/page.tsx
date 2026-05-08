@@ -9,7 +9,8 @@ const navigation = [
   { name: "Hôtel", href: "/hotel" },
   { name: "Restaurant", href: "/restaurant" },
   { name: "Événements", href: "/evenements" },
-  { name: "Contact", href: "/contact" },
+  { name: "Contact", href: "/Contact" },
+
 ]
 
 const images = [
@@ -237,9 +238,12 @@ useEffect(() => {
               occasionnels.
             </p>
 
-            <button className="rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-white shadow-xl transition hover:scale-105">
+            <Link
+              href="/restaurant"
+              className="rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-white shadow-xl transition hover:scale-105 inline-block text-center"
+            >
               Voir la carte
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -255,24 +259,52 @@ useEffect(() => {
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
-            {[1, 2, 3].map((event) => (
-              <div
-                key={event}
-                className="rounded-3xl bg-white/10 p-6 backdrop-blur"
-              >
-                <div className="mb-4 rounded-2xl bg-[#c89b5f] px-4 py-2 inline-block">
-                  Vendredi soir
-                </div>
-
-                <h3 className="mb-3 text-2xl font-semibold">
-                  Concert live
-                </h3>
-
-                <p className="text-white/80">
-                  Soirée musicale conviviale dans une ambiance chaleureuse.
-                </p>
+            <div                
+              className="rounded-3xl bg-white/10 p-6 backdrop-blur"
+            >
+              <div className="mb-4 rounded-2xl bg-[#c89b5f] px-4 py-2 inline-block">
+                Vendredi  8 Décembre
               </div>
-            ))}
+
+              <h3 className="mb-3 text-2xl font-semibold">
+                Rediff Final World Cup
+              </h3>
+
+              <p className="text-white/80">
+                soirée spéciale pour la finale de la coupe du monde de football avec retransmission sur grand écran, boissons et snacks.
+              </p>
+            </div>
+
+            <div                
+              className="rounded-3xl bg-white/10 p-6 backdrop-blur"
+            >
+              <div className="mb-4 rounded-2xl bg-[#c89b5f] px-4 py-2 inline-block">
+                Vendredi  15 Décembre
+              </div>
+
+              <h3 className="mb-3 text-2xl font-semibold">
+                Soirée Karaoké
+              </h3>
+
+              <p className="text-white/80">
+                Soirée karaoké conviviale pour chanter vos titres préférés entre amis, avec une sélection de boissons et snacks.
+              </p>
+            </div>
+            <div                
+              className="rounded-3xl bg-white/10 p-6 backdrop-blur"
+            >
+              <div className="mb-4 rounded-2xl bg-[#c89b5f] px-4 py-2 inline-block">
+                Vendredi 22 Décembre
+              </div>
+
+              <h3 className="mb-3 text-2xl font-semibold">
+                Soirée pétanque
+              </h3>
+
+              <p className="text-white/80">
+                Soirée pétanque conviviale pour jouer entre amis, avec une sélection de boissons et snacks.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -284,8 +316,8 @@ useEffect(() => {
             <h2 className="mb-6 text-4xl font-bold">Contact</h2>
 
             <div className="space-y-4 text-lg text-[#5a4c42]">
-              <p>📍 Adresse de l&apos;auberge</p>
-              <p>📞 Téléphone</p>
+              <p>📍 21 Rue Saint-Barnabé, 03160 Saint-Aubin-le-Monial</p>
+              <p>📞 04 70 66 50 97</p>
               <p>✉️ contact@auberge-st-aubin.fr</p>
             </div>
           </div>

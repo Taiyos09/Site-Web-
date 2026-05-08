@@ -11,7 +11,24 @@ const images = [
 ]
 
 export default function RestaurantPage() {
+  const [restaurantConfig, setRestaurantConfig] = useState(RESTAURANT_CONFIG)
   const [currentImage, setCurrentImage] = useState(0)
+
+  useEffect(() => {
+    const readRestaurantConfig = () => {
+      const savedRestaurant = localStorage.getItem("restaurantData")
+      if (!savedRestaurant) return
+
+      setRestaurantConfig(JSON.parse(savedRestaurant))
+    }
+
+    readRestaurantConfig()
+
+    window.addEventListener("pricesUpdated", readRestaurantConfig)
+    return () => {
+      window.removeEventListener("pricesUpdated", readRestaurantConfig)
+    }
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -102,22 +119,22 @@ export default function RestaurantPage() {
               <div className="space-y-6">
                 <div>
                   <div className="flex justify-between">
-                    <span>{RESTAURANT_CONFIG.entrees[0].name}</span>
-                    <span>{RESTAURANT_CONFIG.entrees[0].price}€</span>
+                    <span>{restaurantConfig.entrees[0].name}</span>
+                    <span>{restaurantConfig.entrees[0].price}€</span>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between">
-                    <span>{RESTAURANT_CONFIG.entrees[1].name}</span>
-                    <span>{RESTAURANT_CONFIG.entrees[1].price}€</span>
+                    <span>{restaurantConfig.entrees[1].name}</span>
+                    <span>{restaurantConfig.entrees[1].price}€</span>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between">
-                    <span>{RESTAURANT_CONFIG.entrees[2].name}</span>
-                    <span>{RESTAURANT_CONFIG.entrees[2].price}€</span>
+                    <span>{restaurantConfig.entrees[2].name}</span>
+                    <span>{restaurantConfig.entrees[2].price}€</span>
                   </div>
                 </div>
               </div>
@@ -131,23 +148,23 @@ export default function RestaurantPage() {
 
               <div className="space-y-6">
                 <div className="flex justify-between">
-                  <span>{RESTAURANT_CONFIG.plats[0].name}</span>
-                  <span>{RESTAURANT_CONFIG.plats[0].price}€</span>
+                  <span>{restaurantConfig.plats[0].name}</span>
+                  <span>{restaurantConfig.plats[0].price}€</span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span>{RESTAURANT_CONFIG.plats[1].name}</span>
-                  <span>{RESTAURANT_CONFIG.plats[1].price}€</span>
+                  <span>{restaurantConfig.plats[1].name}</span>
+                  <span>{restaurantConfig.plats[1].price}€</span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span>{RESTAURANT_CONFIG.plats[2].name}</span>
-                  <span>{RESTAURANT_CONFIG.plats[2].price}€</span>
+                  <span>{restaurantConfig.plats[2].name}</span>
+                  <span>{restaurantConfig.plats[2].price}€</span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span>{RESTAURANT_CONFIG.plats[3].name}</span>
-                  <span>{RESTAURANT_CONFIG.plats[3].price}€</span>
+                  <span>{restaurantConfig.plats[3].name}</span>
+                  <span>{restaurantConfig.plats[3].price}€</span>
                 </div>
               </div>
             </div>
@@ -160,18 +177,18 @@ export default function RestaurantPage() {
 
               <div className="space-y-6">
                 <div className="flex justify-between">
-                  <span>{RESTAURANT_CONFIG.desserts[0].name}</span>
-                  <span>{RESTAURANT_CONFIG.desserts[0].price}€</span>
+                  <span>{restaurantConfig.desserts[0].name}</span>
+                  <span>{restaurantConfig.desserts[0].price}€</span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span>{RESTAURANT_CONFIG.desserts[1].name}</span>
-                  <span>{RESTAURANT_CONFIG.desserts[1].price}€</span>
+                  <span>{restaurantConfig.desserts[1].name}</span>
+                  <span>{restaurantConfig.desserts[1].price}€</span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span>{RESTAURANT_CONFIG.desserts[2].name}</span>
-                  <span>{RESTAURANT_CONFIG.desserts[2].price}€</span>
+                  <span>{restaurantConfig.desserts[2].name}</span>
+                  <span>{restaurantConfig.desserts[2].price}€</span>
                 </div>
               </div>
             </div>
@@ -193,12 +210,12 @@ export default function RestaurantPage() {
           </div>
 
           <div className="space-y-6 text-center text-xl">
-            <p>🥗 {RESTAURANT_CONFIG.menuDuJour.starter}</p>
-            <p>🍖 {RESTAURANT_CONFIG.menuDuJour.main}</p>
-            <p>🍰 {RESTAURANT_CONFIG.menuDuJour.dessert}</p>
+            <p>🥗 {restaurantConfig.menuDuJour.starter}</p>
+            <p>🍖 {restaurantConfig.menuDuJour.main}</p>
+            <p>🍰 {restaurantConfig.menuDuJour.dessert}</p>
 
             <div className="pt-6 text-4xl font-bold text-[#c89b5f]">
-              {RESTAURANT_CONFIG.menuDuJour.price}€
+              {restaurantConfig.menuDuJour.price}€
             </div>
           </div>
         </div>
@@ -220,38 +237,38 @@ export default function RestaurantPage() {
           <div className="rounded-3xl bg-[#faf7f2] p-10 shadow-xl">
             <div className="space-y-4 text-lg">
               <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-                <span>{RESTAURANT_CONFIG.horaires[0].day}</span>
-                <span>{RESTAURANT_CONFIG.horaires[0].hours}</span>
+                <span>{restaurantConfig.horaires[0].day}</span>
+                <span>{restaurantConfig.horaires[0].hours}</span>
               </div>
 
               <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-                <span>{RESTAURANT_CONFIG.horaires[1].day}</span>
-                <span>{RESTAURANT_CONFIG.horaires[1].hours}</span>
+                <span>{restaurantConfig.horaires[1].day}</span>
+                <span>{restaurantConfig.horaires[1].hours}</span>
               </div>
 
               <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-                <span>{RESTAURANT_CONFIG.horaires[2].day}</span>
-                <span>{RESTAURANT_CONFIG.horaires[2].hours}</span>
+                <span>{restaurantConfig.horaires[2].day}</span>
+                <span>{restaurantConfig.horaires[2].hours}</span>
               </div>
 
               <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-                <span>{RESTAURANT_CONFIG.horaires[3].day}</span>
-                <span>{RESTAURANT_CONFIG.horaires[3].hours}</span>
+                <span>{restaurantConfig.horaires[3].day}</span>
+                <span>{restaurantConfig.horaires[3].hours}</span>
               </div>
 
               <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-                <span>{RESTAURANT_CONFIG.horaires[4].day}</span>
-                <span>{RESTAURANT_CONFIG.horaires[4].hours}</span>
+                <span>{restaurantConfig.horaires[4].day}</span>
+                <span>{restaurantConfig.horaires[4].hours}</span>
               </div>
 
               <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-                <span>{RESTAURANT_CONFIG.horaires[5].day}</span>
-                <span>{RESTAURANT_CONFIG.horaires[5].hours}</span>
+                <span>{restaurantConfig.horaires[5].day}</span>
+                <span>{restaurantConfig.horaires[5].hours}</span>
               </div>
 
               <div className="flex justify-between">
-                <span>{RESTAURANT_CONFIG.horaires[6].day}</span>
-                <span>{RESTAURANT_CONFIG.horaires[6].hours}</span>
+                <span>{restaurantConfig.horaires[6].day}</span>
+                <span>{restaurantConfig.horaires[6].hours}</span>
               </div>
             </div>
           </div>
