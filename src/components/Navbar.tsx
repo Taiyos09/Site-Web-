@@ -13,7 +13,7 @@ export default function Navbar() {
     <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-black/30 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 text-white">
         <h1 className="text-2xl font-bold">
-          L'auberge de St Aubin
+          L'Auberge de St Aubin
         </h1>
 
         <nav className="flex gap-8">

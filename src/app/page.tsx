@@ -46,12 +46,16 @@ export default function AubergeSaintAubinHomepage() {
         <div className="absolute inset-0 bg-black/45" />
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
-          <h1 className="mb-4 text-5xl font-bold md:text-7xl">
-            L&apos;auberge de St Aubin
-          </h1>
+          <div className="flex items-center gap-3">
+  <img
+    src="/images/logo.png"
+    alt="Logo Auberge St Aubin"
+    className="h-150 w-auto drop-shadow-2xl"
+  />
+</div>
 
           <p className="mb-8 max-w-2xl text-lg md:text-2xl">
-            Hôtel • Restaurant • Bar
+            Bar • Restaurant •  Hôtel
           </p>
 
           <p className="mb-10 max-w-3xl text-base md:text-lg text-white/90">
