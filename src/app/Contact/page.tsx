@@ -2,7 +2,6 @@
 
 import Navbar from "@/components/Navbar"
 import Link from "next/link"
-import { useEffect, useState, useMemo } from "react"
 
 export default function ContactPage() {
   return (
