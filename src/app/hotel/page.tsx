@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { HOTEL_CONFIG } from "@/data/hotel"
 
 export default function HotelPage() {

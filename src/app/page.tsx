@@ -98,108 +98,18 @@ useEffect(() => {
         Entre chambres confortables, cuisine maison et événements du vendredi
         soir, découvrez une ambiance rustique moderne pensée pour tous.
       </p>
-    </div>
-    </div>
+      </div>
 
     <div className="overflow-hidden rounded-3xl shadow-2xl bg-[#f5f1ea]">
-  <img
-    src={images[currentImage]}
-    alt="Auberge"
-    className="w-full h-auto rounded-3xl"
-  />
-          <nav className="hidden gap-8 md:flex">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="transition hover:text-[#c89b5f]"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-
-          <button className="rounded-2xl bg-[#c89b5f] px-5 py-3 font-semibold text-white transition hover:scale-105">
-            Réserver
-          </button>
-        </div>
-    </section>
-  </div>
-      {/* HERO */}
-      <section
-        className="relative h-screen bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('/images/auberge-de-saint-aubin.jpg')",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/45" />
-
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
-          <div className="flex flex-col items-center gap-1">
-  <img
-    src="/images/logo.png"
-    alt="Logo Auberge St Aubin"
-    className="h-150 w-auto drop-shadow-2xl"
-  />
-            <p className="mt-1 mb-8 max-w-3xl text-lg md:text-xl text-white/90">
-              Une auberge chaleureuse entre authenticité, convivialité et
-              traditionnelle.
-            </p>
-</div>
-       <div className="flex flex-wrap justify-center gap-4">
-            <button
-              disabled
-              className="rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-white shadow-xl transition cursor-not-allowed opacity-50"
-          >
-              Réserver une chambre
-            </button>
-
-            <button
-              disabled
-              className="rounded-2xl border border-white/70 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur transition cursor-not-allowed opacity-50"
-            >
-              Découvrir le restaurant
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* PRESENTATION */}
-<section
-  id="restaurant"
-  className="mx-auto max-w-7xl px-6 py-24"
->
-  <div className="grid items-center gap-12 md:grid-cols-2">
-    <div>
-      <h2 className="mb-6 text-4xl font-bold">
-        Une auberge authentique
-      </h2>
-
-      <p className="mb-4 text-lg leading-relaxed text-[#5a4c42]">
-        Située au cœur de la campagne bourbonnaise, dans un cadre calme et
-        authentique, l’Auberge de St Aubin vous accueille pour partager un
-        moment convivial autour d’une cuisine généreuse et traditionnelle.
-        Que ce soit pour une pause au bar, un repas en famille ou un séjour
-        au calme dans l’Allier, l’auberge vous ouvre ses portes dans une
-        ambiance chaleureuse et familiale.
-      </p>
-
-      <p className="text-lg leading-relaxed text-[#5a4c42]">
-        Entre chambres confortables, cuisine maison et événements du vendredi
-        soir, découvrez une ambiance rustique moderne pensée pour tous.
-      </p>
+      <img
+        src={images[currentImage]}
+        alt="Auberge"
+        className="w-full h-auto rounded-3xl"
+      />
     </div>
-
-    <div className="overflow-hidden rounded-3xl shadow-2xl bg-[#f5f1ea]">
-  <img
-    src={images[currentImage]}
-    alt="Auberge"
-    className="w-full h-auto rounded-3xl"
-  />
-</div>
   </div>
 </section>
+
       {/* HORAIRES */}
 <section id="horaires" className="bg-white py-24">
   <div className="mx-auto max-w-7xl px-6">
