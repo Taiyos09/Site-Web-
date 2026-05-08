@@ -88,7 +88,7 @@ export default function HotelPage() {
     <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
       {/* HERO */}
       <section
-        className="relative flex h-[60vh] items-center justify-center bg-cover bg-center"
+        className="relative  h-screen flex h-[60vh] items-center justify-center bg-cover bg-center"
         style={{
           backgroundImage: "url('/images/hotel/HERO.jpg')",
         }}
@@ -107,7 +107,7 @@ export default function HotelPage() {
       </section>
 
       {/* PRESENTATION */}
-      <section className="mx-auto max-w-7xl px-6 py-24">
+      <section className="mx-auto h-screen max-w-7xl px-6 py-24">
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div>
             <h2 className="mb-6 text-4xl font-bold">
@@ -137,7 +137,7 @@ export default function HotelPage() {
 
       {/* CHAMBRES */}
       <section
-        className="bg-cover bg-center py-24"
+        className="bg-cover h-screen bg-center py-24"
         style={{
           backgroundImage: "url('/images/hotel/bois.jpg')",
         }}
@@ -198,7 +198,7 @@ export default function HotelPage() {
 
       {/* RESERVATION */}
       <section
-        className="relative bg-cover bg-center py-24"
+        className="relative  h-screen bg-cover bg-center py-24"
         style={{
           backgroundImage: "url('/images/campagne.jpeg')",
         }}

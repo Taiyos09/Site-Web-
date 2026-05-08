@@ -78,7 +78,7 @@ useEffect(() => {
       {/* PRESENTATION */}
 <section
   id="restaurant"
-  className="mx-auto max-w-7xl px-6 py-24"
+  className="mx-100 h-screen max-w-7xl px-6 py-24"
 >
   <div className="grid items-center gap-12 md:grid-cols-2">
     <div>
@@ -112,8 +112,9 @@ useEffect(() => {
 </section>
 
       {/* HORAIRES */}
-<section id="horaires" className="bg-white py-24">
-  <div className="mx-auto max-w-7xl px-6">
+<section id="horaires" className="relative  h-screen py-24 bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/images/horaires-bg.avif')"}}>
+  <div className="absolute inset-0 bg-white/60"></div>
+  <div className="relative mx-auto max-w-7xl px-6">
     <div className="mb-14 text-center">
       <h2 className="mb-4 text-4xl font-bold">
         Nos horaires
@@ -126,7 +127,7 @@ useEffect(() => {
 
     <div className="grid gap-8 md:grid-cols-2">
       {/* BAR */}
-      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl">
+      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl text-center">
         <h3 className="mb-6 text-3xl font-bold text-[#2f241d]">
           🍷 Bar
         </h3>
@@ -170,7 +171,7 @@ useEffect(() => {
       </div>
 
       {/* RESTAURANT */}
-      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl">
+      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl text-center">
         <h3 className="mb-6 text-3xl font-bold text-[#2f241d]">
           🍽️ Restaurant
         </h3>
@@ -217,39 +218,64 @@ useEffect(() => {
 </section>
 
       {/* RESTAURANT */}
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <div className="grid gap-12 md:grid-cols-2 items-center">
-          <img
-            src="https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1974&auto=format&fit=crop"
-            alt="Restaurant"
-            className="rounded-3xl shadow-2xl"
-          />
+<section
+  className="relative h-screen py-24"
+  style={{
+    backgroundImage: "url('/images/table.png')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  }}
+>
+        {/* Overlay */}
+  <div className="absolute inset-0 bg-[#f5f1ea]/10 backdrop-blur-[1px]" />
 
-          <div>
-            <h2 className="mb-6 text-4xl font-bold">Restaurant & bar</h2>
+  <div className="relative z-10 mx-auto max-w-7xl px-6">
+    <div className="grid items-center gap-12 md:grid-cols-2">
+      
+      {/* IMAGE */}
+      <div className="overflow-hidden rounded-[32px] shadow-2xl border border-white/40">
+        <img
+          src="/images/bar.jpeg"
+          alt="Restaurant"
+          className="w-full object-cover"
+        />
+      </div>
 
-            <p className="mb-4 text-lg leading-relaxed text-[#5a4c42]">
-              Découvrez une cuisine conviviale avec carte fixe et menu du jour
-              du lundi au vendredi.
-            </p>
+      {/* TEXTE */}
+      <div className="rounded-[32px] bg-white/40 p-10 backdrop-blur-md shadow-xl">
+        <h2 className="mb-6 text-5xl font-bold text-[#2f241d]">
+          Restaurant & bar
+        </h2>
 
-            <p className="mb-8 text-lg leading-relaxed text-[#5a4c42]">
-              Le bar accueille également des soirées événements et concerts
-              occasionnels.
-            </p>
+        <p className="mb-4 text-xl leading-relaxed text-[#4e4035]">
+          Découvrez une cuisine conviviale avec carte fixe et menu du jour
+          du lundi au vendredi.
+        </p>
 
-            <Link
-              href="/restaurant"
-              className="rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-white shadow-xl transition hover:scale-105 inline-block text-center"
-            >
-              Voir la carte
-            </Link>
-          </div>
-        </div>
-      </section>
+        <p className="mb-8 text-xl leading-relaxed text-[#4e4035]">
+          Le bar accueille également des soirées événements et concerts
+          occasionnels.
+        </p>
+
+        <Link
+        href="/restaurant" 
+        className="rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-white shadow-xl transition hover:scale-105">
+          Voir la carte
+        </Link>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* EVENEMENTS */}
-      <section id="evenements" className="bg-[#2f241d] py-24 text-white">
+      <section
+  id="evenements"
+  className="relative h-screen py-24 text-white bg-cover bg-center"
+  style={{
+    backgroundImage:
+      "url('/images/festif.png')",
+  }}
+>
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-14 text-center">
             <h2 className="mb-4 text-4xl font-bold">Événements</h2>
@@ -275,21 +301,35 @@ useEffect(() => {
               </p>
             </div>
 
-            <div                
-              className="rounded-3xl bg-white/10 p-6 backdrop-blur"
-            >
-              <div className="mb-4 rounded-2xl bg-[#c89b5f] px-4 py-2 inline-block">
-                Vendredi  15 Décembre
-              </div>
+            <div className="rounded-3xl bg-white/10 p-6 backdrop-blur">
+  <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    
+    {/* TEXTE */}
+    <div className="flex-1 text-center">
+      <div className="mb-4 inline-block rounded-2xl bg-[#c89b5f] px-4 py-2">
+        Vendredi 15 Décembre
+        
+      </div>
+      
+      <h3 className="mb-3 text-2xl font-semibold">
+        Soirée Karaoké
+      </h3>
+      <img
+      src="/images/karaoké.jpg"
+      alt="Soirée Karaoké"
+      className="h-24 mb-6 mt-4 w-full rounded-2xl object-cover shadow-xl md:w-24 md:mx-auto"
+    />
 
-              <h3 className="mb-3 text-2xl font-semibold">
-                Soirée Karaoké
-              </h3>
+      <p className="text-white/80">
+        Soirée karaoké conviviale pour chanter vos titres préférés entre amis,
+        avec une sélection de boissons et snacks.
+      </p>
+    </div>
 
-              <p className="text-white/80">
-                Soirée karaoké conviviale pour chanter vos titres préférés entre amis, avec une sélection de boissons et snacks.
-              </p>
-            </div>
+    {/* IMAGE */}
+    
+  </div>
+</div>
             <div                
               className="rounded-3xl bg-white/10 p-6 backdrop-blur"
             >
@@ -310,7 +350,7 @@ useEffect(() => {
       </section>
 
       {/* CONTACT */}
-      <section id="contact" className="mx-auto max-w-7xl px-6 py-24">
+      <section id="contact" className="mx-auto h-screen max-w-7xl px-6 py-24">
         <div className="grid gap-12 md:grid-cols-2">
           <div>
             <h2 className="mb-6 text-4xl font-bold">Contact</h2>

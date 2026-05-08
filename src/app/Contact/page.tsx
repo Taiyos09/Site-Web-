@@ -11,7 +11,7 @@ export default function ContactPage() {
         className="relative h-[55vh] bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('/images/contact-hero.jpg')",
+            "url('/images/contact-hero.webp')",
         }}
       >
         <div className="absolute inset-0 bg-black/50" />
@@ -20,7 +20,7 @@ export default function ContactPage() {
           <img
             src="/images/logo.png"
             alt="Logo Auberge"
-            className="mb-4 h-56 w-auto drop-shadow-2xl"
+            className="mb-4 h-70 w-auto drop-shadow-2xl"
           />
 
           <h1 className="mb-4 text-5xl font-bold md:text-6xl">
@@ -51,7 +51,7 @@ export default function ContactPage() {
                 <p>
                   L&apos;Auberge de St Aubin
                   <br />
-                  1370 Route de Lespinas
+                  21 Rue Saint-Barnabé
                   <br />
                   03160 Saint Aubin le Monial
                 </p>
@@ -62,7 +62,7 @@ export default function ContactPage() {
                   📞 Téléphone
                 </p>
 
-                <p>00 00 00 00 00</p>
+                <p>04 70 66 50 97</p>
               </div>
 
               <div className="rounded-3xl bg-white p-6 shadow-lg">
@@ -81,13 +81,13 @@ export default function ContactPage() {
                 <p>
                   Lundi au Vendredi :
                   <br />
-                  12h00 - 14h00
+                  08h30 - 22h00
                 </p>
 
                 <p className="mt-3">
                   Vendredi & Samedi soir :
                   <br />
-                  19h00 - 22h00
+                  08h30 - 22h00
                 </p>
               </div>
             </div>
@@ -176,7 +176,7 @@ export default function ContactPage() {
 
           <div className="overflow-hidden rounded-[40px] shadow-2xl">
             <iframe
-              src="https://www.google.com/maps?q=Saint+Aubin+le+Monial&output=embed"
+              src="https://www.google.com/maps?q=Auberge+de+St+Aubin&output=embed"
               width="100%"
               height="500"
               loading="lazy"
