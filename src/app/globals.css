@@ -19,6 +19,11 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -58,4 +63,8 @@ body {
 .animate-slide {
   width: 300%;
   animation: slide 15s infinite ease-in-out;
+}
+
+html {
+  scroll-behavior: smooth;
 }

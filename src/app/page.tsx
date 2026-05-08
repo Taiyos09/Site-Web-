@@ -9,8 +9,7 @@ const navigation = [
   { name: "Hôtel", href: "/hotel" },
   { name: "Restaurant", href: "/restaurant" },
   { name: "Événements", href: "/evenements" },
-  { name: "Contact", href: "/Contact" },
-
+  { name: "Contact", href: "/contact" },
 ]
 
 const images = [
@@ -32,12 +31,15 @@ useEffect(() => {
   return () => clearInterval(interval)
 }, [])
   return (
-    <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d] font-serif">
+  <div
+    className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth bg-[#f5f1ea] text-[#2f241d] font-serif"
+    style={{ scrollPaddingTop: "100px" }}
+  >
       {/* NAVBAR */}
       <Navbar />
       {/* HERO */}
       <section
-        className="relative h-screen bg-cover bg-center"
+        className="relative snap-start h-screen bg-cover bg-center"
         style={{
           backgroundImage:
             "url('/images/auberge-de-saint-aubin.jpg')",
@@ -46,9 +48,10 @@ useEffect(() => {
         <div className="absolute inset-0 bg-black/45" />
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
-          <div className="flex flex-col items-center gap-1">
+          <div className=" p-8 rounded-lg ">
+            <div className="flex flex-col items-center gap-1">
   <img
-    src="/images/logo.png"
+    src="/images/logo2.png"
     alt="Logo Auberge St Aubin"
     className="h-150 w-auto drop-shadow-2xl"
   />
@@ -57,6 +60,7 @@ useEffect(() => {
               traditionnelle.
             </p>
 </div>
+          </div>
        <div className="flex flex-wrap justify-center gap-4">
             <button
               disabled
@@ -78,56 +82,124 @@ useEffect(() => {
       {/* PRESENTATION */}
 <section
   id="restaurant"
-  className="mx-100 h-screen max-w-7xl px-6 py-24"
+  className="relative snap-center min-h-screen border-t border-[#e5ddd2] bg-cover bg-center flex items-center justify-center"
+  style={{
+    backgroundImage: "url('/images/test.png')",
+  }}
 >
-  <div className="grid items-center gap-12 md:grid-cols-2">
-    <div>
-      <h2 className="mb-6 text-4xl font-bold">
-        Une auberge authentique
-      </h2>
+  <div className="absolute inset-0 bg-white/0" />
+  <div className="relative mx-auto max-w-7xl px-6 w-full">
+    <div className="grid items-center gap-12 md:grid-cols-2">
+      <div className=" p-8 ">
+        <h2 className="mb-6 text-4xl text-white font-bold"
+        style={{
+    textShadow: `
+      0 0 3px rgba(0,0,0,0.95),
+    2px 2px 4px rgba(0,0,0,0.9),
+    4px 4px 8px rgba(0,0,0,0.85),
+    6px 6px 12px rgba(0,0,0,0.75)
+    `,
+    transform: 'translateY(2px)',
+    opacity: '1'
+  }}>
+          Une auberge authentique
+        </h2>
 
-      <p className="mb-4 text-lg leading-relaxed text-[#5a4c42]">
-        Située au cœur de la campagne bourbonnaise, dans un cadre calme et
-        authentique, l’Auberge de St Aubin vous accueille pour partager un
-        moment convivial autour d’une cuisine généreuse et traditionnelle.
-        Que ce soit pour une pause au bar, un repas en famille ou un séjour
-        au calme dans l’Allier, l’auberge vous ouvre ses portes dans une
-        ambiance chaleureuse et familiale.
-      </p>
+        <p className="mb-4 text-lg leading-relaxed text-white">
+          <span
+  className="inline-block"
+  style={{
+    textShadow: `
+      0 0 3px rgba(0,0,0,0.95),
+    2px 2px 4px rgba(0,0,0,0.9),
+    4px 4px 8px rgba(0,0,0,0.85),
+    6px 6px 12px rgba(0,0,0,0.75)
+    `,
+    transform: 'translateY(2px)',
+    opacity: '1'
+  }}
+>
+            Située au cœur de la campagne bourbonnaise, dans un cadre calme et
+            authentique, l'Auberge de St Aubin vous accueille pour partager un
+            moment convivial autour d'une cuisine généreuse et traditionnelle.
+            Que ce soit pour une pause au bar, un repas en famille ou un séjour
+            au calme dans l'Allier, l'auberge vous ouvre ses portes dans une
+            ambiance chaleureuse et familiale.
+          </span>
+        </p>
 
-      <p className="text-lg leading-relaxed text-[#5a4c42]">
-        Entre chambres confortables, cuisine maison et événements du vendredi
-        soir, découvrez une ambiance rustique moderne pensée pour tous.
-      </p>
+        <p className="text-lg leading-relaxed text-white">
+          <span
+  className="inline-block"
+  style={{
+    textShadow: `
+      0 0 3px rgba(0,0,0,0.95),
+    2px 2px 4px rgba(0,0,0,0.9),
+    4px 4px 8px rgba(0,0,0,0.85),
+    6px 6px 12px rgba(0,0,0,0.75)
+    `,
+    transform: 'translateY(2px)',
+    opacity: '0.95'
+  }}
+>
+            Entre chambres confortables, cuisine maison et événements du vendredi
+            soir, découvrez une ambiance rustique moderne pensée pour tous.
+          </span>
+        </p>
       </div>
 
-    <div className="overflow-hidden rounded-3xl shadow-2xl bg-[#f5f1ea]">
-      <img
-        src={images[currentImage]}
-        alt="Auberge"
-        className="w-full h-auto rounded-3xl"
-      />
+      <div className="overflow-hidden rounded-3xl shadow-2xl bg-[#f5f1ea] h-[280px] sm:h-[360px] md:h-[420px]">
+        <img
+          src={images[currentImage]}
+          alt="Auberge"
+          className="h-full w-full object-cover rounded-3xl"
+        />
+      </div>
     </div>
   </div>
 </section>
 
       {/* HORAIRES */}
-<section id="horaires" className="relative  h-screen py-24 bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/images/horaires-bg.avif')"}}>
-  <div className="absolute inset-0 bg-white/60"></div>
-  <div className="relative mx-auto max-w-7xl px-6">
+<section
+  id="horaires"
+  className="relative snap-center min-h-screen border-t border-[#e5ddd2] bg-cover bg-center bg-no-repeat flex items-center justify-center"
+  style={{ backgroundImage: "url('/images/horaires-bg.png')" }}
+>
+  <div className="absolute inset-0 bg-white/0"></div>
+  <div className="relative mx-auto max-w-7xl px-6 w-full">
     <div className="mb-14 text-center">
-      <h2 className="mb-4 text-4xl font-bold">
+      <h2 className="mb-4 text-4xl text-white font-bold"
+      style={{
+    textShadow: `
+      0 0 3px rgba(0,0,0,0.95),
+    2px 2px 4px rgba(0,0,0,0.9),
+    4px 4px 8px rgba(0,0,0,0.85),
+    6px 6px 12px rgba(0,0,0,0.75)
+    `,
+    transform: 'translateY(2px)',
+    opacity: '1'
+  }}>
         Nos horaires
       </h2>
 
-      <p className="text-lg text-[#6b5b4f]">
+      <p className="text-lg text-white"
+      style={{
+    textShadow: `
+      0 0 3px rgba(0,0,0,0.95),
+    2px 2px 4px rgba(0,0,0,0.9),
+    4px 4px 8px rgba(0,0,0,0.85),
+    6px 6px 12px rgba(0,0,0,0.75)
+    `,
+    transform: 'translateY(2px)',
+    opacity: '1'
+  }}>
         Retrouvez les horaires du bar et du restaurant.
       </p>
     </div>
 
     <div className="grid gap-8 md:grid-cols-2">
       {/* BAR */}
-      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl text-center">
+      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl">
         <h3 className="mb-6 text-3xl font-bold text-[#2f241d]">
           🍷 Bar
         </h3>
@@ -171,7 +243,7 @@ useEffect(() => {
       </div>
 
       {/* RESTAURANT */}
-      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl text-center">
+      <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl">
         <h3 className="mb-6 text-3xl font-bold text-[#2f241d]">
           🍽️ Restaurant
         </h3>
@@ -218,65 +290,86 @@ useEffect(() => {
 </section>
 
       {/* RESTAURANT */}
-<section
-  className="relative h-screen py-24"
-  style={{
-    backgroundImage: "url('/images/table.png')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  }}
->
-        {/* Overlay */}
-  <div className="absolute inset-0 bg-[#f5f1ea]/10 backdrop-blur-[1px]" />
+      <section
+        id="restaurantbar"
+        className="relative border-t snap-center min-h-screen border-[#e5ddd2] bg-cover bg-center bg-no-repeat flex items-center justify-center"
+        style={{
+          backgroundImage: "url('/images/table.png')",
+        }}
+      >
+        <div className="absolute inset-0 bg-[#f5f1ea]/10 backdrop-blur-[1px]" />
+        <div className="relative mx-auto max-w-7xl px-6 w-full">
+          <div className="grid gap-12 md:grid-cols-2 items-center">
+            <img
+              src="/images/bar.jpeg"
+              alt="Restaurant"
+              className="rounded-3xl shadow-2xl"
+            />
 
-  <div className="relative z-10 mx-auto max-w-7xl px-6">
-    <div className="grid items-center gap-12 md:grid-cols-2">
-      
-      {/* IMAGE */}
-      <div className="overflow-hidden rounded-[32px] shadow-2xl border border-white/40">
-        <img
-          src="/images/bar.jpeg"
-          alt="Restaurant"
-          className="w-full object-cover"
-        />
-      </div>
+            <div>
+              <h2 className="mb-6 text-4xl font-bold"
+              style={{
+    textShadow: `
+      0 0 3px rgba(255, 255, 255, 0.95),
+    2px 2px 4px rgba(255, 255, 255, 0.9),
+    4px 4px 8px rgba(255, 255, 255, 0.85),
+    6px 6px 12px rgba(255, 255, 255, 0.75)
+    `,
+    transform: 'translateY(2px)',
+    opacity: '1'
+  }}>Restaurant & bar</h2>
 
-      {/* TEXTE */}
-      <div className="rounded-[32px] bg-white/40 p-10 backdrop-blur-md shadow-xl">
-        <h2 className="mb-6 text-5xl font-bold text-[#2f241d]">
-          Restaurant & bar
-        </h2>
+              <p className="mb-4 text-lg leading-relaxed font-bold text-[rgb(0, 0, 0)]"
+              style={{
+    textShadow: `
+      0 0 3px rgba(255, 255, 255, 0.95),
+    2px 2px 4px rgba(255, 255, 255, 0.9),
+    4px 4px 8px rgba(255, 255, 255, 0.85),
+    6px 6px 12px rgba(255, 255, 255, 0.75)
+    `,
+    transform: 'translateY(2px)',
+    opacity: '1'
+  }}>
+                Découvrez une cuisine conviviale avec carte fixe et menu du jour
+                du lundi au vendredi.
+              </p>
 
-        <p className="mb-4 text-xl leading-relaxed text-[#4e4035]">
-          Découvrez une cuisine conviviale avec carte fixe et menu du jour
-          du lundi au vendredi.
-        </p>
+              <p className="mb-8 text-lg leading-relaxed font-bold text-[rgb(0, 0, 0)]"
+              style={{
+    textShadow: `
+      0 0 3px rgba(255, 255, 255, 0.95),
+    2px 2px 4px rgba(255, 255, 255, 0.9),
+    4px 4px 8px rgba(255, 255, 255, 0.85),
+    6px 6px 12px rgba(255, 255, 255, 0.75)
+    `,
+    transform: 'translateY(2px)',
+    opacity: '1'
+  }}>
+                Le bar accueille également des soirées événements et concerts
+                occasionnels.
+              </p>
 
-        <p className="mb-8 text-xl leading-relaxed text-[#4e4035]">
-          Le bar accueille également des soirées événements et concerts
-          occasionnels.
-        </p>
-
-        <Link
-        href="/restaurant" 
-        className="rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-white shadow-xl transition hover:scale-105">
-          Voir la carte
-        </Link>
-      </div>
-    </div>
-  </div>
-</section>
+              <Link
+                href="/restaurant"
+                className="inline-block rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-[rgb(0, 0, 0)] shadow-xl transition hover:scale-105"
+              >
+                Voir la carte
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* EVENEMENTS */}
       <section
-  id="evenements"
-  className="relative h-screen py-24 text-white bg-cover bg-center"
-  style={{
-    backgroundImage:
-      "url('/images/festif.png')",
-  }}
->
-        <div className="mx-auto max-w-7xl px-6">
+        id="evenements"
+        className="relative snap-center min-h-screen border-t border-white/10 text-white bg-cover bg-center flex items-center justify-center"
+        style={{
+          backgroundImage: "url('/images/festif.png')",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="mx-auto max-w-7xl px-6 w-full">
           <div className="mb-14 text-center">
             <h2 className="mb-4 text-4xl font-bold">Événements</h2>
             <p className="text-lg text-white/80">
@@ -285,78 +378,97 @@ useEffect(() => {
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
-            <div                
-              className="rounded-3xl bg-white/10 p-6 backdrop-blur"
-            >
-              <div className="mb-4 rounded-2xl bg-[#c89b5f] px-4 py-2 inline-block">
-                Vendredi  8 Décembre
-              </div>
+            
+              <div
+                
+                className="rounded-3xl text-center bg-white/10 p-6 backdrop-blur"
+              >
+                <div className="mb-4 rounded-2xl bg-[#c89b5f] text-center text-[rgb(255, 255, 255)] px-4 py-2 inline-block">
+                  Vendredi 8 Décembre
+                </div>
 
-              <h3 className="mb-3 text-2xl font-semibold">
-                Rediff Final World Cup
-              </h3>
+                <h3 className="mb-3 text-2xl text-center font-semibold">
+                  Final coupe du monde Football
+                </h3>
 
-              <p className="text-white/80">
-                soirée spéciale pour la finale de la coupe du monde de football avec retransmission sur grand écran, boissons et snacks.
-              </p>
-            </div>
-
-            <div className="rounded-3xl bg-white/10 p-6 backdrop-blur">
-  <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-    
-    {/* TEXTE */}
-    <div className="flex-1 text-center">
-      <div className="mb-4 inline-block rounded-2xl bg-[#c89b5f] px-4 py-2">
-        Vendredi 15 Décembre
-        
-      </div>
-      
-      <h3 className="mb-3 text-2xl font-semibold">
-        Soirée Karaoké
-      </h3>
-      <img
-      src="/images/karaoké.jpg"
-      alt="Soirée Karaoké"
-      className="h-24 mb-6 mt-4 w-full rounded-2xl object-cover shadow-xl md:w-24 md:mx-auto"
+                {/* IMAGE */}
+    <img
+      src="/images/football.jpg"
+      alt="football"
+      className="h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 mx-auto"
     />
 
-      <p className="text-white/80">
-        Soirée karaoké conviviale pour chanter vos titres préférés entre amis,
-        avec une sélection de boissons et snacks.
-      </p>
-    </div>
-
-    {/* IMAGE */}
-    
-  </div>
-</div>
-            <div                
-              className="rounded-3xl bg-white/10 p-6 backdrop-blur"
-            >
-              <div className="mb-4 rounded-2xl bg-[#c89b5f] px-4 py-2 inline-block">
-                Vendredi 22 Décembre
+                <p className="text-center text-lg text-white/90">
+                  Soirée spéciale pour la finale de la coupe du monde de football avec
+                  retransmission sur grand écran, ambiance festive et menu spécial.
+                </p>
               </div>
 
-              <h3 className="mb-3 text-2xl font-semibold">
-                Soirée pétanque
-              </h3>
+              <div
+                
+                className="rounded-3xl text-center bg-white/10 p-6 backdrop-blur"
+              >
+                <div className="mb-4 rounded-2xl bg-[#c89b5f] text-center text-[rgb(255, 255, 255)] px-4 py-2 inline-block">
+                  Vendredi 15 Décembre
+                </div>
 
-              <p className="text-white/80">
-                Soirée pétanque conviviale pour jouer entre amis, avec une sélection de boissons et snacks.
-              </p>
-            </div>
+                <h3 className="mb-3 text-2xl text-center font-semibold">
+                  Soirée Karaoké
+                </h3>
+
+                {/* IMAGE */}
+    <img
+      src="/images/karaoké.jpg"
+      alt="Soirée Karaoké"
+      className="h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 mx-auto"
+    />
+
+                <p className="text-center text-lg text-white/90">
+                  Soirée karaoké tous les vendredis avec une sélection de chansons variées pour tous les goûts, ambiance conviviale garantie.
+                </p>
+              </div>
+
+              <div
+                
+                className="rounded-3xl text-center bg-white/10 p-6 backdrop-blur"
+              >
+                <div className="mb-4 rounded-2xl bg-[#c89b5f] text-center text-[rgb(255, 255, 255)] px-4 py-2 inline-block">
+                  Vendredi 15 Décembre
+                </div>
+
+                <h3 className="mb-3 text-2xl text-center font-semibold">
+                  Soirée Loto
+                </h3>
+
+                {/* IMAGE */}
+    <img
+      src="/images/loto.webp"
+      alt="Soirée Loto"
+      className="h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 mx-auto"
+    />
+
+                <p className="text-center text-lg text-white/90">
+                  Soirée loto avec des lots à gagner, ambiance conviviale garantie.
+                </p>
+              </div>
+            
           </div>
         </div>
       </section>
 
       {/* CONTACT */}
-      <section id="contact" className="mx-auto h-screen max-w-7xl px-6 py-24">
+      <section id="contact" className="border-t snap-center min-h-screen border-[#e5ddd2] flex items-center justify-center">
+        <div className="mx-auto max-w-7xl px-6 w-full">
         <div className="grid gap-12 md:grid-cols-2">
           <div>
             <h2 className="mb-6 text-4xl font-bold">Contact</h2>
 
             <div className="space-y-4 text-lg text-[#5a4c42]">
-              <p>📍 21 Rue Saint-Barnabé, 03160 Saint-Aubin-le-Monial</p>
+              <p>📍 L&apos;Auberge de St Aubin
+                  <br />
+                  21 Rue Saint-Barnabé
+                  <br />
+                  03160 Saint Aubin le Monial</p>
               <p>📞 04 70 66 50 97</p>
               <p>✉️ contact@auberge-st-aubin.fr</p>
             </div>
@@ -385,6 +497,7 @@ useEffect(() => {
               Envoyer
             </button>
           </form>
+        </div>
         </div>
       </section>
 

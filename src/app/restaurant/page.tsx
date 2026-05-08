@@ -66,35 +66,42 @@ export default function RestaurantPage() {
       </section>
 
       {/* PRESENTATION */}
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <div className="grid items-center gap-12 md:grid-cols-2">
-          <div>
-            <h2 className="mb-6 text-4xl font-bold">
-              Une cuisine authentique
-            </h2>
+      <section
+  id="restaurant"
+  className="py-24 scroll-mt-24"
+>
+  <div className="mx-auto max-w-7xl px-6">
+    <div className="grid items-center gap-12 md:grid-cols-2">
+      <div>
+      <h2 className="mb-6 text-4xl font-bold">
+        Une auberge authentique
+      </h2>
 
-            <p className="mb-4 text-lg leading-relaxed text-[#5a4c42]">
-              L&apos;Auberge de St Aubin vous accueille dans une ambiance
-              chaleureuse et familiale autour d&apos;une cuisine généreuse et
-              traditionnelle.
-            </p>
+      <p className="mb-4 text-lg leading-relaxed text-[#5a4c42]">
+        Située au cœur de la campagne bourbonnaise, dans un cadre calme et
+        authentique, l’Auberge de St Aubin vous accueille pour partager un
+        moment convivial autour d’une cuisine généreuse et traditionnelle.
+        Que ce soit pour une pause au bar, un repas en famille ou un séjour
+        au calme dans l’Allier, l’auberge vous ouvre ses portes dans une
+        ambiance chaleureuse et familiale.
+      </p>
 
-            <p className="text-lg leading-relaxed text-[#5a4c42]">
-              Produits locaux, plats maison, menus du jour et soirées
-              conviviales rythment la vie de l&apos;auberge au cœur de la
-              campagne bourbonnaise.
-            </p>
-          </div>
+      <p className="text-lg leading-relaxed text-[#5a4c42]">
+        Entre chambres confortables, cuisine maison et événements du vendredi
+        soir, découvrez une ambiance rustique moderne pensée pour tous.
+      </p>
+      </div>
 
-          <div className="overflow-hidden rounded-3xl bg-[#f5f1ea] shadow-2xl">
-            <img
-              src={images[currentImage]}
-              alt="Restaurant"
-              className="w-full h-auto"
-            />
-          </div>
-        </div>
-      </section>
+      <div className="overflow-hidden rounded-3xl shadow-2xl bg-[#f5f1ea] h-[280px] sm:h-[360px] md:h-[420px]">
+        <img
+          src={images[currentImage]}
+          alt="Auberge"
+          className="h-full w-full object-cover rounded-3xl"
+        />
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* CARTE */}
       <section className="bg-white py-24">
