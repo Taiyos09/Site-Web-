@@ -18,9 +18,9 @@ export default function ContactPage() {
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
           <img
-            src="/images/logo.png"
+            src="/images/logo2.png"
             alt="Logo Auberge"
-            className="mb-4 h-70 w-auto drop-shadow-2xl"
+            className="mb-4 h-50 w-auto drop-shadow-2xl"
           />
 
           <h1 className="mb-4 text-5xl font-bold md:text-6xl">

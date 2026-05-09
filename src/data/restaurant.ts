@@ -48,17 +48,38 @@ export const RESTAURANT_CONFIG = {
     },
   ],
 
-  menuDuJour: {
-    title: "Menu du jour",
-    description:
-      "Disponible du lundi au vendredi midi.",
-    starter: "Entrée du jour",
-    main: "Plat du jour & accompagnement",
-    dessert: "Dessert maison",
-    price: 18,
+  barHoraires: [
+  {
+    day: "Lundi",
+    hours: "7h00 - 22h00",
   },
+  {
+    day: "Mardi",
+    hours: "7h00 - 22h00",
+  },
+  {
+    day: "Mercredi",
+    hours: "7h00 - 22h00",
+  },
+  {
+    day: "Jeudi",
+    hours: "7h00 - 22h00",
+  },
+  {
+    day: "Vendredi",
+    hours: "7h00 - 01h00",
+  },
+  {
+    day: "Samedi",
+    hours: "8h00 - 01h00",
+  },
+  {
+    day: "Dimanche",
+    hours: "Fermé",
+  },
+],
 
-  horaires: [
+  restaurantHoraires: [
     {
       day: "Lundi",
       hours: "12h00 - 14h00",
@@ -88,4 +109,22 @@ export const RESTAURANT_CONFIG = {
       hours: "Fermé",
     },
   ],
+
+  menuDuJour: {
+    title: "Menu du jour",
+    description:
+      "Disponible du lundi au vendredi midi.",
+    starter: "Entrée du jour",
+    main: "Plat du jour & accompagnement",
+    dessert: "Dessert maison",
+    price: 18,
+  },
+
+  menuEnfant: {
+  main: "Steak haché ou nuggets",
+  side: "Frites maison",
+  drink: "Sirop ou jus",
+  dessert: "Boule de glace",
+  price: 10,
+},
 }

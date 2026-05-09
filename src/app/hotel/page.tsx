@@ -7,6 +7,8 @@ export default function HotelPage() {
   const [hotelConfig, setHotelConfig] = useState(HOTEL_CONFIG)
   const [selectedRoom, setSelectedRoom] = useState("")
 
+  const [currentImages, setCurrentImages] = useState<number[]>([])
+
   const [breakfast, setBreakfast] = useState(false)
   const [lunch, setLunch] = useState(false)
   const [dinner, setDinner] = useState(false)
@@ -37,20 +39,59 @@ export default function HotelPage() {
   }, [checkIn, checkOut])
 
   useEffect(() => {
-    const readHotelConfig = () => {
-      const savedHotel = localStorage.getItem("hotelData")
-      if (!savedHotel) return
+  const readHotelConfig = () => {
+    const savedHotel = localStorage.getItem("hotelData")
 
-      setHotelConfig(JSON.parse(savedHotel))
+    if (!savedHotel) {
+      // initialise le slideshow avec HOTEL_CONFIG
+      setCurrentImages(
+        (HOTEL_CONFIG.rooms || []).map(() => 0)
+      )
+
+      return
     }
 
-    readHotelConfig()
+    const parsedHotel = JSON.parse(savedHotel)
 
-    window.addEventListener("pricesUpdated", readHotelConfig)
-    return () => {
-      window.removeEventListener("pricesUpdated", readHotelConfig)
-    }
-  }, [])
+    setHotelConfig(parsedHotel)
+
+    // Sécurisation rooms
+    const rooms = parsedHotel?.rooms || []
+
+    setCurrentImages(
+      rooms.map(() => 0)
+    )
+  }
+
+  readHotelConfig()
+
+  window.addEventListener(
+    "pricesUpdated",
+    readHotelConfig
+  )
+
+  // DIAPORAMA AUTO
+  const interval = setInterval(() => {
+    setCurrentImages((prev) => {
+      return prev.map((value, index) => {
+        const totalImages =
+          hotelConfig?.rooms?.[index]?.images?.length || 1
+
+        return (value + 1) % totalImages
+      })
+    })
+  }, 3500)
+
+  return () => {
+    window.removeEventListener(
+      "pricesUpdated",
+      readHotelConfig
+    )
+
+    clearInterval(interval)
+  }
+}, [])
+
 
   let baseRoomPrice = hotelConfig.roomPrices.onePerson
 
@@ -85,10 +126,10 @@ export default function HotelPage() {
   const totalPrice = roomTotal + breakfastTotal + lunchTotal + dinnerTotal + extraBedTotal + petTotal + touristTaxTotal
 
   return (
-    <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
+    <div className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth bg-[#f5f1ea] text-[#2f241d]">
       {/* HERO */}
       <section
-        className="relative  h-screen flex h-[60vh] items-center justify-center bg-cover bg-center"
+        className="relative  snap-start min-h-screen flex h-[60vh] items-center justify-center bg-cover bg-center"
         style={{
           backgroundImage: "url('/images/hotel/HERO.jpg')",
         }}
@@ -106,99 +147,133 @@ export default function HotelPage() {
         </div>
       </section>
 
-      {/* PRESENTATION */}
-      <section className="mx-auto h-screen max-w-7xl px-6 py-24">
-        <div className="grid items-center gap-12 md:grid-cols-2">
-          <div>
-            <h2 className="mb-6 text-4xl font-bold">
-              Un séjour au calme au cœur de la campagne bourbonnaise
-            </h2>
+     {/* PRESENTATION */}
+<section
+  id="presentation"
+  className="relative snap-start min-h-screen bg-cover bg-center"
+  style={{
+    backgroundImage: "url('/images/hotel/fd1.png')",
+  }}
+>
+  {/* voile sombre léger */}
+  <div className="absolute inset-0 bg-black/40"></div>
 
-            <p className="mb-5 text-lg leading-relaxed text-[#5a4c42]">
-              Nos chambres vous accueillent dans une ambiance simple, chaleureuse et authentique, idéale pour se reposer loin de l’agitation.
-            </p>
+  <div className="relative z-10 mx-auto flex min-h-screen max-w-[1800px] items-center px-10">
+    <div className="grid items-center gap-16 md:grid-cols-2">
+      
+      {/* TEXTE */}
+      <div className="rounded-3xl bg-white/55 p-8 backdrop-blur-sm">
+        <h2 className="mb-6 text-3xl font-bold leading-tight md:text-5xl text-[rgba(46, 21, 14, 0.9)]">
+          Un séjour au calme au cœur de la campagne bourbonnaise
+        </h2>
 
-            <p className="mb-5 text-lg leading-relaxed text-[#5a4c42]">
-              Que vous soyez de passage dans l’Allier, en déplacement ou en séjour dans la région, l’auberge vous propose différentes formules avec possibilité de petit déjeuner et de restauration sur place selon vos envies.
-            </p>
+        <p className="mb-5 text-base leading-relaxed md:text-lg text-[rgba(46, 21, 14, 0.9)]">
+          Nos chambres vous accueillent dans une ambiance simple,
+          chaleureuse et authentique, idéale pour se reposer loin
+          de l’agitation.
+        </p>
 
-            <p className="text-lg leading-relaxed text-[#5a4c42]">
-              Lors de votre réservation, vous pourrez ajouter différentes options comme le petit déjeuner ou les repas du midi et du soir.
-            </p>
-          </div>
+        <p className="mb-5 text-base leading-relaxed md:text-lg text-[rgba(46, 21, 14, 0.9)]">
+          Que vous soyez de passage dans l’Allier, en déplacement
+          ou en séjour dans la région, l’auberge vous propose
+          différentes formules avec possibilité de petit déjeuner
+          et de restauration sur place selon vos envies.
+        </p>
 
-          <img
-            src="/images/gab1.jpeg"
-            alt="Chambre"
-            className="rounded-3xl shadow-2xl"
-          />
-        </div>
-      </section>
+        <p className="text-base leading-relaxed md:text-lg text-[rgba(46, 21, 14, 0.9)]">
+          Lors de votre réservation, vous pourrez ajouter
+          différentes options comme le petit déjeuner ou les
+          repas du midi et du soir.
+        </p>
+      </div>
 
-      {/* CHAMBRES */}
-      <section
-        className="bg-cover h-screen bg-center py-24"
-        style={{
-          backgroundImage: "url('/images/hotel/bois.jpg')",
-        }}
-      >
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-14 text-center">
-            <h2 className="mb-4 text-4xl font-bold">
-              Nos chambres
-            </h2>
+      {/* IMAGE */}
+      <div className="flex justify-center">
+        <img
+          src="/images/gab.png"
+          alt="Chambre"
+          className="max-h-[950px] w-full max-w-[750px] rounded-3xl object-cover shadow-2xl"
+        />
+      </div>
+    </div>
+  </div>
+</section>
 
-            <p className="text-lg text-[#6b5b4f]">
-              Trois chambres avec différentes surfaces.
-            </p>
-          </div>
+{/* CHAMBRES */}
+<section
+  className="bg-cover snap-start min-h-screen bg-center py-24"
+  style={{
+    backgroundImage: "url('/images/hotel/bois.jpg')",
+  }}
+>
+  <div className="mx-auto max-w-[1800px] px-10">
+    <div className="mb-14 text-center">
+      <h2 className="mb-4 text-4xl font-bold">
+        Nos chambres
+      </h2>
 
-          <div className="grid gap-8 md:grid-cols-3">
-            {hotelConfig.rooms.map((room) => (
-              <div
-                key={room.id}
-                className="overflow-hidden rounded-3xl bg-[#f3ede3] shadow-xl"
-              >
-                <img
-                  src={room.image}
-                  alt={room.name}
-                  className="h-72 w-full object-cover"
-                />
+      <p className="text-lg text-[rgba(46, 21, 14, 0.9)]">
+        Trois chambres avec différentes surfaces.
+      </p>
+    </div>
 
-                <div className="p-6">
-                  <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-2xl font-semibold">
-                      {room.name}
-                    </h3>
-
-                    <span className="rounded-full bg-[#c89b5f]/20 px-4 py-2 text-sm font-semibold text-[#8a6330]">
-                      {room.size}
-                    </span>
-                  </div>
-
-                  <p className="mb-6 text-[#5a4c42]">
-                    Chambre avec salle de bain privée et placard, télévision et ambiance chaleureuse.
-                  </p>
-
-                  <div className="mb-6 flex items-center justify-between">
-                    <span className="text-2xl font-bold">
-                      {hotelConfig.roomPrices.onePerson}€
-                    </span>
-                  </div>
-
-                  <button className="w-full rounded-2xl bg-[#4b3527] py-4 text-lg font-semibold text-white transition hover:bg-[#43352c]">
-                    Réserver cette chambre
-                  </button>
-                </div>
-              </div>
+    <div className="mx-auto grid max-w-[1800px] grid-cols-1 gap-14 md:grid-cols-2 2xl:grid-cols-3">
+      {(hotelConfig?.rooms ?? []).map((room, roomIndex) => (
+        <div
+          key={room.id}
+          className="mx-auto w-full max-w-[650px] overflow-hidden rounded-3xl bg-[#f3ede3]/95 shadow-2xl backdrop-blur transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
+        >
+          {/* DIAPORAMA */}
+          <div className="relative h-[420px] overflow-hidden">
+            {(room.images ?? []).map((img, imgIndex) => (
+              <img
+                key={imgIndex}
+                src={img}
+                alt={room.name}
+                loading="lazy"
+                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+                  imgIndex === (currentImages[roomIndex] ?? 0)
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              />
             ))}
+
+            {/* BADGE SURFACE */}
+            <div className="absolute right-4 top-4 rounded-full bg-[#f3ede3]/90 px-4 py-2 text-sm font-bold text-[#8a6330] backdrop-blur">
+              {room.size}
+            </div>
+          </div>
+
+          {/* CONTENU */}
+          <div className="p-6">
+            <h3 className="mb-4 text-2xl font-bold font-serif text-[#2f241d]">
+              {room.name}
+            </h3>
+
+            <p className="mb-4 text-[#5a4c42] font-sans leading-relaxed">
+              {room.description}
+            </p>
+
+            <div className="flex items-center justify-between border-t border-[#d8cbbb] pt-4">
+              <span className="text-3xl font-bold text-[#2f241d]">
+                {hotelConfig.roomPrices.onePerson}€
+              </span>
+
+              <span className="text-sm text-[#7a6a5d]">
+                par nuit
+              </span>
+            </div>
           </div>
         </div>
+      ))}
+    </div>
+  </div>
       </section>
 
       {/* RESERVATION */}
       <section
-        className="relative  h-screen bg-cover bg-center py-24"
+        className="relative  snap-start min-h-screen bg-cover bg-center"
         style={{
           backgroundImage: "url('/images/campagne.jpeg')",
         }}

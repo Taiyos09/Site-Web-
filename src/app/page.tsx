@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import Navbar from "@/components/Navbar"
+import { RESTAURANT_CONFIG } from "@/data/restaurant"
 
 const navigation = [
   { name: "Accueil", href: "/" },
@@ -21,25 +22,63 @@ const images = [
 export default function AubergeSaintAubinHomepage() {
   const [currentImage, setCurrentImage] = useState(0)
 
+  const [restaurantConfig, setRestaurantConfig] =
+  useState(RESTAURANT_CONFIG)
+
 useEffect(() => {
+
+  const savedRestaurant =
+    localStorage.getItem("restaurantData")
+
+  if (savedRestaurant) {
+
+    const parsedRestaurant =
+      JSON.parse(savedRestaurant)
+
+    setRestaurantConfig({
+      ...RESTAURANT_CONFIG,
+      ...parsedRestaurant,
+
+      menuDuJour: {
+        ...RESTAURANT_CONFIG.menuDuJour,
+        ...parsedRestaurant.menuDuJour,
+      },
+
+      menuEnfant: {
+        ...RESTAURANT_CONFIG.menuEnfant,
+        ...parsedRestaurant.menuEnfant,
+      },
+
+      barHoraires:
+        parsedRestaurant.barHoraires ||
+        RESTAURANT_CONFIG.barHoraires,
+
+      restaurantHoraires:
+        parsedRestaurant.restaurantHoraires ||
+        RESTAURANT_CONFIG.restaurantHoraires,
+    })
+  }
+
   const interval = setInterval(() => {
     setCurrentImage((prev) =>
-      prev === images.length - 1 ? 0 : prev + 1
+      prev === images.length - 1
+        ? 0
+        : prev + 1
     )
   }, 4000)
 
   return () => clearInterval(interval)
+
 }, [])
   return (
   <div
-    className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth bg-[#f5f1ea] text-[#2f241d] font-serif"
-    style={{ scrollPaddingTop: "100px" }}
+    className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth bg-[#f5f1ea] text-[#2f241d] font-serif pt-24"
   >
       {/* NAVBAR */}
       <Navbar />
       {/* HERO */}
       <section
-        className="relative snap-start h-screen bg-cover bg-center"
+        className="relative snap-start min-h-screen bg-cover bg-center"
         style={{
           backgroundImage:
             "url('/images/auberge-de-saint-aubin.jpg')",
@@ -47,13 +86,13 @@ useEffect(() => {
       >
         <div className="absolute inset-0 bg-black/45" />
 
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
+        <div className="relative z-10 flex min-h-[calc(100vh-96px)] flex-col items-center justify-center px-6 text-center text-white">
           <div className=" p-8 rounded-lg ">
             <div className="flex flex-col items-center gap-1">
   <img
     src="/images/logo2.png"
     alt="Logo Auberge St Aubin"
-    className="h-150 w-auto drop-shadow-2xl"
+    className="h-80 w-auto drop-shadow-2xl"
   />
             <p className="mt-1 mb-8 max-w-3xl text-lg md:text-xl text-white/90">
               Une auberge chaleureuse entre authenticité, convivialité et
@@ -62,19 +101,19 @@ useEffect(() => {
 </div>
           </div>
        <div className="flex flex-wrap justify-center gap-4">
-            <button
-              disabled
-              className="rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-white shadow-xl transition cursor-not-allowed opacity-50"
+            <Link
+              href="/hotel"
+              className="rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-2xl hover:bg-[#d4a76a]"
           >
               Réserver une chambre
-            </button>
+            </Link>
 
-            <button
-              disabled
-              className="rounded-2xl border border-white/70 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur transition cursor-not-allowed opacity-50"
+            <Link
+              href="/restaurant" 
+              className="rounded-2xl border border-white/70 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-white/20 hover:shadow-2xl"
             >
               Découvrir le restaurant
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -82,7 +121,7 @@ useEffect(() => {
       {/* PRESENTATION */}
 <section
   id="restaurant"
-  className="relative snap-center min-h-screen border-t border-[#e5ddd2] bg-cover bg-center flex items-center justify-center"
+  className="relative snap-start min-h-screen border-t border-[#e5ddd2] bg-cover bg-center flex items-center justify-center"
   style={{
     backgroundImage: "url('/images/test.png')",
   }}
@@ -91,7 +130,7 @@ useEffect(() => {
   <div className="relative mx-auto max-w-7xl px-6 w-full">
     <div className="grid items-center gap-12 md:grid-cols-2">
       <div className=" p-8 ">
-        <h2 className="mb-6 text-4xl text-white font-bold"
+        <h2 className="mb-6 text-4xl text-white font-bold font-serif"
         style={{
     textShadow: `
       0 0 3px rgba(0,0,0,0.95),
@@ -105,7 +144,7 @@ useEffect(() => {
           Une auberge authentique
         </h2>
 
-        <p className="mb-4 text-lg leading-relaxed text-white">
+        <p className="mb-4 text-lg leading-relaxed font-sans text-white">
           <span
   className="inline-block"
   style={{
@@ -128,7 +167,7 @@ useEffect(() => {
           </span>
         </p>
 
-        <p className="text-lg leading-relaxed text-white">
+        <p className="text-lg leading-relaxed font-sans text-white">
           <span
   className="inline-block"
   style={{
@@ -162,129 +201,94 @@ useEffect(() => {
       {/* HORAIRES */}
 <section
   id="horaires"
-  className="relative snap-center min-h-screen border-t border-[#e5ddd2] bg-cover bg-center bg-no-repeat flex items-center justify-center"
+  className="relative snap-start min-h-screen border-t border-[#e5ddd2] bg-cover bg-center bg-no-repeat flex items-center justify-center"
   style={{ backgroundImage: "url('/images/horaires-bg.png')" }}
 >
   <div className="absolute inset-0 bg-white/0"></div>
+
   <div className="relative mx-auto max-w-7xl px-6 w-full">
+
+    {/* TITRE */}
     <div className="mb-14 text-center">
-      <h2 className="mb-4 text-4xl text-white font-bold"
-      style={{
-    textShadow: `
-      0 0 3px rgba(0,0,0,0.95),
-    2px 2px 4px rgba(0,0,0,0.9),
-    4px 4px 8px rgba(0,0,0,0.85),
-    6px 6px 12px rgba(0,0,0,0.75)
-    `,
-    transform: 'translateY(2px)',
-    opacity: '1'
-  }}>
+      <h2
+        className="mb-4 text-4xl text-white font-bold"
+        style={{
+          textShadow: `
+            0 0 3px rgba(0,0,0,0.95),
+            2px 2px 4px rgba(0,0,0,0.9),
+            4px 4px 8px rgba(0,0,0,0.85),
+            6px 6px 12px rgba(0,0,0,0.75)
+          `,
+        }}
+      >
         Nos horaires
       </h2>
 
-      <p className="text-lg text-white"
-      style={{
-    textShadow: `
-      0 0 3px rgba(0,0,0,0.95),
-    2px 2px 4px rgba(0,0,0,0.9),
-    4px 4px 8px rgba(0,0,0,0.85),
-    6px 6px 12px rgba(0,0,0,0.75)
-    `,
-    transform: 'translateY(2px)',
-    opacity: '1'
-  }}>
+      <p
+        className="text-lg text-white font-sans"
+        style={{
+          textShadow: `
+            0 0 3px rgba(0,0,0,0.95),
+            2px 2px 4px rgba(0,0,0,0.9),
+            4px 4px 8px rgba(0,0,0,0.85),
+            6px 6px 12px rgba(0,0,0,0.75)
+          `,
+        }}
+      >
         Retrouvez les horaires du bar et du restaurant.
       </p>
     </div>
 
     <div className="grid gap-8 md:grid-cols-2">
+
       {/* BAR */}
       <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl">
+
         <h3 className="mb-6 text-3xl font-bold text-[#2f241d]">
           🍷 Bar
         </h3>
 
         <div className="space-y-4 text-lg">
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Lundi</span>
-            <span>7h00 - 22h00</span>
-          </div>
 
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Mardi</span>
-            <span>7h00 - 22h00</span>
-          </div>
+          {restaurantConfig.barHoraires.map(
+            (horaire, index) => (
+              <div
+                key={index}
+                className="flex justify-between border-b border-[#e5ddd2] pb-3"
+              >
+                <span>{horaire.day}</span>
+                <span>{horaire.hours}</span>
+              </div>
+            )
+          )}
 
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Mercredi</span>
-            <span>7h00 - 22h00</span>
-          </div>
-
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Jeudi</span>
-            <span>7h00 - 22h00</span>
-          </div>
-
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Vendredi</span>
-            <span>7h00 - 01h00</span>
-          </div>
-
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Samedi</span>
-            <span>8h00 - 01h00</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Dimanche</span>
-            <span>8h00 - 20h00</span>
-          </div>
         </div>
       </div>
 
       {/* RESTAURANT */}
       <div className="rounded-3xl bg-[#faf7f2] p-8 shadow-xl">
+
         <h3 className="mb-6 text-3xl font-bold text-[#2f241d]">
           🍽️ Restaurant
         </h3>
 
         <div className="space-y-4 text-lg">
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Lundi</span>
-            <span>12h00 - 14h00</span>
-          </div>
 
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Mardi</span>
-            <span>12h00 - 14h00</span>
-          </div>
+          {restaurantConfig.restaurantHoraires.map(
+            (horaire, index) => (
+              <div
+                key={index}
+                className="flex justify-between border-b border-[#e5ddd2] pb-3"
+              >
+                <span>{horaire.day}</span>
+                <span>{horaire.hours}</span>
+              </div>
+            )
+          )}
 
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Mercredi</span>
-            <span>12h00 - 14h00</span>
-          </div>
-
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Jeudi</span>
-            <span>12h00 - 14h00</span>
-          </div>
-
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Vendredi</span>
-            <span>12h00 - 14h00 / 19h00 - 22h00</span>
-          </div>
-
-          <div className="flex justify-between border-b border-[#e5ddd2] pb-3">
-            <span>Samedi</span>
-            <span>12h00 - 14h00 /19h00 - 22h00</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Dimanche</span>
-            <span>Fermé</span>
-          </div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -292,7 +296,7 @@ useEffect(() => {
       {/* RESTAURANT */}
       <section
         id="restaurantbar"
-        className="relative border-t snap-center min-h-screen border-[#e5ddd2] bg-cover bg-center bg-no-repeat flex items-center justify-center"
+        className="relative border-t snap-start min-h-screen border-[#e5ddd2] bg-cover bg-center bg-no-repeat flex items-center justify-center"
         style={{
           backgroundImage: "url('/images/table.png')",
         }}
@@ -307,7 +311,7 @@ useEffect(() => {
             />
 
             <div>
-              <h2 className="mb-6 text-4xl font-bold"
+              <h2 className="mb-6 text-4xl font-bold font-serif"
               style={{
     textShadow: `
       0 0 3px rgba(255, 255, 255, 0.95),
@@ -319,7 +323,7 @@ useEffect(() => {
     opacity: '1'
   }}>Restaurant & bar</h2>
 
-              <p className="mb-4 text-lg leading-relaxed font-bold text-[rgb(0, 0, 0)]"
+              <p className="mb-4 text-lg leading-relaxed font-bold font-sans text-[rgb(0, 0, 0)]"
               style={{
     textShadow: `
       0 0 3px rgba(255, 255, 255, 0.95),
@@ -334,7 +338,7 @@ useEffect(() => {
                 du lundi au vendredi.
               </p>
 
-              <p className="mb-8 text-lg leading-relaxed font-bold text-[rgb(0, 0, 0)]"
+              <p className="mb-8 text-lg leading-relaxed font-bold font-sans text-[rgb(0, 0, 0)]"
               style={{
     textShadow: `
       0 0 3px rgba(255, 255, 255, 0.95),
@@ -351,7 +355,7 @@ useEffect(() => {
 
               <Link
                 href="/restaurant"
-                className="inline-block rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg font-semibold text-[rgb(0, 0, 0)] shadow-xl transition hover:scale-105"
+                className="inline-block font-sans rounded-2xl bg-[#c89b5f] px-8 py-4 text-lg text-[rgb(0, 0, 0)] shadow-xl transition hover:scale-105"
               >
                 Voir la carte
               </Link>
@@ -361,103 +365,121 @@ useEffect(() => {
       </section>
 
       {/* EVENEMENTS */}
-      <section
-        id="evenements"
-        className="relative snap-center min-h-screen border-t border-white/10 text-white bg-cover bg-center flex items-center justify-center"
-        style={{
-          backgroundImage: "url('/images/festif.png')",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="mx-auto max-w-7xl px-6 w-full">
-          <div className="mb-14 text-center">
-            <h2 className="mb-4 text-4xl font-bold">Événements</h2>
-            <p className="text-lg text-white/80">
-              Concerts, soirées du vendredi et animations.
-            </p>
-          </div>
+<section
+  id="evenements"
+  className="relative snap-start min-h-screen border-t border-white/10 bg-cover bg-center text-white"
+  style={{
+    backgroundImage: "url('/images/festif.png')",
+  }}
+>
+  {/* OVERLAY */}
+  <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
 
-          <div className="grid gap-8 md:grid-cols-3">
-            
-              <div
-                
-                className="rounded-3xl text-center bg-white/10 p-6 backdrop-blur"
-              >
-                <div className="mb-4 rounded-2xl bg-[#c89b5f] text-center text-[rgb(255, 255, 255)] px-4 py-2 inline-block">
-                  Vendredi 8 Décembre
-                </div>
+  {/* CONTENU */}
+  <div className="relative z-10 mx-auto flex min-h-screen max-w-[1800px] items-center px-10 py-24">
+    <div className="w-full">
+      
+      {/* TITRE */}
+      <div className="mb-20 text-center">
+        <h2 className="mb-4 font-serif text-5xl font-bold">
+          Événements
+        </h2>
 
-                <h3 className="mb-3 text-2xl text-center font-semibold">
-                  Final coupe du monde Football
-                </h3>
+        <p className="font-sans text-xl text-white/90">
+          Concerts, soirées du vendredi et animations.
+        </p>
+      </div>
 
-                {/* IMAGE */}
+      {/* CARDS */}
+<div className="grid gap-8 md:grid-cols-3">
+
+  {/* CARD 1 */}
+  <div className="rounded-3xl bg-white/10 p-6 text-center shadow-2xl backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-white/15">
+
+    {/* DATE */}
+    <div className="mb-8 inline-block rounded-2xl bg-[#c89b5f] px-5 py-2 font-serif text-white shadow-lg">
+      Vendredi 8 Décembre
+    </div>
+
+    {/* TITRE */}
+    <h3 className="mb-6 font-serif text-3xl font-semibold">
+      Final coupe du monde Football
+    </h3>
+
+    {/* IMAGE */}
     <img
       src="/images/football.jpg"
       alt="football"
-      className="h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 mx-auto"
+      className="h-24 w-full rounded-2xl mb-8 object-cover shadow-xl md:w-24 mx-auto"
     />
+    {/* TEXTE */}
+    <p className="font-sans text-lg leading-relaxed text-white/90">
+      Soirée spéciale pour la finale de la coupe du monde
+      de football avec retransmission sur grand écran,
+      ambiance festive et menu spécial.
+    </p>
+  </div>
 
-                <p className="text-center text-lg text-white/90">
-                  Soirée spéciale pour la finale de la coupe du monde de football avec
-                  retransmission sur grand écran, ambiance festive et menu spécial.
-                </p>
-              </div>
+  {/* CARD 2 */}
+  <div className="rounded-3xl bg-white/10 p-6 text-center shadow-2xl backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-white/15">
 
-              <div
-                
-                className="rounded-3xl text-center bg-white/10 p-6 backdrop-blur"
-              >
-                <div className="mb-4 rounded-2xl bg-[#c89b5f] text-center text-[rgb(255, 255, 255)] px-4 py-2 inline-block">
-                  Vendredi 15 Décembre
-                </div>
+    {/* DATE */}
+    <div className="mb-8 inline-block rounded-2xl bg-[#c89b5f] px-5 py-2 font-serif text-white shadow-lg">
+      Vendredi 15 Décembre
+    </div>
 
-                <h3 className="mb-3 text-2xl text-center font-semibold">
-                  Soirée Karaoké
-                </h3>
+    {/* TITRE */}
+    <h3 className="mb-6 font-serif text-3xl font-semibold">
+      Soirée Karaoké
+    </h3>
 
-                {/* IMAGE */}
+    {/* IMAGE */}
     <img
       src="/images/karaoké.jpg"
       alt="Soirée Karaoké"
-      className="h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 mx-auto"
+      className="mb-8 h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 md:mx-auto"
     />
 
-                <p className="text-center text-lg text-white/90">
-                  Soirée karaoké tous les vendredis avec une sélection de chansons variées pour tous les goûts, ambiance conviviale garantie.
-                </p>
-              </div>
+    {/* TEXTE */}
+    <p className="font-sans text-lg leading-relaxed text-white/90">
+      Soirée karaoké tous les vendredis avec une sélection
+      de chansons variées pour tous les goûts,
+      ambiance conviviale garantie.
+    </p>
+  </div>
 
-              <div
-                
-                className="rounded-3xl text-center bg-white/10 p-6 backdrop-blur"
-              >
-                <div className="mb-4 rounded-2xl bg-[#c89b5f] text-center text-[rgb(255, 255, 255)] px-4 py-2 inline-block">
-                  Vendredi 15 Décembre
-                </div>
+  {/* CARD 3 */}
+  <div className="rounded-3xl bg-white/10 p-6 text-center shadow-2xl backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-white/15">
 
-                <h3 className="mb-3 text-2xl text-center font-semibold">
-                  Soirée Loto
-                </h3>
+    {/* DATE */}
+    <div className="mb-8 inline-block rounded-2xl bg-[#c89b5f] px-5 py-2 font-serif text-white shadow-lg">
+      Vendredi 22 Décembre
+    </div>
 
-                {/* IMAGE */}
+    {/* TITRE */}
+    <h3 className="mb-6 font-serif text-3xl font-semibold">
+      Soirée Loto
+    </h3>
+
+    {/* IMAGE */}
     <img
       src="/images/loto.webp"
       alt="Soirée Loto"
-      className="h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 mx-auto"
+      className="mb-8 h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 md:mx-auto"
     />
 
-                <p className="text-center text-lg text-white/90">
-                  Soirée loto avec des lots à gagner, ambiance conviviale garantie.
-                </p>
-              </div>
-            
-          </div>
-        </div>
-      </section>
-
+    {/* TEXTE */}
+    <p className="font-sans text-lg leading-relaxed text-white/90">
+      Soirée loto avec des lots à gagner,
+      ambiance chaleureuse et conviviale garantie.
+    </p>
+  </div>
+  </div> {/* FIN GRID CARDS */}
+    </div> {/* FIN W-FULL */}
+  </div> {/* FIN CONTENU */}
+</section> {/* FIN EVENEMENTS */}
       {/* CONTACT */}
-      <section id="contact" className="border-t snap-center min-h-screen border-[#e5ddd2] flex items-center justify-center">
+      <section id="contact" className="border-t snap-start min-h-screen border-[#e5ddd2] flex items-center justify-center">
         <div className="mx-auto max-w-7xl px-6 w-full">
         <div className="grid gap-12 md:grid-cols-2">
           <div>
