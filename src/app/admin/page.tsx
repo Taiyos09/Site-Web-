@@ -5,60 +5,85 @@ import Link from "next/link"
 import { HOTEL_CONFIG } from "@/data/hotel"
 import { RESTAURANT_CONFIG } from "@/data/restaurant"
 import { EVENTS } from "@/data/events"
+import { supabase } from "@/lib/supabase"
 
 export default function AdminPage() {
   const [hotelData, setHotelData] =
     useState(HOTEL_CONFIG)
 
   const [eventsData, setEventsData] = useState(EVENTS)
+  const [isLogged, setIsLogged] = useState(false)
+const [loading, setLoading] = useState(true)
 
   const [restaurantData, setRestaurantData] =
-    useState(RESTAURANT_CONFIG)
+  useState(RESTAURANT_CONFIG)
 
-  useEffect(() => {
-  const savedHotel =
-    localStorage.getItem("hotelData")
+useEffect(() => {
 
-  const savedEvents = localStorage.getItem("eventsData")
+  const logged =
+  localStorage.getItem("adminLogged")
 
-if (savedEvents) {
-  setEventsData(JSON.parse(savedEvents))
+if (logged !== "true") {
+  window.location.href = "/login"
+  return
 }
 
-  const savedRestaurant =
-    localStorage.getItem("restaurantData")
+setIsLogged(true)
+setLoading(false)
 
-  if (savedHotel) {
-    setHotelData(JSON.parse(savedHotel))
+  const loadHotelData = async () => {
+
+    const { data } = await supabase
+      .from("hotel_config")
+      .select("*")
+      .single()
+
+    if (data?.data) {
+      setHotelData(data.data)
+    }
+
+    const savedEvents =
+      localStorage.getItem("eventsData")
+
+    if (savedEvents) {
+      setEventsData(JSON.parse(savedEvents))
+    }
+
+    const savedRestaurant =
+      localStorage.getItem("restaurantData")
+
+    if (savedRestaurant) {
+
+      const parsedRestaurant =
+        JSON.parse(savedRestaurant)
+
+      setRestaurantData({
+        ...RESTAURANT_CONFIG,
+        ...parsedRestaurant,
+
+        menuDuJour: {
+          ...RESTAURANT_CONFIG.menuDuJour,
+          ...parsedRestaurant.menuDuJour,
+        },
+
+        menuEnfant: {
+          ...RESTAURANT_CONFIG.menuEnfant,
+          ...parsedRestaurant.menuEnfant,
+        },
+
+        barHoraires:
+          parsedRestaurant.barHoraires ||
+          RESTAURANT_CONFIG.barHoraires,
+
+        restaurantHoraires:
+          parsedRestaurant.restaurantHoraires ||
+          RESTAURANT_CONFIG.restaurantHoraires,
+      })
+    }
   }
 
-  if (savedRestaurant) {
-  const parsedRestaurant =
-    JSON.parse(savedRestaurant)
+  loadHotelData()
 
-  setRestaurantData({
-    ...RESTAURANT_CONFIG,
-    ...parsedRestaurant,
-
-    menuDuJour: {
-      ...RESTAURANT_CONFIG.menuDuJour,
-      ...parsedRestaurant.menuDuJour,
-    },
-
-    menuEnfant: {
-      ...RESTAURANT_CONFIG.menuEnfant,
-      ...parsedRestaurant.menuEnfant,
-    },
-
-    barHoraires:
-      parsedRestaurant.barHoraires ||
-      RESTAURANT_CONFIG.barHoraires,
-
-    restaurantHoraires:
-      parsedRestaurant.restaurantHoraires ||
-      RESTAURANT_CONFIG.restaurantHoraires,
-  })
-}
 }, [])
 
   /* ---------------- HOTEL ---------------- */
@@ -273,11 +298,13 @@ const removeEvent = (index: number) => {
 
   /* ---------------- SAVE ---------------- */
 
-  const saveChanges = () => {
-    localStorage.setItem(
-      "hotelData",
-      JSON.stringify(hotelData)
-    )
+  const saveChanges = async() => {
+    await supabase
+  .from("hotel_config")
+  .upsert({
+    id: 1,
+    data: hotelData,
+  })
 
     localStorage.setItem(
   "eventsData",
@@ -295,6 +322,10 @@ const removeEvent = (index: number) => {
 
     alert("Modifications sauvegardées")
   }
+
+  if (loading || !isLogged) {
+  return null
+}
 
   return (
   <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">

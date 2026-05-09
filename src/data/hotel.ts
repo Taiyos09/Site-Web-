@@ -11,7 +11,7 @@ export const HOTEL_CONFIG = {
     dinner: 20,
     extraBed: 15,
     pet: 5,
-    touristTax: 0.8,
+    touristTax: 1.3,
   },
 
   rooms: [

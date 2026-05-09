@@ -6,7 +6,7 @@ const navigation = [
   { name: "Restaurant", href: "/restaurant" },
   { name: "Événements", href: "/evenements" },
   { name: "Contact", href: "/contact" },
-  { name: "Admin", href: "/admin" },
+  { name: "Login", href: "/login" },
 ]
 
 export default function Navbar() {

@@ -434,11 +434,14 @@ const petTotal =
       }
     )
 
-    if (response.ok) {
-      alert("Demande envoyée")
-    } else {
-      alert("Erreur")
-    }
+    const data = await response.json()
+
+if (response.ok) {
+  alert("Demande envoyée")
+} else {
+  console.error(data)
+  alert(data.error || "Erreur serveur")
+}
   }}
   className="space-y-6 rounded-[32px] bg-[#faf7f2] p-12 shadow-xl"
 >

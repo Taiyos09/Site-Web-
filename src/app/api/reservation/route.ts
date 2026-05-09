@@ -1,39 +1,89 @@
 import nodemailer from "nodemailer"
+import { supabase } from "@/lib/supabase-server"
 
 export async function POST(req: Request) {
 
-  const body = await req.json()
+  try {
 
-  const transporter =
-    nodemailer.createTransport({
-      service: "gmail",
+    const body = await req.json()
 
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    })
+    const transporter =
+      nodemailer.createTransport({
+        service: "gmail",
+
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      })
 
     const formatDateFR = (date: string) => {
-  return new Date(date).toLocaleDateString(
-    "fr-FR",
-    {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+      return new Date(date).toLocaleDateString(
+        "fr-FR",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }
+      )
     }
-  )
-}
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+    const { error } = await supabase
+      .from("reservations")
+      .insert([
+        {
+          first_name: body.firstName,
+          last_name: body.lastName,
 
-    to: "ateyoGaming@gmail.com",
+          email: body.email,
+          phone: body.phone,
 
-    subject:
-      "Nouvelle réservation hôtel",
+          check_in: body.checkIn,
+          check_out: body.checkOut,
 
-    html: `
+          nights: body.nights,
+
+          people: body.people,
+          rooms: body.roomsNeeded,
+
+          animals: body.petCount,
+          babies: body.babyCount,
+
+          breakfast: body.breakfast,
+          lunch: body.lunch,
+          dinner: body.dinner,
+
+          baby_bed: body.babyBed,
+          high_chair: body.highChair,
+
+          total_price: body.totalPrice,
+
+          message: body.message,
+        },
+      ])
+
+    if (error) {
+
+      console.error("SUPABASE ERROR :", error)
+
+      return Response.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 500,
+        }
+      )
+    }
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+
+      to: "ateyoGaming@gmail.com",
+
+      subject: "Nouvelle réservation hôtel",
+
+      html: `
 <div style="
   background:#f5f1ea;
   padding:40px 20px;
@@ -52,45 +102,45 @@ export async function POST(req: Request) {
 
     <!-- HEADER -->
     <div
-  style="
-    background:#2f241d;
-    padding:40px 20px;
-    text-align:center;
-    border-radius:32px 32px 0 0;
-  "
->
+      style="
+        background:#2f241d;
+        padding:40px 20px;
+        text-align:center;
+        border-radius:32px 32px 0 0;
+      "
+    >
 
-  <img
-    src="https://image.noelshack.com/fichiers/2026/19/6/1778339311-logo2.jpg"
-    alt="Logo Auberge"
-    style="
-      width:110px;
-      margin-bottom:20px;
-    "
-  />
+      <img
+        src="https://image.noelshack.com/fichiers/2026/19/6/1778339311-logo2.jpg"
+        alt="Logo Auberge"
+        style="
+          width:110px;
+          margin-bottom:20px;
+        "
+      />
 
-  <h1
-    style="
-      color:white;
-      margin:0;
-      font-size:42px;
-      font-weight:bold;
-    "
-  >
-    Nouvelle réservation
-  </h1>
+      <h1
+        style="
+          color:white;
+          margin:0;
+          font-size:42px;
+          font-weight:bold;
+        "
+      >
+        Nouvelle réservation
+      </h1>
 
-  <p
-    style="
-      color:#d6c7b8;
-      margin-top:12px;
-      font-size:18px;
-    "
-  >
-    Auberge de St Aubin
-  </p>
+      <p
+        style="
+          color:#d6c7b8;
+          margin-top:12px;
+          font-size:18px;
+        "
+      >
+        Auberge de St Aubin
+      </p>
 
-</div>
+    </div>
 
     <div style="padding:35px;">
 
@@ -132,9 +182,9 @@ export async function POST(req: Request) {
           Séjour
         </h2>
 
-        <p><b>Arrivée :</b> ${body.checkIn}</p>
+        <p><b>Arrivée :</b> ${formatDateFR(body.checkIn)}</p>
 
-        <p><b>Départ :</b> ${body.checkOut}</p>
+        <p><b>Départ :</b> ${formatDateFR(body.checkOut)}</p>
 
         <p><b>Nuits :</b> ${body.nights}</p>
 
@@ -159,40 +209,19 @@ export async function POST(req: Request) {
           Options
         </h2>
 
-        <p>
-          ☕ Petit déjeuner :
-          <b>${body.breakfast ? "Oui" : "Non"}</b>
-        </p>
+        <p>☕ Petit déjeuner : <b>${body.breakfast ? "Oui" : "Non"}</b></p>
 
-        <p>
-          🍽️ Repas midi :
-          <b>${body.lunch ? "Oui" : "Non"}</b>
-        </p>
+        <p>🍽️ Repas midi : <b>${body.lunch ? "Oui" : "Non"}</b></p>
 
-        <p>
-          🌙 Repas soir :
-          <b>${body.dinner ? "Oui" : "Non"}</b>
-        </p>
+        <p>🌙 Repas soir : <b>${body.dinner ? "Oui" : "Non"}</b></p>
 
-        <p>
-          🐾 Animaux :
-          <b>${body.petCount}</b>
-        </p>
+        <p>🐾 Animaux : <b>${body.petCount}</b></p>
 
-        <p>
-          👶 Enfants bas âge :
-          <b>${body.babyCount}</b>
-        </p>
+        <p>👶 Enfants bas âge : <b>${body.babyCount}</b></p>
 
-        <p>
-          🛏️ Lit parapluie :
-          <b>${body.babyBed ? "Oui" : "Non"}</b>
-        </p>
+        <p>🛏️ Lit parapluie : <b>${body.babyBed ? "Oui" : "Non"}</b></p>
 
-        <p>
-          🪑 Chaise haute :
-          <b>${body.highChair ? "Oui" : "Non"}</b>
-        </p>
+        <p>🪑 Chaise haute : <b>${body.highChair ? "Oui" : "Non"}</b></p>
 
       </div>
 
@@ -302,10 +331,19 @@ export async function POST(req: Request) {
   </div>
 
 </div>
-`,
-  })
+      `,
+    })
 
-  return Response.json({
-    success: true,
-  })
+    return Response.json({
+      success: true,
+    })
+
+  } catch (error) {
+
+console.error("SERVER ERROR :", error)
+
+
+
+    return Response.json( { error: String(error), }, { status: 500, } )
+  }
 }
