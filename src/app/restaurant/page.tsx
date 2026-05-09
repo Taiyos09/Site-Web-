@@ -371,9 +371,9 @@ style={{
 
     <div className="space-y-5 text-xl text-[#4e4036]">
 
-      <p>📍 Auberge de St Aubin - Allier</p>
+      <p>📍 Auberge de St Aubin - 21 Rue Saint-Barnabé, 03160 Saint-Aubin-le-Monial</p>
 
-      <p>📞 00 00 00 00 00</p>
+      <p>📞 04 70 66 50 97</p>
 
       <p>🍷 Bar & restaurant convivial</p>
 

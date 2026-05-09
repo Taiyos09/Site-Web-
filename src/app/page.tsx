@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import Navbar from "@/components/Navbar"
 import { RESTAURANT_CONFIG } from "@/data/restaurant"
+import { EVENTS } from "@/data/events"
 
 const navigation = [
   { name: "Accueil", href: "/" },
@@ -22,10 +23,23 @@ const images = [
 export default function AubergeSaintAubinHomepage() {
   const [currentImage, setCurrentImage] = useState(0)
 
+  const [eventsData, setEventsData] =
+  useState(EVENTS)
+
   const [restaurantConfig, setRestaurantConfig] =
   useState(RESTAURANT_CONFIG)
 
+  const [formData, setFormData] = useState({
+  name: "",
+  email: "",
+  message: "",
+})
+
+const [loading, setLoading] = useState(false)
+
 useEffect(() => {
+
+  /* RESTAURANT */
 
   const savedRestaurant =
     localStorage.getItem("restaurantData")
@@ -59,17 +73,83 @@ useEffect(() => {
     })
   }
 
-  const interval = setInterval(() => {
-    setCurrentImage((prev) =>
-      prev === images.length - 1
-        ? 0
-        : prev + 1
-    )
-  }, 4000)
+  /* EVENEMENTS */
 
-  return () => clearInterval(interval)
+  const savedEvents =
+    localStorage.getItem("eventsData")
+
+  if (savedEvents) {
+    setEventsData(JSON.parse(savedEvents))
+  }
+
+  const refreshEvents = () => {
+
+    const updatedEvents =
+      localStorage.getItem("eventsData")
+
+    if (updatedEvents) {
+      setEventsData(JSON.parse(updatedEvents))
+    }
+  }
+
+  window.addEventListener(
+    "pricesUpdated",
+    refreshEvents
+  )
+
+  return () => {
+    window.removeEventListener(
+      "pricesUpdated",
+      refreshEvents
+    )
+  }
 
 }, [])
+const handleSubmit = async (
+  e: React.FormEvent
+) => {
+
+  e.preventDefault()
+
+  setLoading(true)
+
+  try {
+
+    const response = await fetch(
+      "/api/contact",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify(formData),
+      }
+    )
+
+    if (response.ok) {
+
+      alert("Message envoyé !")
+
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      })
+
+    } else {
+      alert("Erreur lors de l'envoi")
+    }
+
+  } catch (error) {
+
+    alert("Erreur serveur")
+  }
+
+  setLoading(false)
+}
+
   return (
   <div
     className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth bg-[#f5f1ea] text-[#2f241d] font-serif pt-24"
@@ -394,87 +474,37 @@ useEffect(() => {
 <div className="grid gap-8 md:grid-cols-3">
 
   {/* CARD 1 */}
-  <div className="rounded-3xl bg-white/10 p-6 text-center shadow-2xl backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-white/15">
+ {eventsData.map((event, index) => (
+  <div
+    key={index}
+    className="rounded-3xl bg-white/10 p-6 text-center shadow-2xl backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-white/15"
+  >
 
     {/* DATE */}
     <div className="mb-8 inline-block rounded-2xl bg-[#c89b5f] px-5 py-2 font-serif text-white shadow-lg">
-      Vendredi 8 Décembre
+      {event.date}
     </div>
 
     {/* TITRE */}
     <h3 className="mb-6 font-serif text-3xl font-semibold">
-      Final coupe du monde Football
+      {event.title}
     </h3>
 
     {/* IMAGE */}
     <img
-      src="/images/football.jpg"
-      alt="football"
-      className="h-24 w-full rounded-2xl mb-8 object-cover shadow-xl md:w-24 mx-auto"
-    />
-    {/* TEXTE */}
-    <p className="font-sans text-lg leading-relaxed text-white/90">
-      Soirée spéciale pour la finale de la coupe du monde
-      de football avec retransmission sur grand écran,
-      ambiance festive et menu spécial.
-    </p>
-  </div>
-
-  {/* CARD 2 */}
-  <div className="rounded-3xl bg-white/10 p-6 text-center shadow-2xl backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-white/15">
-
-    {/* DATE */}
-    <div className="mb-8 inline-block rounded-2xl bg-[#c89b5f] px-5 py-2 font-serif text-white shadow-lg">
-      Vendredi 15 Décembre
-    </div>
-
-    {/* TITRE */}
-    <h3 className="mb-6 font-serif text-3xl font-semibold">
-      Soirée Karaoké
-    </h3>
-
-    {/* IMAGE */}
-    <img
-      src="/images/karaoké.jpg"
-      alt="Soirée Karaoké"
-      className="mb-8 h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 md:mx-auto"
+      src={event.image}
+      alt={event.title}
+      className="mb-8 h-34 w-full rounded-2xl object-cover shadow-xl md:w-34 md:mx-auto"
     />
 
     {/* TEXTE */}
     <p className="font-sans text-lg leading-relaxed text-white/90">
-      Soirée karaoké tous les vendredis avec une sélection
-      de chansons variées pour tous les goûts,
-      ambiance conviviale garantie.
+      {event.description}
     </p>
+
   </div>
-
-  {/* CARD 3 */}
-  <div className="rounded-3xl bg-white/10 p-6 text-center shadow-2xl backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-white/15">
-
-    {/* DATE */}
-    <div className="mb-8 inline-block rounded-2xl bg-[#c89b5f] px-5 py-2 font-serif text-white shadow-lg">
-      Vendredi 22 Décembre
-    </div>
-
-    {/* TITRE */}
-    <h3 className="mb-6 font-serif text-3xl font-semibold">
-      Soirée Loto
-    </h3>
-
-    {/* IMAGE */}
-    <img
-      src="/images/loto.webp"
-      alt="Soirée Loto"
-      className="mb-8 h-24 w-full rounded-2xl object-cover shadow-xl md:w-24 md:mx-auto"
-    />
-
-    {/* TEXTE */}
-    <p className="font-sans text-lg leading-relaxed text-white/90">
-      Soirée loto avec des lots à gagner,
-      ambiance chaleureuse et conviviale garantie.
-    </p>
-  </div>
-  </div> {/* FIN GRID CARDS */}
+))}
+</div> {/* FIN GRID */}
     </div> {/* FIN W-FULL */}
   </div> {/* FIN CONTENU */}
 </section> {/* FIN EVENEMENTS */}
@@ -496,27 +526,55 @@ useEffect(() => {
             </div>
           </div>
 
-          <form className="space-y-4 rounded-3xl bg-white p-8 shadow-xl">
+          <form
+  onSubmit={handleSubmit}
+  className="space-y-4 rounded-3xl bg-white p-8 shadow-xl"
+>
             <input
-              type="text"
-              placeholder="Nom"
-              className="w-full rounded-2xl border p-4"
-            />
+  type="text"
+  placeholder="Nom"
+  value={formData.name}
+  onChange={(e) =>
+    setFormData({
+      ...formData,
+      name: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border p-4"
+/>
 
             <input
-              type="email"
-              placeholder="Email"
-              className="w-full rounded-2xl border p-4"
-            />
+  type="email"
+  placeholder="Email"
+  value={formData.email}
+  onChange={(e) =>
+    setFormData({
+      ...formData,
+      email: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border p-4"
+/>
 
             <textarea
               placeholder="Votre message"
               rows={5}
+              value={formData.message}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  message: e.target.value,
+                })
+              }
               className="w-full rounded-2xl border p-4"
             />
 
-            <button className="w-full rounded-2xl bg-[#2f241d] py-4 text-white transition hover:bg-[#43352c]">
-              Envoyer
+            <button 
+  type="submit"
+  className="w-full rounded-2xl bg-[#2f241d] py-4 text-white transition hover:bg-[#43352c]"
+  disabled={loading}
+>
+              {loading ? "Envoi en cours..." : "Envoyer"}
             </button>
           </form>
         </div>

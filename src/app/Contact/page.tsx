@@ -2,11 +2,72 @@
 
 import Navbar from "@/components/Navbar"
 import Link from "next/link"
+import { useState } from "react"
 
 export default function ContactPage() {
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  })
+
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (
+    e: React.FormEvent
+  ) => {
+
+    e.preventDefault()
+
+    setLoading(true)
+
+    try {
+
+      const response = await fetch(
+        "/api/contact",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify(formData),
+        }
+      )
+
+      if (response.ok) {
+
+        alert("Message envoyé !")
+
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+        })
+
+      } else {
+
+        alert("Erreur lors de l'envoi")
+      }
+
+    } catch (error) {
+
+      alert("Erreur serveur")
+    }
+
+    setLoading(false)
+  }
+
   return (
     <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
+
       <Navbar />
+
+      {/* HERO */}
       <section
         className="relative h-[55vh] bg-cover bg-center"
         style={{
@@ -17,6 +78,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-black/50" />
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
+
           <img
             src="/images/logo2.png"
             alt="Logo Auberge"
@@ -35,14 +97,18 @@ export default function ContactPage() {
 
       {/* CONTACT */}
       <section className="mx-auto max-w-7xl px-6 py-24">
+
         <div className="grid gap-12 lg:grid-cols-2">
+
           {/* INFOS */}
           <div>
+
             <h2 className="mb-8 text-4xl font-bold">
               Informations
             </h2>
 
             <div className="space-y-6 text-lg text-[#5a4c42]">
+
               <div className="rounded-3xl bg-white p-6 shadow-lg">
                 <p className="mb-2 text-2xl font-semibold">
                   📍 Adresse
@@ -95,13 +161,21 @@ export default function ContactPage() {
 
           {/* FORMULAIRE */}
           <div>
+
             <div className="rounded-[40px] bg-white p-10 shadow-2xl">
+
               <h2 className="mb-8 text-4xl font-bold">
                 Nous écrire
               </h2>
 
-              <form className="space-y-6">
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-6"
+              >
+
+                {/* NOM */}
                 <div>
+
                   <label className="mb-2 block font-medium">
                     Nom
                   </label>
@@ -109,11 +183,20 @@ export default function ContactPage() {
                   <input
                     type="text"
                     placeholder="Votre nom"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        name: e.target.value,
+                      })
+                    }
                     className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4 text-[#2f241d]"
                   />
                 </div>
 
+                {/* EMAIL */}
                 <div>
+
                   <label className="mb-2 block font-medium">
                     Email
                   </label>
@@ -121,11 +204,20 @@ export default function ContactPage() {
                   <input
                     type="email"
                     placeholder="Votre email"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        email: e.target.value,
+                      })
+                    }
                     className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4 text-[#2f241d]"
                   />
                 </div>
 
+                {/* TELEPHONE */}
                 <div>
+
                   <label className="mb-2 block font-medium">
                     Téléphone
                   </label>
@@ -133,11 +225,20 @@ export default function ContactPage() {
                   <input
                     type="tel"
                     placeholder="Votre téléphone"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        phone: e.target.value,
+                      })
+                    }
                     className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4 text-[#2f241d]"
                   />
                 </div>
 
+                {/* MESSAGE */}
                 <div>
+
                   <label className="mb-2 block font-medium">
                     Message
                   </label>
@@ -145,16 +246,28 @@ export default function ContactPage() {
                   <textarea
                     rows={6}
                     placeholder="Votre message..."
+                    value={formData.message}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        message: e.target.value,
+                      })
+                    }
                     className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4 text-[#2f241d]"
                   />
                 </div>
 
+                {/* BOUTON */}
                 <button
                   type="submit"
+                  disabled={loading}
                   className="w-full rounded-2xl bg-[#2f241d] py-5 text-lg font-semibold text-white transition hover:bg-[#43352c]"
                 >
-                  Envoyer le message
+                  {loading
+                    ? "Envoi en cours..."
+                    : "Envoyer le message"}
                 </button>
+
               </form>
             </div>
           </div>
@@ -163,8 +276,11 @@ export default function ContactPage() {
 
       {/* MAP */}
       <section className="bg-white py-24">
+
         <div className="mx-auto max-w-7xl px-6">
+
           <div className="mb-10 text-center">
+
             <h2 className="mb-4 text-4xl font-bold">
               Nous trouver
             </h2>
@@ -175,6 +291,7 @@ export default function ContactPage() {
           </div>
 
           <div className="overflow-hidden rounded-[40px] shadow-2xl">
+
             <iframe
               src="https://www.google.com/maps?q=Auberge+de+St+Aubin&output=embed"
               width="100%"
@@ -188,12 +305,14 @@ export default function ContactPage() {
 
       {/* FOOTER */}
       <footer className="bg-[#1f1712] px-6 py-10 text-center text-white/70">
+
         <p>
           © 2026 L&apos;Auberge de St Aubin —
           Tous droits réservés
         </p>
 
         <div className="mt-6">
+
           <Link
             href="/"
             className="text-[#c89b5f] transition hover:text-white"

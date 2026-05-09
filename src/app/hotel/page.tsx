@@ -5,25 +5,30 @@ import { HOTEL_CONFIG } from "@/data/hotel"
 
 export default function HotelPage() {
   const [hotelConfig, setHotelConfig] = useState(HOTEL_CONFIG)
-  const [selectedRoom, setSelectedRoom] = useState("")
 
   const [currentImages, setCurrentImages] = useState<number[]>([])
 
   const [breakfast, setBreakfast] = useState(false)
   const [lunch, setLunch] = useState(false)
   const [dinner, setDinner] = useState(false)
-  const [extraBed, setExtraBed] = useState(false)
-  const [pet, setPet] = useState(false)
-  const [baby, setBaby] = useState(false)
+  const [petCount, setPetCount] = useState(0)
+const [babyCount, setBabyCount] = useState(0)
   const [babyBed, setBabyBed] = useState(false)
   const [highChair, setHighChair] = useState(false)
 
-  const [roomConfiguration, setRoomConfiguration] = useState("single")
+  const [acceptTerms, setAcceptTerms] = useState(false)
 
   const [people, setPeople] = useState(0)
 
   const [checkIn, setCheckIn] = useState("")
   const [checkOut, setCheckOut] = useState("")
+
+  const [firstName, setFirstName] = useState("")
+const [lastName, setLastName] = useState("")
+const [email, setEmail] = useState("")
+const [phone, setPhone] = useState("")
+const [message, setMessage] = useState("")
+const [loading, setLoading] = useState(false)
 
   const nights = useMemo(() => {
     if (!checkIn || !checkOut) return 1
@@ -92,41 +97,128 @@ export default function HotelPage() {
   }
 }, [])
 
+  let roomsNeeded = 0
+let roomTotal = 0
+let bookingPossible = true
 
-  let baseRoomPrice = hotelConfig.roomPrices.onePerson
+if (people === 1) {
 
-  if (people >= 1) {
-    baseRoomPrice = hotelConfig.roomPrices.onePerson
-  }
+  roomsNeeded = 1
 
-  if (people >= 2) {
-    baseRoomPrice = hotelConfig.roomPrices.twoPeople
-  }
+  roomTotal =
+    hotelConfig.roomPrices.onePerson *
+    nights
+}
 
-  if (people >= 3 && roomConfiguration === "double") {
-    baseRoomPrice = hotelConfig.roomPrices.doubleRoom
-  }
+else if (people === 2) {
 
-  const roomTotal = baseRoomPrice * nights
+  roomsNeeded = 1
 
-  const breakfastTotal = breakfast ? hotelConfig.options.breakfast * people * nights : 0
+  roomTotal =
+    hotelConfig.roomPrices.twoPeople *
+    nights
+}
 
-  const lunchTotal = lunch ? hotelConfig.options.lunch * people * nights : 0
+else if (people === 3) {
 
-  const dinnerTotal = dinner ? hotelConfig.options.dinner * people * nights : 0
+  roomsNeeded = 1
 
-  const hasExtraBed = extraBed || (people >= 3 && roomConfiguration === "single")
+  roomTotal =
+    hotelConfig.roomPrices.doubleRoom *
+    nights
+}
 
-  const extraBedTotal = hasExtraBed ? hotelConfig.options.extraBed * nights : 0
+else if (people === 4) {
 
-  const petTotal = pet ? hotelConfig.options.pet * nights : 0
+  roomsNeeded = 2
+
+  roomTotal =
+    hotelConfig.roomPrices.twoPeople *
+    2 *
+    nights
+}
+
+else if (people === 5) {
+
+  roomsNeeded = 2
+
+  roomTotal =
+    (
+      hotelConfig.roomPrices.doubleRoom +
+      hotelConfig.roomPrices.twoPeople
+    ) * nights
+}
+
+else if (people === 6) {
+
+  roomsNeeded = 3
+
+  roomTotal =
+    (
+      hotelConfig.roomPrices.twoPeople *
+      2 +
+      hotelConfig.roomPrices.doubleRoom
+    ) * nights
+}
+
+else if (people === 7) {
+
+  roomsNeeded = 3
+
+  roomTotal =
+    (
+      hotelConfig.roomPrices.twoPeople *
+      2 +
+      hotelConfig.roomPrices.doubleRoom
+    ) * nights
+}
+
+else if (people > 7) {
+
+  bookingPossible = false
+
+  roomsNeeded = 3
+
+  roomTotal =
+    (
+      hotelConfig.roomPrices.twoPeople *
+      2 +
+      hotelConfig.roomPrices.doubleRoom
+    ) * nights
+}
+
+const breakfastTotal =
+  breakfast
+    ? hotelConfig.options.breakfast *
+      people *
+      nights
+    : 0
+
+const lunchTotal =
+  lunch
+    ? hotelConfig.options.lunch *
+      people *
+      nights
+    : 0
+
+const dinnerTotal =
+  dinner
+    ? hotelConfig.options.dinner *
+      people *
+      nights
+    : 0
+
+const petTotal =
+  petCount *
+  hotelConfig.options.pet *
+  nights
 
   const touristTaxTotal = hotelConfig.options.touristTax * people * nights
 
-  const totalPrice = roomTotal + breakfastTotal + lunchTotal + dinnerTotal + extraBedTotal + petTotal + touristTaxTotal
+  const totalPrice = roomTotal + breakfastTotal + lunchTotal + dinnerTotal + petTotal + touristTaxTotal
 
   return (
-    <div className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth bg-[#f5f1ea] text-[#2f241d]">
+    <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
       {/* HERO */}
       <section
         className="relative  snap-start min-h-screen flex h-[60vh] items-center justify-center bg-cover bg-center"
@@ -273,13 +365,13 @@ export default function HotelPage() {
 
       {/* RESERVATION */}
       <section
-        className="relative  snap-start min-h-screen bg-cover bg-center"
+  className="relative snap-start bg-cover bg-center py-24"
         style={{
           backgroundImage: "url('/images/campagne.jpeg')",
         }}
       >
         <div className="absolute inset-0 bg-black/40"></div>
-        <div className="relative mx-auto max-w-7xl px-6">
+        <div className="relative mx-auto max-w-[1800px] px-8 py-10">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-4xl font-bold text-white">
               Réserver votre séjour
@@ -290,11 +382,68 @@ export default function HotelPage() {
             </p>
           </div>
 
-          <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr]">
+          <div className="items-start gap-8 lg:grid lg:grid-cols-[1.2fr_0.55fr]">
             {/* FORMULAIRE */}
-            <form className="space-y-6 rounded-[32px] bg-[#faf7f2] p-10 shadow-xl">
+            <form
+  onSubmit={async (e) => {
+    e.preventDefault()
+
+    const response = await fetch(
+      "/api/reservation",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+  firstName,
+  lastName,
+  email,
+  phone,
+  message,
+
+  checkIn,
+  checkOut,
+  nights,
+
+  people,
+  roomsNeeded,
+
+  breakfast,
+  lunch,
+  dinner,
+
+  petCount,
+  babyCount,
+
+  babyBed,
+  highChair,
+
+  roomTotal,
+
+  breakfastTotal,
+  lunchTotal,
+  dinnerTotal,
+  petTotal,
+
+  touristTaxTotal,
+  totalPrice,
+}),
+      }
+    )
+
+    if (response.ok) {
+      alert("Demande envoyée")
+    } else {
+      alert("Erreur")
+    }
+  }}
+  className="space-y-6 rounded-[32px] bg-[#faf7f2] p-12 shadow-xl"
+>
               <div>
-                <h3 className="mb-6 text-2xl font-semibold">
+                <h3 className="mb-6 text-2xl font-semibold text-center">
                   Informations séjour
                 </h3>
 
@@ -327,81 +476,115 @@ export default function HotelPage() {
                 </div>
               </div>
 
-              {/* CHAMBRE + PERSONNES */}
-              <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block font-medium">
-                    Chambre
-                  </label>
+              {/* PERSONNES */}
+<div>
+  <label className="mb-2 block font-medium">
+    Nombre de personnes
+  </label>
 
-                  <select
-                    value={selectedRoom}
-                    onChange={(e) => setSelectedRoom(e.target.value)}
-                    className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
-                  >
-                    <option value="">
-                      Sélectionner une chambre
-                    </option>
-                    <option>Chambre 1</option>
-                    <option>Chambre 2</option>
-                    <option>Chambre 3</option>
-                  </select>
-                </div>
+  <select
+    value={people}
+    onChange={(e) =>
+      setPeople(Number(e.target.value))
+    }
+    className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
+  >
+    <option value={0}>
+      Nombre de personnes
+    </option>
 
-                <div>
-                  <label className="mb-2 block font-medium">
-                    Nombre de personnes
-                  </label>
+    {[...Array(10)].map((_, i) => (
+      <option
+        key={i + 1}
+        value={i + 1}
+      >
+        {i + 1} personne{i > 0 ? "s" : ""}
+      </option>
+    ))}
+  </select>
 
-                  <select
-                    value={people}
-                    onChange={(e) => setPeople(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
-                  >
-                    <option value={0}>
-                      Nombre de personnes
-                    </option>
-                    <option value={1}>
-                      1 personne
-                    </option>
+  {people > 0 && bookingPossible && (
+  <div className="mt-4 rounded-2xl bg-[#f3ede3] p-4 text-[#5a4c42]">
+    <p className="font-semibold">
+      {roomsNeeded} chambre(s)
+      nécessaire(s)
+    </p>
 
-                    <option value={2}>
-                      2 personnes
-                    </option>
+    <p className="mt-1 text-sm">
+      Configuration automatique selon
+      les capacités des chambres.
+    </p>
+  </div>
+)}
 
-                    <option value={3}>
-                      3 personnes
-                    </option>
+{people > 7 && (
+  <div className="mt-4 rounded-2xl bg-red-100 p-4 text-red-700">
+    Merci de contacter directement
+    l’auberge pour les groupes de
+    plus de 7 personnes ou pour
+    ajouter des lits supplémentaires.
+  </div>
+)}
+</div>
+              
+              {/* CLIENT */}
+<div>
+  <h3 className="mb-6 text-2xl font-semibold">
+    Informations client
+  </h3>
 
-                    <option value={4}>
-                      4 personnes
-                    </option>
-                  </select>
-                </div>
+  <div className="grid gap-6 md:grid-cols-2">
 
-                {/* CONFIGURATION */}
-                {people >= 3 && (
-                  <div className="md:col-span-2">
-                    <label className="mb-2 block font-medium">
-                      Configuration des chambres
-                    </label>
+    <input
+      type="text"
+      placeholder="Prénom"
+      value={firstName}
+      onChange={(e) =>
+        setFirstName(e.target.value)
+      }
+      className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
+    />
 
-                    <select
-                      value={roomConfiguration}
-                      onChange={(e) => setRoomConfiguration(e.target.value)}
-                      className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
-                    >
-                      <option value="single">
-                        1 chambre avec lit supplémentaire
-                      </option>
+    <input
+      type="text"
+      placeholder="Nom"
+      value={lastName}
+      onChange={(e) =>
+        setLastName(e.target.value)
+      }
+      className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
+    />
 
-                      <option value="double">
-                        2 chambres de 2 personnes
-                      </option>
-                    </select>
-                  </div>
-                )}
-              </div>
+    <input
+      type="email"
+      placeholder="Email"
+      value={email}
+      onChange={(e) =>
+        setEmail(e.target.value)
+      }
+      className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
+    />
+
+    <input
+      type="tel"
+      placeholder="Téléphone"
+      value={phone}
+      onChange={(e) =>
+        setPhone(e.target.value)
+      }
+      className="w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
+    />
+  </div>
+
+  <textarea
+    placeholder="Message complémentaire"
+    value={message}
+    onChange={(e) =>
+      setMessage(e.target.value)
+    }
+    className="mt-6 min-h-[140px] w-full rounded-2xl border border-[#d9d1c7] bg-white p-4"
+  />
+</div>
 
               {/* OPTIONS */}
               <div>
@@ -470,74 +653,60 @@ export default function HotelPage() {
               </div>
 
               {/* OPTIONS SUPP */}
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <label className="flex cursor-pointer items-center gap-3 rounded-2xl bg-white p-5 shadow-sm transition hover:shadow-md">
-                  <input
-                    type="checkbox"
-                    checked={hasExtraBed}
-                    onChange={(e) => setExtraBed(e.target.checked)}
-                    className="h-5 w-5"
-                    disabled={people >= 3 && roomConfiguration === "single"}
-                  />
+<div className="mt-6 grid gap-4 md:grid-cols-2">
 
-                  <div>
-                    <p className="font-semibold">
-                      Lit supplémentaire
-                    </p>
+  {/* ANIMAUX */}
+  <div className="rounded-2xl bg-white p-5 shadow-sm">
+    <label className="mb-3 block font-semibold">
+      Nombre d'animaux
+    </label>
 
-                    <p className="text-sm text-[#6b5b4f]">
-                      +{hotelConfig.options.extraBed}€
-                    </p>
-                  </div>
-                </label>
+    <select
+      value={petCount}
+      onChange={(e) =>
+        setPetCount(Number(e.target.value))
+      }
+      className="w-full rounded-xl border border-[#d9d1c7] p-3"
+    >
+      <option value={0}>Aucun animal</option>
+      <option value={1}>1 animal</option>
+      <option value={2}>2 animaux</option>
+      <option value={3}>3 animaux</option>
+    </select>
 
-                <label className="flex cursor-pointer items-center gap-3 rounded-2xl bg-white p-5 shadow-sm transition hover:shadow-md">
-                  <input
-                    type="checkbox"
-                    checked={pet}
-                    onChange={(e) => setPet(e.target.checked)}
-                    className="h-5 w-5"
-                  />
+    <p className="mt-2 text-sm text-[#6b5b4f]">
+      +{hotelConfig.options.pet}€ par animal / nuit
+    </p>
+  </div>
 
-                  <div>
-                    <p className="font-semibold">
-                      Supplément animal
-                    </p>
+  {/* ENFANTS */}
+  <div className="rounded-2xl bg-white p-5 shadow-sm">
+    <label className="mb-3 block font-semibold">
+      Enfants bas âge
+    </label>
 
-                    <p className="text-sm text-[#6b5b4f]">
-                      +{hotelConfig.options.pet}€
-                    </p>
-                  </div>
-                </label>
-              </div>
+    <select
+      value={babyCount}
+      onChange={(e) =>
+        setBabyCount(Number(e.target.value))
+      }
+      className="w-full rounded-xl border border-[#d9d1c7] p-3"
+    >
+      <option value={0}>Aucun enfant</option>
+      <option value={1}>1 enfant</option>
+      <option value={2}>2 enfants</option>
+      <option value={3}>3 enfants</option>
+    </select>
+  </div>
+</div>
 
-              {/* ENFANT BAS AGE */}
-              <div className="mt-6 rounded-3xl bg-white p-6 shadow-sm">
-                <label className="flex cursor-pointer items-start gap-4">
-                  <input
-                    type="checkbox"
-                    checked={baby}
-                    onChange={(e) => setBaby(e.target.checked)}
-                    className="mt-1 h-5 w-5"
-                  />
-
-                  <div>
-                    <p className="text-lg font-semibold">
-                      Enfant bas âge
-                    </p>
-
-                    <p className="text-sm text-[#6b5b4f]">
-                      Lit parapluie et chaise haute disponibles
-                    </p>
-                  </div>
-                </label>
-
-                {baby && (
+                {babyCount > 0 && (
                   <div className="mt-6 grid gap-4 md:grid-cols-2">
                     <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-[#e5ddd2] p-4">
                       <input
                         type="checkbox"
                         checked={babyBed}
+                        disabled={babyCount === 0}
                         onChange={(e) =>
                           setBabyBed(e.target.checked)
                         }
@@ -559,6 +728,7 @@ export default function HotelPage() {
                       <input
                         type="checkbox"
                         checked={highChair}
+                        disabled={babyCount === 0}
                         onChange={(e) =>
                           setHighChair(e.target.checked)
                         }
@@ -577,60 +747,162 @@ export default function HotelPage() {
                     </label>
                   </div>
                 )}
-              </div>
 
-              <button className="w-full rounded-2xl bg-[#c89b5f] py-5 text-lg font-semibold text-white transition hover:scale-[1.01]">
-                Continuer vers le paiement
-              </button>
+              {/* INFORMATIONS LEGALES */}
+<div className="mx-auto w-[70%] scale-[0.85] origin-top space-y-5 rounded-[28px] bg-[#faf7f2] p-8 shadow-xl">
+
+  <h3 className="mb-3 text-base font-semibold text-[#2f241d]">
+    Informations importantes
+  </h3>
+
+  <div className="space-y-5">
+
+    <label className="flex items-start gap-4">
+      <input
+        type="checkbox"
+        checked={acceptTerms}
+        onChange={(e) =>
+          setAcceptTerms(e.target.checked)
+        }
+        className="mt-1 h-5 w-5"
+      />
+
+      <span className="text-[12px] leading-relaxed text-[#5a4c42]">
+        J’accepte les conditions générales
+        de réservation ainsi que la
+        politique d’annulation de
+        l’auberge.
+      </span>
+    </label>
+
+    <div className="rounded-xl bg-[#f5f1ea] p-3 text-[12px] leading-relaxed text-[#6b5b4f]">
+
+      <p className="mb-4">
+        Les informations collectées via
+        ce formulaire sont utilisées
+        uniquement dans le cadre de votre
+        demande de réservation.
+      </p>
+
+      <p className="mb-4">
+        Conformément au RGPD, vous pouvez
+        demander la modification ou la
+        suppression de vos données
+        personnelles.
+      </p>
+
+      <p className="mb-4">
+        Toute réservation effectuée via
+        ce formulaire constitue une
+        demande de réservation et devra
+        être confirmée par l’auberge
+        selon les disponibilités.
+      </p>
+
+      <p>
+        Les tarifs affichés incluent les
+        prestations sélectionnées ainsi
+        que la taxe de séjour applicable.
+      </p>
+
+    </div>
+
+  </div>
+</div>
+
+{/* BOUTON */}
+<div className="flex justify-center pt-6">
+
+  <button
+    type="submit"
+    disabled={
+      !bookingPossible ||
+      !acceptTerms
+    }
+    className="
+      rounded-2xl
+      bg-[#c89b5f]
+      px-14
+      py-5
+      text-lg
+      font-bold
+      text-white
+      shadow-xl
+      transition-all
+      duration-300
+      hover:scale-[1.03]
+      hover:bg-[#b88b4f]
+      disabled:cursor-not-allowed
+      disabled:opacity-40
+    "
+  >
+    Envoyer la demande de réservation
+  </button>
+
+</div>
             </form>
 
-            {/* RECAP */}
-            <div className="h-fit rounded-[32px] bg-[#2f241d] p-8 text-white shadow-2xl">
-              <h3 className="mb-6 text-3xl font-bold">
-                Récapitulatif
-              </h3>
+{/* RECAP */}
+<div className="sticky top-24 h-fit rounded-[32px] bg-[#2f241d] p-6 text-white shadow-2xl">
 
-              <div className="space-y-5 border-b border-white/10 pb-6 text-white/90">
-                <div className="flex items-center justify-between">
-                  <span>{nights} nuit(s)</span>
-                  <span>{roomTotal}€</span>
-                </div>
+  <h3 className="mb-6 text-3xl font-bold">
+    Récapitulatif
+  </h3>
 
-                <div className="flex items-center justify-between">
-                  <span>Taxe de séjour</span>
 
-                  <span>
-                    {touristTaxTotal.toFixed(2)}€
-                  </span>
-                </div>
+  <div className="space-y-3 border-b border-white/10 pb-6 text-white/90">
 
-                <div className="flex items-center justify-between">
-                  <span>Petit déjeuner</span>
-                  <span>{breakfastTotal}€</span>
-                </div>
+  <div className="flex items-center justify-between">
+    <span>Nuits</span>
+    <span>{nights}</span>
+  </div>
 
-                <div className="flex items-center justify-between">
-                  <span>Repas midi</span>
-                  <span>{lunchTotal}€</span>
-                </div>
+  <div className="flex items-center justify-between">
+    <span>Prix chambres</span>
+    <span>{roomTotal}€</span>
+  </div>
 
-                <div className="flex items-center justify-between">
-                  <span>Repas soir</span>
-                  <span>{dinnerTotal}€</span>
-                </div>
+  <div className="flex items-center justify-between">
+    <span>Personnes</span>
+    <span>{people}</span>
+  </div>
 
-                <div className="flex items-center justify-between">
-                  <span>Lit supplémentaire</span>
-                  <span>
-  {hasExtraBed ? extraBedTotal : 0}€
-</span>
-                </div>
+  <div className="flex items-center justify-between">
+    <span>Animaux</span>
+    <span>{petCount}</span>
+  </div>
 
-                <div className="flex items-center justify-between">
-                  <span>Supplément animal</span>
-                  <span>{petTotal}€</span>
-                </div>
-              </div>
+  <div className="flex items-center justify-between">
+    <span>Enfants bas âge</span>
+    <span>{babyCount}</span>
+  </div>
+
+  <div className="flex items-center justify-between">
+    <span>Taxe de séjour</span>
+    <span>{touristTaxTotal.toFixed(2)}€</span>
+  </div>
+
+  <div className="flex items-center justify-between">
+    <span>Petit déjeuner</span>
+    <span>{breakfastTotal}€</span>
+  </div>
+
+  <div className="flex items-center justify-between">
+    <span>Repas midi</span>
+    <span>{lunchTotal}€</span>
+  </div>
+
+  <div className="flex items-center justify-between">
+    <span>Repas soir</span>
+    <span>{dinnerTotal}€</span>
+  </div>
+
+  <div className="flex items-center justify-between">
+    <span>Supplément animal</span>
+    <span>{petTotal}€</span>
+  </div>
+
+</div>
 
               <div className="mt-6 flex items-center justify-between text-2xl font-bold">
                 <span>Total</span>
@@ -638,17 +910,6 @@ export default function HotelPage() {
                 <span>
                   {totalPrice.toFixed(2)}€
                 </span>
-              </div>
-
-              <div className="mt-10 rounded-3xl bg-white/10 p-6 backdrop-blur">
-                <h4 className="mb-3 text-xl font-semibold">
-                  Paiement sécurisé
-                </h4>
-
-                <p className="text-white/80">
-                  Le paiement en ligne via Stripe sera
-                  connecté prochainement.
-                </p>
               </div>
             </div>
           </div>
