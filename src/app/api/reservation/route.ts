@@ -1,72 +1,40 @@
+import { NextResponse } from "next/server"
+import { createClient } from "@supabase/supabase-js"
 import nodemailer from "nodemailer"
-import { supabase } from "@/lib/supabase-server"
 
-export async function POST(req: Request) {
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+})
+
+export async function POST(
+  req: Request
+) {
 
   try {
 
     const body = await req.json()
 
-    const transporter =
-      nodemailer.createTransport({
-        service: "gmail",
-
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      })
-
-    const formatDateFR = (date: string) => {
-      return new Date(date).toLocaleDateString(
-        "fr-FR",
-        {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }
-      )
-    }
+    /* ---------------- SAVE SUPABASE ---------------- */
 
     const { error } = await supabase
       .from("reservations")
-      .insert([
-        {
-          first_name: body.firstName,
-          last_name: body.lastName,
-
-          email: body.email,
-          phone: body.phone,
-
-          check_in: body.checkIn,
-          check_out: body.checkOut,
-
-          nights: body.nights,
-
-          people: body.people,
-          rooms: body.roomsNeeded,
-
-          animals: body.petCount,
-          babies: body.babyCount,
-
-          breakfast: body.breakfast,
-          lunch: body.lunch,
-          dinner: body.dinner,
-
-          baby_bed: body.babyBed,
-          high_chair: body.highChair,
-
-          total_price: body.totalPrice,
-
-          message: body.message,
-        },
-      ])
+      .insert([body])
 
     if (error) {
 
-      console.error("SUPABASE ERROR :", error)
+      console.error(error)
 
-      return Response.json(
+      return NextResponse.json(
         {
           error: error.message,
         },
@@ -76,274 +44,112 @@ export async function POST(req: Request) {
       )
     }
 
+    /* ---------------- EMAIL ADMIN ---------------- */
+
     await transporter.sendMail({
+
       from: process.env.EMAIL_USER,
 
-      to: "ateyoGaming@gmail.com",
+      to: process.env.EMAIL_TO,
 
-      subject: "Nouvelle réservation hôtel",
+      subject:
+        "Nouvelle réservation - Auberge St Aubin",
 
       html: `
-<div style="
-  background:#f5f1ea;
-  padding:40px 20px;
-  font-family:Arial,sans-serif;
-  color:#2f241d;
-">
+        <h2>Nouvelle demande de réservation</h2>
 
-  <div style="
-    max-width:700px;
-    margin:auto;
-    background:white;
-    border-radius:24px;
-    overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,0.08);
-  ">
-
-    <!-- HEADER -->
-    <div
-      style="
-        background:#2f241d;
-        padding:40px 20px;
-        text-align:center;
-        border-radius:32px 32px 0 0;
-      "
-    >
-
-      <img
-        src="https://image.noelshack.com/fichiers/2026/19/6/1778339311-logo2.jpg"
-        alt="Logo Auberge"
-        style="
-          width:110px;
-          margin-bottom:20px;
-        "
-      />
-
-      <h1
-        style="
-          color:white;
-          margin:0;
-          font-size:42px;
-          font-weight:bold;
-        "
-      >
-        Nouvelle réservation
-      </h1>
-
-      <p
-        style="
-          color:#d6c7b8;
-          margin-top:12px;
-          font-size:18px;
-        "
-      >
-        Auberge de St Aubin
-      </p>
-
-    </div>
-
-    <div style="padding:35px;">
-
-      <!-- CLIENT -->
-      <div style="
-        background:#faf7f2;
-        border-radius:18px;
-        padding:25px;
-        margin-bottom:25px;
-      ">
-
-        <h2 style="
-          margin-top:0;
-          font-size:24px;
-        ">
-          Informations client
-        </h2>
-
-        <p><b>Nom :</b> ${body.firstName} ${body.lastName}</p>
-
-        <p><b>Email :</b> ${body.email}</p>
-
-        <p><b>Téléphone :</b> ${body.phone}</p>
-
-      </div>
-
-      <!-- SEJOUR -->
-      <div style="
-        background:#faf7f2;
-        border-radius:18px;
-        padding:25px;
-        margin-bottom:25px;
-      ">
-
-        <h2 style="
-          margin-top:0;
-          font-size:24px;
-        ">
-          Séjour
-        </h2>
-
-        <p><b>Arrivée :</b> ${formatDateFR(body.checkIn)}</p>
-
-        <p><b>Départ :</b> ${formatDateFR(body.checkOut)}</p>
-
-        <p><b>Nuits :</b> ${body.nights}</p>
-
-        <p><b>Personnes :</b> ${body.people}</p>
-
-        <p><b>Chambres :</b> ${body.roomsNeeded}</p>
-
-      </div>
-
-      <!-- OPTIONS -->
-      <div style="
-        background:#faf7f2;
-        border-radius:18px;
-        padding:25px;
-        margin-bottom:25px;
-      ">
-
-        <h2 style="
-          margin-top:0;
-          font-size:24px;
-        ">
-          Options
-        </h2>
-
-        <p>☕ Petit déjeuner : <b>${body.breakfast ? "Oui" : "Non"}</b></p>
-
-        <p>🍽️ Repas midi : <b>${body.lunch ? "Oui" : "Non"}</b></p>
-
-        <p>🌙 Repas soir : <b>${body.dinner ? "Oui" : "Non"}</b></p>
-
-        <p>🐾 Animaux : <b>${body.petCount}</b></p>
-
-        <p>👶 Enfants bas âge : <b>${body.babyCount}</b></p>
-
-        <p>🛏️ Lit parapluie : <b>${body.babyBed ? "Oui" : "Non"}</b></p>
-
-        <p>🪑 Chaise haute : <b>${body.highChair ? "Oui" : "Non"}</b></p>
-
-      </div>
-
-      <!-- TARIFS -->
-      <div style="
-        background:#faf7f2;
-        border-radius:18px;
-        padding:25px;
-        margin-bottom:25px;
-      ">
-
-        <h2 style="
-          margin-top:0;
-          font-size:24px;
-        ">
-          Détail des tarifs
-        </h2>
-
-        <table width="100%" cellspacing="0" cellpadding="10">
-
-          <tr>
-            <td>Chambres</td>
-            <td align="right">${body.roomTotal}€</td>
-          </tr>
-
-          <tr>
-            <td>Petit déjeuner</td>
-            <td align="right">${body.breakfastTotal}€</td>
-          </tr>
-
-          <tr>
-            <td>Repas midi</td>
-            <td align="right">${body.lunchTotal}€</td>
-          </tr>
-
-          <tr>
-            <td>Repas soir</td>
-            <td align="right">${body.dinnerTotal}€</td>
-          </tr>
-
-          <tr>
-            <td>Supplément animal</td>
-            <td align="right">${body.petTotal}€</td>
-          </tr>
-
-          <tr>
-            <td>Taxe de séjour</td>
-            <td align="right">${body.touristTaxTotal}€</td>
-          </tr>
-
-        </table>
-
-      </div>
-
-      <!-- TOTAL -->
-      <div style="
-        background:#2f241d;
-        color:white;
-        border-radius:20px;
-        padding:30px;
-        text-align:center;
-        margin-bottom:25px;
-      ">
-
-        <p style="
-          margin:0;
-          font-size:18px;
-          opacity:0.8;
-        ">
-          Total réservation
+        <p>
+          <strong>Nom :</strong>
+          ${body.first_name}
+          ${body.last_name}
         </p>
 
-        <h2 style="
-          margin:10px 0 0 0;
-          font-size:42px;
-        ">
-          ${body.totalPrice}€
-        </h2>
-
-      </div>
-
-      <!-- MESSAGE -->
-      <div style="
-        background:#faf7f2;
-        border-radius:18px;
-        padding:25px;
-      ">
-
-        <h2 style="
-          margin-top:0;
-          font-size:24px;
-        ">
-          Message client
-        </h2>
-
-        <p style="
-          white-space:pre-line;
-          line-height:1.7;
-        ">
-          ${body.message || "Aucun message"}
+        <p>
+          <strong>Email :</strong>
+          ${body.email}
         </p>
 
-      </div>
+        <p>
+          <strong>Téléphone :</strong>
+          ${body.phone}
+        </p>
 
-    </div>
+        <hr />
 
-  </div>
+        <p>
+          <strong>Arrivée :</strong>
+          ${body.arrival}
+        </p>
 
-</div>
+        <p>
+          <strong>Départ :</strong>
+          ${body.departure}
+        </p>
+
+        <p>
+          <strong>Nuits :</strong>
+          ${body.nights}
+        </p>
+
+        <p>
+          <strong>Personnes :</strong>
+          ${body.people}
+        </p>
+
+        <p>
+          <strong>Petit déjeuner :</strong>
+          ${body.breakfast ? "Oui" : "Non"}
+        </p>
+
+        <p>
+          <strong>Repas midi :</strong>
+          ${body.lunch ? "Oui" : "Non"}
+        </p>
+
+        <p>
+          <strong>Repas soir :</strong>
+          ${body.dinner ? "Oui" : "Non"}
+        </p>
+
+        <p>
+          <strong>Animal :</strong>
+          ${body.pets ? "Oui" : "Non"}
+        </p>
+
+        <p>
+          <strong>Bébé :</strong>
+          ${body.baby ? "Oui" : "Non"}
+        </p>
+
+        <hr />
+
+        <p>
+          <strong>Total :</strong>
+          ${body.total}€
+        </p>
+
+        <p>
+          <strong>Message :</strong><br />
+          ${body.message || "Aucun"}
+        </p>
       `,
     })
 
-    return Response.json({
+    return NextResponse.json({
       success: true,
     })
 
   } catch (error) {
 
-console.error("SERVER ERROR :", error)
+    console.error(error)
 
-
-
-    return Response.json( { error: String(error), }, { status: 500, } )
+    return NextResponse.json(
+      {
+        error: "Erreur serveur",
+      },
+      {
+        status: 500,
+      }
+    )
   }
 }

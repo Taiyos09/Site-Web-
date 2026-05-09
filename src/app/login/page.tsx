@@ -13,18 +13,24 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
 
-    const { error } = await supabase.auth.signInWithPassword({
+  const { error } =
+    await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
-    if (error) {
-      alert(error.message)
-      return
-    }
-
-    router.push("/admin")
+  if (error) {
+    alert(error.message)
+    return
   }
+
+  localStorage.setItem(
+    "adminLogged",
+    "true"
+  )
+
+  router.push("/admin")
+}
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f5f1ea]">

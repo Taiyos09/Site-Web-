@@ -16,7 +16,7 @@ export default function Navbar() {
         <div className="flex items-center space-x-4">
           <div className="w-3 h-3 bg-[#c89b5f] rounded-full animate-pulse"></div>
           <h1 className="text-2xl font-light tracking-wide font-serif">
-            L&apos;Auberge de St Aubin
+            Auberge de St Aubin
           </h1>
         </div>
 
