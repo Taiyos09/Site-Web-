@@ -5,6 +5,8 @@ import { useEffect, useState } from "react"
 type ReservationData = {
   from: string
   to: string
+  roomName: string
+  status: string
   nights: number
   people: number
   touristTaxTotal: number
@@ -67,9 +69,11 @@ export default function CheckoutPage() {
 
   const payload = {
 
+    status: "pending",
+    roomName: reservation.roomName,
     first_name: firstName,
     last_name: lastName,
-
+    
     email,
     phone,
     message,
@@ -91,7 +95,6 @@ export default function CheckoutPage() {
 
     total: reservation.total,
 
-    status: "pending",
   }
 
   try {
@@ -259,23 +262,34 @@ export default function CheckoutPage() {
           <div className="space-y-5 text-lg">
 
             <div className="flex justify-between border-b pb-3">
-              <span>Arrivée</span>
-              <span>
-                {new Date(
-                  reservation.from
-                ).toLocaleDateString("fr-FR")}
-              </span>
-            </div>
+  <span>Arrivée</span>
 
-            <div className="flex justify-between border-b pb-3">
-              <span>Départ</span>
-              <span>
-                {new Date(
-                  reservation.to
-                ).toLocaleDateString("fr-FR")}
-              </span>
-            </div>
+  <span>
+    {new Date(
+      reservation.from
+    ).toLocaleDateString(
+      "fr-FR",
+      {
+        timeZone: "Europe/Paris",
+      }
+    )}
+  </span>
+</div>
 
+<div className="flex justify-between border-b pb-3">
+  <span>Départ</span>
+
+  <span>
+    {new Date(
+      reservation.to
+    ).toLocaleDateString(
+      "fr-FR",
+      {
+        timeZone: "Europe/Paris",
+      }
+    )}
+  </span>
+</div>
             <div className="flex justify-between border-b pb-3">
               <span>Nuits</span>
               <span>

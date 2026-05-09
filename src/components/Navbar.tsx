@@ -11,7 +11,7 @@ const navigation = [
 
 export default function Navbar() {
   return (
-    <header className="fixed top-0 z-20 w-full border-b border-white/20 bg-black/40 backdrop-blur-xl shadow-lg">
+    <header className="public-navbar fixed top-0 z-20 w-full border-b border-white/20 bg-black/40 backdrop-blur-xl shadow-lg">
       <div className="flex items-center justify-between px-8 py-6 text-white">
         <div className="flex items-center space-x-4">
           <div className="w-3 h-3 bg-[#c89b5f] rounded-full animate-pulse"></div>

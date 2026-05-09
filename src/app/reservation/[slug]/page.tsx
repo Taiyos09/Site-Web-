@@ -190,6 +190,7 @@ export default async function ReservationPage({
 
             <BookingCalendar
               price={HOTEL_CONFIG.roomPrices.onePerson}
+              roomName={room.name}
             />
 
           </div>

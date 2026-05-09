@@ -26,9 +26,13 @@ export async function POST(
 
     /* ---------------- SAVE SUPABASE ---------------- */
 
-    const { error } = await supabase
-      .from("reservations")
-      .insert([body])
+    body.room_name = body.roomName
+
+delete body.roomName
+
+const { error } = await supabase
+  .from("reservations")
+  .insert([body])
 
     if (error) {
 
@@ -72,6 +76,11 @@ export async function POST(
         <p>
           <strong>Téléphone :</strong>
           ${body.phone}
+        </p>
+
+        <p>
+        <strong>Chambre :</strong>
+        ${body.roomName}
         </p>
 
         <hr />
