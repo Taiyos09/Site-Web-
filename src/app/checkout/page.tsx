@@ -70,7 +70,6 @@ export default function CheckoutPage() {
   const payload = {
 
     status: "pending",
-    roomName: reservation.roomName,
     first_name: firstName,
     last_name: lastName,
     
@@ -80,6 +79,8 @@ export default function CheckoutPage() {
 
     arrival: reservation.from,
     departure: reservation.to,
+    
+    roomName: reservation.roomName,
 
     nights: reservation.nights,
     people: reservation.people,

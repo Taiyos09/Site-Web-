@@ -1,40 +1,164 @@
-import { notFound } from "next/navigation"
-import { HOTEL_CONFIG } from "@/data/hotel"
-import BookingCalendar from "@/components/hotel/BookingCalendar"
+"use client"
 
-export default async function ReservationPage({
+import { notFound } from "next/navigation"
+import BookingCalendar from "@/components/hotel/BookingCalendar"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabase"
+
+type Room = {
+  id: number
+  name: string
+  slug: string
+  size: string
+  description: string
+
+  one_person_price: number
+  two_people_price: number
+
+  image_1: string
+  image_2: string
+  image_3: string
+}
+
+export default function ReservationPage({
   params,
 }: {
   params: Promise<{ slug: string }>
 }) {
 
-  const { slug } = await params
+  const [slug, setSlug] =
+    useState("")
 
-  const room = HOTEL_CONFIG.rooms.find(
-    (r) => r.slug === slug
-  )
+  const [room, setRoom] =
+    useState<Room | null>(null)
+
+  const [loading, setLoading] =
+    useState(true)
+
+  useEffect(() => {
+
+  const getSlug = async () => {
+
+    const resolvedParams =
+      await params
+
+    setSlug(
+      resolvedParams.slug
+    )
+  }
+
+  getSlug()
+
+}, [params])
+
+useEffect(() => {
+
+  if (!slug) return
+
+  loadRoom()
+
+}, [slug])
+
+  async function loadRoom() {
+
+    try {
+
+      const { data, error } =
+        await supabase
+          .from("rooms")
+          .select("*")
+          .eq("slug", slug)
+          .single()
+
+      if (error || !data) {
+
+        console.error(error)
+
+        setRoom(null)
+
+        return
+      }
+
+      setRoom(data)
+
+    } catch (error) {
+
+      console.error(error)
+
+    } finally {
+
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+
+    return (
+      <div className="
+        flex
+        min-h-screen
+        items-center
+        justify-center
+        bg-[#f5f1ea]
+      ">
+        Chargement...
+      </div>
+    )
+  }
 
   if (!room) {
     notFound()
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
+
+    <main className="
+      min-h-screen
+      bg-[#f5f1ea]
+      text-[#2f241d]
+    ">
 
       {/* HERO */}
-      <section className="relative h-[45vh] overflow-hidden">
+
+      <section className="
+        relative
+        h-[45vh]
+        overflow-hidden
+      ">
 
         <img
-          src={room.images[0]}
+          src={room.image_1}
           alt={room.name}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="
+            absolute
+            inset-0
+            h-full
+            w-full
+            object-cover
+          "
         />
 
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="
+          absolute
+          inset-0
+          bg-black/50
+        " />
 
-        <div className="relative z-10 flex h-full items-end">
+        <div className="
+          relative
+          z-10
+          flex
+          h-full
+          items-end
+        ">
 
-          <div className="mx-auto w-full max-w-[1600px] px-8 pb-16">
+          <div className="
+            mx-auto
+            w-full
+            max-w-[1600px]
+            px-8
+            pb-16
+          ">
 
             <h1 className="
               font-serif
@@ -61,6 +185,7 @@ export default async function ReservationPage({
       </section>
 
       {/* CONTENU */}
+
       <section className="
         mx-auto
         max-w-[1600px]
@@ -75,6 +200,7 @@ export default async function ReservationPage({
         ">
 
           {/* GAUCHE */}
+
           <div>
 
             <div className="
@@ -85,7 +211,7 @@ export default async function ReservationPage({
             ">
 
               <img
-                src={room.images[1]}
+                src={room.image_2}
                 alt={room.name}
                 className="
                   h-[420px]
@@ -106,78 +232,20 @@ export default async function ReservationPage({
                 </h2>
 
                 <p className="
+                  mb-4
+                  text-lg
+                  text-[#8a6330]
+                ">
+                  {room.size}
+                </p>
+
+                <p className="
                   text-lg
                   leading-relaxed
                   text-[#5a4c42]
                 ">
                   {room.description}
                 </p>
-
-                {/* INFOS */}
-                <div className="
-                  mt-10
-                  grid
-                  gap-4
-                  md:grid-cols-2
-                ">
-
-                  <div className="
-                    rounded-2xl
-                    bg-[#faf7f2]
-                    p-5
-                  ">
-                    <p className="text-sm text-[#7a6a5d]">
-                      Surface
-                    </p>
-
-                    <p className="mt-2 text-xl font-bold">
-                      {room.size}
-                    </p>
-                  </div>
-
-                  <div className="
-                    rounded-2xl
-                    bg-[#faf7f2]
-                    p-5
-                  ">
-                    <p className="text-sm text-[#7a6a5d]">
-                      Wi-Fi
-                    </p>
-
-                    <p className="mt-2 text-xl font-bold">
-                      Inclus
-                    </p>
-                  </div>
-
-                  <div className="
-                    rounded-2xl
-                    bg-[#faf7f2]
-                    p-5
-                  ">
-                    <p className="text-sm text-[#7a6a5d]">
-                      Parking
-                    </p>
-
-                    <p className="mt-2 text-xl font-bold">
-                      Gratuit
-                    </p>
-                  </div>
-
-                  <div className="
-                    rounded-2xl
-                    bg-[#faf7f2]
-                    p-5
-                  ">
-                    <p className="text-sm text-[#7a6a5d]">
-                      Salle de bain
-                    </p>
-
-                    <p className="mt-2 text-xl font-bold">
-                      Privative
-                    </p>
-                  </div>
-
-                </div>
 
               </div>
 
@@ -186,12 +254,23 @@ export default async function ReservationPage({
           </div>
 
           {/* DROITE */}
-          <div className="sticky top-28 h-fit">
+
+          <div className="
+            sticky
+            top-28
+            h-fit
+          ">
 
             <BookingCalendar
-              price={HOTEL_CONFIG.roomPrices.onePerson}
-              roomName={room.name}
-            />
+  onePersonPrice={
+    Number(room.one_person_price)
+  }
+  twoPeoplePrice={
+    Number(room.two_people_price)
+  }
+  roomName={room.name}
+  roomSlug={room.slug}
+/>
 
           </div>
 

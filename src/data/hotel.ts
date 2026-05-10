@@ -33,7 +33,7 @@ export const HOTEL_CONFIG = {
       name: "Chambre Confort",
       slug: "confort",
       size: "16m²",
-      description: "Chambre double élégante et romantique, parfaite pour les couples...",
+      description: "Chambre élégante et romantique, parfaite pour les couples...",
       images: [
         "/images/hotel/chambre2.jpg",
         "/images/hotel/sdb2.jpg",
@@ -43,7 +43,7 @@ export const HOTEL_CONFIG = {
 
     {
       id: 3,
-      name: "Chambre double standard",
+      name: "Chambre Double Standard",
       slug: "standard",
       size: "14m²",
       description: "Petite chambre double confortable et fonctionnelle, idéale pour les voyageurs à petit budget...",

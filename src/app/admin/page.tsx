@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import AdminNavbar from "@/components/AdminNavbar"
 
 const cards = [
   {
@@ -40,12 +39,6 @@ export default function AdminDashboard() {
   return (
 
     <>
-    
-      <style jsx global>{`
-        .public-navbar {
-          display: none !important;
-        }
-      `}</style>
 
       <main className="
         min-h-screen
@@ -54,7 +47,6 @@ export default function AdminDashboard() {
         text-[#2f241d]
       ">
 
-        <AdminNavbar />
 
         <div className="mt-10">
 

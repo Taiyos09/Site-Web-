@@ -14,6 +14,6 @@ export const ROOMS = [
   {
     slug: "standard",
 
-    title: "Chambre Standard",
+    title: "Chambre Double Standard",
   },
 ]

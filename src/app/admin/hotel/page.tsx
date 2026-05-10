@@ -1,342 +1,623 @@
 "use client"
 
-import { useState } from "react"
-import AdminNavbar from "@/components/AdminNavbar"
-import { HOTEL_CONFIG } from "@/data/hotel"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabase"
+
+type Room = {
+  id: number
+  name: string
+  slug: string
+  description: string
+  size: string
+
+  one_person_price: number
+  two_people_price: number
+
+  image_1: string
+  image_2: string
+  image_3: string
+}
+
+type HotelSettings = {
+  id: number
+
+  breakfast: number
+  lunch: number
+  dinner: number
+
+  pet: number
+
+  tourist_tax: number
+
+  extra_bed: number
+}
 
 export default function HotelAdminPage() {
 
-  const [hotelData, setHotelData] =
-    useState(HOTEL_CONFIG)
+  const [rooms, setRooms] =
+    useState<Room[]>([])
 
-  /* ---------------- ROOM PRICES ---------------- */
+  const [settings, setSettings] =
+    useState<HotelSettings | null>(null)
 
-  const updateRoomPrice = (
-    key: string,
-    value: number
-  ) => {
+  const [loading, setLoading] =
+    useState(true)
 
-    setHotelData({
-      ...hotelData,
+  useEffect(() => {
 
-      roomPrices: {
-        ...hotelData.roomPrices,
-        [key]: value,
-      },
-    })
+    loadData()
+
+  }, [])
+
+  async function loadData() {
+
+    try {
+
+      const { data: roomsData } =
+        await supabase
+          .from("rooms")
+          .select("*")
+          .order("id")
+
+      const { data: settingsData } =
+        await supabase
+          .from("hotel_settings")
+          .select("*")
+          .single()
+
+      setRooms(roomsData || [])
+
+      if (settingsData) {
+        setSettings(settingsData)
+      }
+
+    } catch (error) {
+
+      console.error(error)
+
+    } finally {
+
+      setLoading(false)
+    }
   }
 
-  /* ---------------- OPTIONS ---------------- */
+  async function updateRoom(
+    roomId: number,
+    field: string,
+    value: any
+  ) {
 
-  const updateOptionPrice = (
-    key: string,
-    value: number
-  ) => {
+    try {
 
-    setHotelData({
-      ...hotelData,
+      await supabase
+        .from("rooms")
+        .update({
+          [field]: value,
+        })
+        .eq("id", roomId)
 
-      options: {
-        ...hotelData.options,
-        [key]: value,
-      },
-    })
+      setRooms((prev) =>
+        prev.map((room) =>
+          room.id === roomId
+            ? {
+                ...room,
+                [field]: value,
+              }
+            : room
+        )
+      )
+
+    } catch (error) {
+
+      console.error(error)
+    }
   }
 
-  /* ---------------- SAVE ---------------- */
+  async function updateSetting(
+    field: string,
+    value: number
+  ) {
 
-  const saveChanges = () => {
+    if (!settings) return
 
-    localStorage.setItem(
-      "hotelData",
-      JSON.stringify(hotelData)
-    )
+    try {
 
-    alert(
-      "Modifications sauvegardées"
+      await supabase
+        .from("hotel_settings")
+        .update({
+          [field]: value,
+        })
+        .eq("id", settings.id)
+
+      setSettings({
+        ...settings,
+        [field]: value,
+      })
+
+    } catch (error) {
+
+      console.error(error)
+    }
+  }
+
+  if (loading) {
+
+    return (
+      <div className="
+        flex
+        min-h-screen
+        items-center
+        justify-center
+        bg-[#f5f1ea]
+      ">
+        Chargement...
+      </div>
     )
   }
 
   return (
 
-    <>
+    <main className="
+      min-h-screen
+      bg-[#f5f1ea]
+      p-10
+      text-[#2f241d]
+    ">
 
-      <style jsx global>{`
-        .public-navbar {
-          display: none !important;
-        }
-      `}</style>
+      <div className="mb-12">
 
-      <main className="
-        min-h-screen
-        bg-[#f5f1ea]
-        p-10
-        text-[#2f241d]
-      ">
+        <h1 className="
+          text-5xl
+          font-bold
+          font-serif
+        ">
+          Gestion Hôtel
+        </h1>
 
-        <AdminNavbar />
+        <p className="
+          mt-2
+          text-[#6b5b4f]
+        ">
+          Toutes les modifications sont
+          appliquées automatiquement
+          sur le site.
+        </p>
 
-        <div className="mt-10">
+      </div>
 
-          {/* HEADER */}
+      {/* TARIFS GÉNÉRAUX */}
+
+      {settings && (
+
+        <section className="
+          mb-12
+          rounded-[36px]
+          bg-white
+          p-8
+          shadow-xl
+        ">
+
+          <h2 className="
+            mb-8
+            text-3xl
+            font-bold
+            font-serif
+          ">
+            Tarifs supplémentaires
+          </h2>
+
           <div className="
-            mb-10
-            flex
-            items-center
-            justify-between
+            grid
+            gap-6
+            md:grid-cols-2
+            xl:grid-cols-3
           ">
 
             <div>
+              <label className="mb-2 block font-bold">
+                Petit déjeuner
+              </label>
 
-              <h1 className="
-                font-serif
-                text-5xl
-                font-bold
-              ">
-                Gestion hôtel
-              </h1>
-
-              <p className="
-                mt-2
-                text-[#6b5b4f]
-              ">
-                Gestion des tarifs et options.
-              </p>
-
+              <input
+                type="number"
+                value={settings.breakfast}
+                onChange={(e) =>
+                  updateSetting(
+                    "breakfast",
+                    Number(e.target.value)
+                  )
+                }
+                className="
+                  w-full
+                  rounded-2xl
+                  border
+                  p-4
+                "
+              />
             </div>
 
-            <button
-              onClick={saveChanges}
-              className="
-                rounded-2xl
-                bg-[#2f241d]
-                px-8
-                py-4
-                text-lg
-                font-bold
-                text-white
-                shadow-xl
-                transition-all
-                duration-300
-                hover:scale-105
-                hover:bg-[#43352c]
-              "
-            >
-              Sauvegarder
-            </button>
+            <div>
+              <label className="mb-2 block font-bold">
+                Repas midi
+              </label>
+
+              <input
+                type="number"
+                value={settings.lunch}
+                onChange={(e) =>
+                  updateSetting(
+                    "lunch",
+                    Number(e.target.value)
+                  )
+                }
+                className="
+                  w-full
+                  rounded-2xl
+                  border
+                  p-4
+                "
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block font-bold">
+                Repas soir
+              </label>
+
+              <input
+                type="number"
+                value={settings.dinner}
+                onChange={(e) =>
+                  updateSetting(
+                    "dinner",
+                    Number(e.target.value)
+                  )
+                }
+                className="
+                  w-full
+                  rounded-2xl
+                  border
+                  p-4
+                "
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block font-bold">
+                Animal
+              </label>
+
+              <input
+                type="number"
+                value={settings.pet}
+                onChange={(e) =>
+                  updateSetting(
+                    "pet",
+                    Number(e.target.value)
+                  )
+                }
+                className="
+                  w-full
+                  rounded-2xl
+                  border
+                  p-4
+                "
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block font-bold">
+                Lit supplémentaire
+              </label>
+
+              <input
+                type="number"
+                value={settings.extra_bed}
+                onChange={(e) =>
+                  updateSetting(
+                    "extra_bed",
+                    Number(e.target.value)
+                  )
+                }
+                className="
+                  w-full
+                  rounded-2xl
+                  border
+                  p-4
+                "
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block font-bold">
+                Taxe touristique
+              </label>
+
+              <input
+                type="number"
+                step="0.1"
+                value={settings.tourist_tax}
+                onChange={(e) =>
+                  updateSetting(
+                    "tourist_tax",
+                    Number(e.target.value)
+                  )
+                }
+                className="
+                  w-full
+                  rounded-2xl
+                  border
+                  p-4
+                "
+              />
+            </div>
 
           </div>
 
-          {/* HOTEL */}
-          <section className="
-            rounded-[36px]
-            border
-            border-[#e7ded2]
-            bg-white/80
-            p-10
-            shadow-xl
-            backdrop-blur
-          ">
+        </section>
 
-            <div className="mb-10">
+      )}
 
-              <h2 className="
-                text-3xl
-                font-bold
-                font-serif
-              ">
-                Hôtel
-              </h2>
+      {/* CHAMBRES */}
 
-              <p className="
-                mt-2
-                text-[#6b5b4f]
-              ">
-                Gestion des prix et options des chambres.
-              </p>
+      <div className="space-y-10">
 
-            </div>
+        {rooms.map((room) => (
+
+          <section
+            key={room.id}
+            className="
+              rounded-[36px]
+              bg-white
+              p-8
+              shadow-xl
+            "
+          >
 
             <div className="
               grid
-              gap-10
+              gap-8
               lg:grid-cols-2
             ">
 
-              {/* PRIX */}
-              <div className="
-                space-y-6
-                rounded-3xl
-                bg-[#faf7f2]
-                p-8
-              ">
+              <div>
 
-                <h3 className="
-                  text-2xl
-                  font-bold
-                ">
-                  Prix des chambres
-                </h3>
-
-                <div>
-
-                  <label className="
-                    mb-2
-                    block
-                    font-medium
-                  ">
-                    1 personne
-                  </label>
-
-                  <input
-                    type="number"
-                    value={
-                      hotelData.roomPrices.onePerson
-                    }
-                    onChange={(e) =>
-                      updateRoomPrice(
-                        "onePerson",
-                        Number(e.target.value)
-                      )
-                    }
-                    className="
-                      w-full
-                      rounded-2xl
-                      border
-                      border-[#d8cfc3]
-                      bg-white
-                      p-4
-                      outline-none
-                    "
-                  />
-
-                </div>
-
-                <div>
-
-                  <label className="
-                    mb-2
-                    block
-                    font-medium
-                  ">
-                    2 personnes
-                  </label>
-
-                  <input
-                    type="number"
-                    value={
-                      hotelData.roomPrices.twoPeople
-                    }
-                    onChange={(e) =>
-                      updateRoomPrice(
-                        "twoPeople",
-                        Number(e.target.value)
-                      )
-                    }
-                    className="
-                      w-full
-                      rounded-2xl
-                      border
-                      border-[#d8cfc3]
-                      bg-white
-                      p-4
-                      outline-none
-                    "
-                  />
-
-                </div>
-
-                <div>
-
-                  <label className="
-                    mb-2
-                    block
-                    font-medium
-                  ">
-                    2 chambres
-                  </label>
-
-                  <input
-                    type="number"
-                    value={
-                      hotelData.roomPrices.doubleRoom
-                    }
-                    onChange={(e) =>
-                      updateRoomPrice(
-                        "doubleRoom",
-                        Number(e.target.value)
-                      )
-                    }
-                    className="
-                      w-full
-                      rounded-2xl
-                      border
-                      border-[#d8cfc3]
-                      bg-white
-                      p-4
-                      outline-none
-                    "
-                  />
-
-                </div>
+                <img
+                  src={room.image_1}
+                  alt={room.name}
+                  className="
+                    h-[400px]
+                    w-full
+                    rounded-3xl
+                    object-cover
+                  "
+                />
 
               </div>
 
-              {/* OPTIONS */}
-              <div className="
-                space-y-6
-                rounded-3xl
-                bg-[#faf7f2]
-                p-8
-              ">
+              <div className="space-y-5">
 
-                <h3 className="
-                  text-2xl
-                  font-bold
+                <div>
+
+                  <label className="
+                    mb-2
+                    block
+                    font-bold
+                  ">
+                    Nom
+                  </label>
+
+                  <input
+                    type="text"
+                    value={room.name}
+                    onChange={(e) =>
+                      updateRoom(
+                        room.id,
+                        "name",
+                        e.target.value
+                      )
+                    }
+                    className="
+                      w-full
+                      rounded-2xl
+                      border
+                      p-4
+                    "
+                  />
+
+                </div>
+
+                <div>
+
+                  <label className="
+                    mb-2
+                    block
+                    font-bold
+                  ">
+                    Taille
+                  </label>
+
+                  <input
+                    type="text"
+                    value={room.size}
+                    onChange={(e) =>
+                      updateRoom(
+                        room.id,
+                        "size",
+                        e.target.value
+                      )
+                    }
+                    className="
+                      w-full
+                      rounded-2xl
+                      border
+                      p-4
+                    "
+                  />
+
+                </div>
+
+                <div>
+
+                  <label className="
+                    mb-2
+                    block
+                    font-bold
+                  ">
+                    Description
+                  </label>
+
+                  <textarea
+                    value={room.description}
+                    onChange={(e) =>
+                      updateRoom(
+                        room.id,
+                        "description",
+                        e.target.value
+                      )
+                    }
+                    className="
+                      min-h-[160px]
+                      w-full
+                      rounded-2xl
+                      border
+                      p-4
+                    "
+                  />
+
+                </div>
+
+                <div className="
+                  grid
+                  gap-4
+                  md:grid-cols-2
                 ">
-                  Options hôtel
-                </h3>
 
-                {Object.entries(
-                  hotelData.options
-                ).map(
-                  ([key, value]) => (
+                  <div>
 
-                    <div key={key}>
+                    <label className="
+                      mb-2
+                      block
+                      font-bold
+                    ">
+                      Prix 1 personne
+                    </label>
 
-                      <label className="
-                        mb-2
-                        block
-                        font-medium
-                        capitalize
-                      ">
-                        {key}
-                      </label>
+                    <input
+                      type="number"
+                      value={room.one_person_price}
+                      onChange={(e) =>
+                        updateRoom(
+                          room.id,
+                          "one_person_price",
+                          Number(e.target.value)
+                        )
+                      }
+                      className="
+                        w-full
+                        rounded-2xl
+                        border
+                        p-4
+                      "
+                    />
 
-                      <input
-                        type="number"
-                        value={Number(value)}
-                        onChange={(e) =>
-                          updateOptionPrice(
-                            key,
-                            Number(e.target.value)
-                          )
-                        }
-                        className="
-                          w-full
-                          rounded-2xl
-                          border
-                          border-[#d8cfc3]
-                          bg-white
-                          p-4
-                          outline-none
-                        "
-                      />
+                  </div>
 
-                    </div>
+                  <div>
 
-                  )
-                )}
+                    <label className="
+                      mb-2
+                      block
+                      font-bold
+                    ">
+                      Prix 2 personnes
+                    </label>
+
+                    <input
+                      type="number"
+                      value={room.two_people_price}
+                      onChange={(e) =>
+                        updateRoom(
+                          room.id,
+                          "two_people_price",
+                          Number(e.target.value)
+                        )
+                      }
+                      className="
+                        w-full
+                        rounded-2xl
+                        border
+                        p-4
+                      "
+                    />
+
+                  </div>
+
+                </div>
+
+                <div className="
+                  grid
+                  gap-4
+                ">
+
+                  <input
+                    type="text"
+                    value={room.image_1}
+                    onChange={(e) =>
+                      updateRoom(
+                        room.id,
+                        "image_1",
+                        e.target.value
+                      )
+                    }
+                    placeholder="Image 1"
+                    className="
+                      w-full
+                      rounded-2xl
+                      border
+                      p-4
+                    "
+                  />
+
+                  <input
+                    type="text"
+                    value={room.image_2}
+                    onChange={(e) =>
+                      updateRoom(
+                        room.id,
+                        "image_2",
+                        e.target.value
+                      )
+                    }
+                    placeholder="Image 2"
+                    className="
+                      w-full
+                      rounded-2xl
+                      border
+                      p-4
+                    "
+                  />
+
+                  <input
+                    type="text"
+                    value={room.image_3}
+                    onChange={(e) =>
+                      updateRoom(
+                        room.id,
+                        "image_3",
+                        e.target.value
+                      )
+                    }
+                    placeholder="Image 3"
+                    className="
+                      w-full
+                      rounded-2xl
+                      border
+                      p-4
+                    "
+                  />
+
+                </div>
 
               </div>
 
@@ -344,10 +625,10 @@ export default function HotelAdminPage() {
 
           </section>
 
-        </div>
+        ))}
 
-      </main>
+      </div>
 
-    </>
+    </main>
   )
 }
