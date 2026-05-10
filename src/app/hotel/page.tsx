@@ -397,6 +397,58 @@ export default function HotelPage() {
 
       </section>
 
+      {/* PRESENTATION */}
+<section
+  id="presentation"
+  className="relative snap-start min-h-screen bg-cover bg-center"
+  style={{
+    backgroundImage: "url('/images/hotel/fd1.png')",
+  }}
+>
+  {/* voile sombre léger */}
+  <div className="absolute inset-0 bg-black/40"></div>
+
+  <div className="relative z-10 mx-auto flex min-h-screen max-w-[1800px] items-center px-10">
+    <div className="grid items-center gap-16 md:grid-cols-2">
+      
+      {/* TEXTE */}
+      <div className="rounded-3xl bg-white/55 p-8 backdrop-blur-sm">
+        <h2 className="mb-6 text-3xl font-bold leading-tight md:text-5xl text-[rgba(46, 21, 14, 0.9)]">
+          Un séjour au calme au cœur de la campagne bourbonnaise
+        </h2>
+
+        <p className="mb-5 text-base leading-relaxed md:text-lg text-[rgba(46, 21, 14, 0.9)]">
+          Nos chambres vous accueillent dans une ambiance simple,
+          chaleureuse et authentique, idéale pour se reposer loin
+          de l’agitation.
+        </p>
+
+        <p className="mb-5 text-base leading-relaxed md:text-lg text-[rgba(46, 21, 14, 0.9)]">
+          Que vous soyez de passage dans l’Allier, en déplacement
+          ou en séjour dans la région, l’auberge vous propose
+          différentes formules avec possibilité de petit déjeuner
+          et de restauration sur place selon vos envies.
+        </p>
+
+        <p className="text-base leading-relaxed md:text-lg text-[rgba(46, 21, 14, 0.9)]">
+          Lors de votre réservation, vous pourrez ajouter
+          différentes options comme le petit déjeuner ou les
+          repas du midi et du soir.
+        </p>
+      </div>
+
+      {/* IMAGE */}
+      <div className="flex justify-center">
+        <img
+          src="/images/gab.png"
+          alt="Chambre"
+          className="max-h-[950px] w-full max-w-[750px] rounded-3xl object-cover shadow-2xl"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
       {/* CHAMBRES */}
 
       <section
