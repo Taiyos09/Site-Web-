@@ -1360,6 +1360,7 @@ await supabase
 
           <input
             type="date"
+            lang="fr-FR"
             value={
               manualReservation.arrival
             }
@@ -1379,6 +1380,7 @@ await supabase
 
           <input
             type="date"
+            lang="fr-FR"
             value={
               manualReservation.departure
             }
@@ -1442,7 +1444,7 @@ await supabase
         <div className="space-y-4">
 
           {[
-            "Chambre Double standard",
+            "Chambre Double Standard",
             "Chambre Confort",
             "Chambre Familiale",
           ].map((room) => {
@@ -1881,26 +1883,6 @@ await supabase
 
   <span>
     {touristTax}€
-  </span>
-
-</div>
-
-{/* BÉBÉ */}
-
-<div className="
-  flex justify-between
-  border-b
-  pb-3
-">
-
-  <span>
-    Enfant en bas âge
-  </span>
-
-  <span>
-    {manualReservation.baby
-      ? "Oui"
-      : "Non"}
   </span>
 
 </div>

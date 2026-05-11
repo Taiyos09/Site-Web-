@@ -24,6 +24,245 @@ export async function POST(
 
     const body = await req.json()
 
+    const { data: room, error: roomFetchError } =
+  await supabase
+    .from("rooms")
+    .select("*")
+    .eq("slug", body.roomSlug)
+    .single()
+
+if (roomFetchError || !room) {
+
+  return NextResponse.json(
+    {
+      error: "Chambre introuvable",
+    },
+    {
+      status: 404,
+    }
+  )
+}
+
+/* ---------------- VÉRIFICATION DISPONIBILITÉ ---------------- */
+
+const {
+  data: existingReservations,
+  error: availabilityError,
+} = await supabase
+  .from("reservation_rooms")
+  .select(`
+    reservation_id,
+    room_slug,
+    reservations (
+      arrival,
+      departure,
+      status
+    )
+  `)
+  .eq("room_slug", room.slug)
+
+if (availabilityError) {
+
+  console.error(availabilityError)
+
+  return NextResponse.json(
+    {
+      error:
+        "Erreur vérification disponibilité",
+    },
+    {
+      status: 500,
+    }
+  )
+}
+
+const hasConflict =
+  existingReservations?.some(
+    (reservation: any) => {
+
+      const existing =
+        reservation.reservations
+
+      if (!existing) return false
+
+      // ignorer refusées / annulées
+      if (
+        existing.status === "refused" ||
+        existing.status === "cancelled"
+      ) {
+        return false
+      }
+
+      return (
+        body.arrival <
+          existing.departure &&
+        body.departure >
+          existing.arrival
+      )
+    }
+  )
+
+if (hasConflict) {
+
+  return NextResponse.json(
+    {
+      error:
+        "Cette chambre est déjà réservée sur ces dates",
+    },
+    {
+      status: 409,
+    }
+  )
+}
+
+/* ---------------- SETTINGS ---------------- */
+
+const {
+  data: settings,
+  error: settingsError,
+} = await supabase
+  .from("hotel_settings")
+  .select("*")
+  .single()
+
+if (settingsError || !settings) {
+
+  return NextResponse.json(
+    {
+      error:
+        "Impossible de charger les paramètres hôtel",
+    },
+    {
+      status: 500,
+    }
+  )
+}
+
+/* ---------------- RECALCUL TOTAL ---------------- */
+
+const arrival =
+  new Date(body.arrival)
+
+const departure =
+  new Date(body.departure)
+
+const nights =
+  Math.ceil(
+    (
+      departure.getTime() -
+      arrival.getTime()
+    ) /
+      (1000 * 60 * 60 * 24)
+  )
+
+if (nights <= 0) {
+
+  return NextResponse.json(
+    {
+      error:
+        "Dates invalides",
+    },
+    {
+      status: 400,
+    }
+  )
+}
+
+if (
+  body.people < 1 ||
+  body.people > room.capacity
+) {
+
+  return NextResponse.json(
+    {
+      error:
+        "Nombre de personnes invalide",
+    },
+    {
+      status: 400,
+    }
+  )
+}
+
+/* ---------- PRIX CHAMBRE ---------- */
+
+const roomPrice =
+  body.people <= 1
+    ? Number(
+        room.one_person_price
+      )
+    : Number(
+        room.two_people_price
+      )
+
+const roomTotal =
+  roomPrice * nights
+
+/* ---------- LITS SUP ---------- */
+
+const extraPeople =
+  body.people > 2
+    ? body.people - 2
+    : 0
+
+const extraBedTotal =
+  extraPeople *
+  Number(settings.extra_bed) *
+  nights
+
+/* ---------- OPTIONS ---------- */
+
+const breakfastTotal =
+  body.breakfast
+    ? body.people *
+      Number(
+        settings.breakfast
+      ) *
+      nights
+    : 0
+
+const lunchTotal =
+  body.lunch
+    ? body.people *
+      Number(settings.lunch) *
+      nights
+    : 0
+
+const dinnerTotal =
+  body.dinner
+    ? body.people *
+      Number(
+        settings.dinner
+      ) *
+      nights
+    : 0
+
+const petTotal =
+  body.pets
+    ? Number(settings.pet) *
+      nights
+    : 0
+
+/* ---------- TAXE ---------- */
+
+const touristTaxTotal =
+  body.people *
+  Number(
+    settings.tourist_tax
+  ) *
+  nights
+
+/* ---------- TOTAL FINAL ---------- */
+
+const total =
+  roomTotal +
+  extraBedTotal +
+  breakfastTotal +
+  lunchTotal +
+  dinnerTotal +
+  petTotal +
+  touristTaxTotal
+
     /* ---------------- RESERVATION PRINCIPALE ---------------- */
 
     const {
@@ -74,7 +313,7 @@ export async function POST(
             body.message,
 
           total:
-            body.total,
+            total,
 
           status:
             "pending",
@@ -108,66 +347,37 @@ export async function POST(
         reservation_id:
           reservationData.id,
 
-        room_name:
-          body.roomName,
+        room_name: room.name,
+room_slug: room.slug,
 
         people:
           body.people,
 
         room_total:
-          body.total,
+          roomTotal,
       })
 
     if (roomError) {
 
-      console.error(roomError)
+  console.error(roomError)
 
-      return NextResponse.json(
-        {
-          error:
-            roomError.message,
-        },
-        {
-          status: 500,
-        }
-      )
+  /* ---------------- ROLLBACK ---------------- */
+
+  await supabase
+    .from("reservations")
+    .delete()
+    .eq("id", reservationData.id)
+
+  return NextResponse.json(
+    {
+      error:
+        roomError.message,
+    },
+    {
+      status: 500,
     }
-
-    /* ---------------- BLOQUER DATES ---------------- */
-
-    const {
-      error: blockedError,
-    } = await supabase
-      .from("blocked_dates")
-      .insert({
-
-        reservation_id:
-          reservationData.id,
-
-        room_name:
-          body.roomName,
-
-        from_date:
-          body.arrival,
-
-        to_date:
-          body.departure,
-      })
-
-    if (blockedError) {
-
-      console.error(blockedError)
-
-      return NextResponse.json(
-        {
-          error:
-            blockedError.message,
-        },
-        {
-          status: 500,
-        }
-      )
-    }
+  )
+}
 
     /* ---------------- EMAIL ADMIN ---------------- */
 
@@ -379,7 +589,7 @@ html: `
           font-size:42px;
           color:#d6b17a;
         ">
-          ${body.total}€
+          ${total}€
         </h2>
 
       </div>

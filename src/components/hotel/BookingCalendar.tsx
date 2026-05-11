@@ -52,73 +52,71 @@ export default function BookingCalendar({
 
   /* ---------------- DATES BLOQUÉES ---------------- */
 
-  useEffect(() => {
+useEffect(() => {
 
-    const loadBlockedDates =
-      async () => {
+  const loadBlockedDates =
+    async () => {
 
-        const { data } =
-          await supabase
-            .from("blocked_dates")
-            .select("*")
-            .eq("room_slug", roomSlug)
+      const response = await fetch(
+  `/api/blocked-dates?roomSlug=${roomSlug}`
+)
 
-        if (!data) return
+const data = await response.json()
 
-        const dates: Date[] = []
+if (!data) {
+  return
+} 
 
-        data.forEach((reservation) => {
+      const dates: Date[] = []
 
-          const start =
-            new Date(
-              reservation.from_date +
-              "T12:00:00"
-            )
+      data.forEach((item: any) => {
 
-          const end =
-            new Date(
-              reservation.to_date +
-              "T12:00:00"
-            )
+        const reservation =
+          item.reservations
 
-          const current =
-            new Date(start)
+        if (!reservation) return
 
-          while (current < end) {
+        // ignorer annulées/refusées
+        if (
+          reservation.status === "refused" ||
+          reservation.status === "cancelled"
+        ) {
+          return
+        }
 
-            const blockedDate =
-              format(
-                current,
-                "yyyy-MM-dd"
-              )
+        const start =
+          new Date(
+            reservation.arrival +
+            "T12:00:00"
+          )
 
-            const departureDate =
-              format(
-                end,
-                "yyyy-MM-dd"
-              )
+        const end =
+          new Date(
+            reservation.departure +
+            "T12:00:00"
+          )
 
-            if (
-              blockedDate !== departureDate
-            ) {
+        const current =
+          new Date(start)
 
-              dates.push(
-                new Date(current)
-              )
-            }
+        while (current < end) {
 
-            current.setDate(
-              current.getDate() + 1
-            )
-          }
-        })
+          dates.push(
+            new Date(current)
+          )
 
-        setBlockedDates(dates)
-      }
+          current.setDate(
+            current.getDate() + 1
+          )
+        }
+      })
 
-    loadBlockedDates()
+      setBlockedDates(dates)
+    }
 
-  }, [roomSlug])
+  loadBlockedDates()
+
+}, [roomSlug])
 
   /* ---------------- SETTINGS ---------------- */
 

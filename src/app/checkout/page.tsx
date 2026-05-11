@@ -6,6 +6,7 @@ type ReservationData = {
   from: string
   to: string
   roomName: string
+  roomSlug: string
   status: string
   nights: number
   people: number
@@ -81,6 +82,7 @@ export default function CheckoutPage() {
     departure: reservation.to,
     
     roomName: reservation.roomName,
+    roomSlug: reservation.roomSlug,
 
     nights: reservation.nights,
     people: reservation.people,
@@ -117,14 +119,15 @@ export default function CheckoutPage() {
 
     if (!response.ok) {
 
-      console.error(data)
+  console.error(data)
 
-      alert(
-        "Erreur lors de l'envoi"
-      )
+  alert(
+    data.error ||
+    "Erreur lors de l'envoi"
+  )
 
-      return
-    }
+  return
+}
 
     alert(
       "Votre demande de réservation a bien été envoyée."

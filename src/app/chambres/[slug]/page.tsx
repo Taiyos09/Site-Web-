@@ -1,32 +1,50 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { HOTEL_CONFIG } from "@/data/hotel"
-import BookingCalendar from "@/components/hotel/BookingCalendar"
+import { supabase } from "@/lib/supabase"
+
+type Props = {
+  params: Promise<{
+    slug: string
+  }>
+}
 
 export default async function RoomPage({
   params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
+}: Props) {
 
-  const { slug } = await params
 
-  const room = HOTEL_CONFIG.rooms.find(
-    (r) => r.slug === slug
-  )
+  const { slug } =
+    await params
 
-  if (!room) {
+  const {
+    data: room,
+    error,
+  } = await supabase
+    .from("rooms")
+    .select("*")
+    .eq("slug", slug)
+    .single()
+
+  if (error || !room) {
     notFound()
   }
 
+  const images = [
+    room.image_1,
+    room.image_2,
+    room.image_3,
+  ].filter(Boolean)
+
   return (
+
     <main className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
 
       {/* HERO */}
+
       <section className="relative h-[72vh] overflow-hidden">
 
         <img
-          src={room.images[0]}
+          src={images[0]}
           alt={room.name}
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -39,7 +57,7 @@ export default async function RoomPage({
 
             <div className="max-w-3xl">
 
-              <p className="mb-4 text-lg tracking-[0.3em] text-[#d6b98c] uppercase">
+              <p className="mb-4 text-lg uppercase tracking-[0.3em] text-[#d6b98c]">
                 Auberge de St Aubin
               </p>
 
@@ -56,49 +74,69 @@ export default async function RoomPage({
           </div>
 
         </div>
+
       </section>
 
       {/* CONTENU */}
+
       <section className="mx-auto max-w-[1700px] px-8 py-24">
 
         <div className="grid gap-20 xl:grid-cols-[1.4fr_500px]">
 
           {/* GAUCHE */}
+
           <div>
 
             {/* GALERIE */}
+
             <div className="grid gap-6 md:grid-cols-2">
 
-              {room.images.map((img, index) => (
+              {images.map(
+                (
+                  img,
+                  index
+                ) => (
 
-                <div
-                  key={index}
-                  className={`
-                    overflow-hidden rounded-[32px]
-                    shadow-2xl
-                    ${index === 0 ? "md:col-span-2" : ""}
-                  `}
-                >
-
-                  <img
-                    src={img}
-                    alt={room.name}
+                  <div
+                    key={index}
                     className={`
-                      w-full object-cover transition duration-700 hover:scale-105
-                      ${index === 0
-                        ? "h-[650px]"
-                        : "h-[320px]"
+                      overflow-hidden
+                      rounded-[32px]
+                      shadow-2xl
+                      ${
+                        index === 0
+                          ? "md:col-span-2"
+                          : ""
                       }
                     `}
-                  />
+                  >
 
-                </div>
+                    <img
+                      src={img}
+                      alt={room.name}
+                      className={`
+                        w-full
+                        object-cover
+                        transition
+                        duration-700
+                        hover:scale-105
+                        ${
+                          index === 0
+                            ? "h-[650px]"
+                            : "h-[320px]"
+                        }
+                      `}
+                    />
 
-              ))}
+                  </div>
+
+                )
+              )}
 
             </div>
 
             {/* DESCRIPTION */}
+
             <div className="mt-20">
 
               <h2 className="mb-8 font-serif text-5xl font-bold">
@@ -131,11 +169,13 @@ export default async function RoomPage({
           </div>
 
           {/* DROITE */}
+
           <div>
 
             <div className="sticky top-32 overflow-hidden rounded-[36px] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
 
               {/* PRIX */}
+
               <div className="bg-[#2f241d] p-10 text-white">
 
                 <p className="mb-3 text-lg text-white/70">
@@ -145,7 +185,7 @@ export default async function RoomPage({
                 <div className="flex items-end gap-3">
 
                   <span className="text-6xl font-bold">
-                    {HOTEL_CONFIG.roomPrices.onePerson}€
+                    {room.one_person_price}€
                   </span>
 
                   <span className="pb-2 text-white/70">
@@ -157,6 +197,7 @@ export default async function RoomPage({
               </div>
 
               {/* INFOS */}
+
               <div className="space-y-8 p-10">
 
                 <div>
@@ -197,6 +238,7 @@ export default async function RoomPage({
                 </div>
 
                 {/* CTA */}
+
                 <Link
                   href={`/reservation/${room.slug}`}
                   className="

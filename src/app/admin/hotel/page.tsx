@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 
 type Room = {
-  id: number
+  id: string
   name: string
   slug: string
   description: string
@@ -33,7 +33,6 @@ type HotelSettings = {
 }
 
 export default function HotelAdminPage() {
-
   const [rooms, setRooms] =
     useState<Room[]>([])
 
@@ -43,176 +42,307 @@ export default function HotelAdminPage() {
   const [loading, setLoading] =
     useState(true)
 
+  const [savingRoom, setSavingRoom] =
+    useState<string | null>(null)
+
+  const [savingSettings, setSavingSettings] =
+    useState(false)
+
   useEffect(() => {
-
     loadData()
-
   }, [])
 
   async function loadData() {
-
     try {
-
-      const { data: roomsData } =
+      const { data: roomsData, error: roomsError } =
         await supabase
           .from("rooms")
           .select("*")
-          .order("id")
+          .order("name")
 
-      const { data: settingsData } =
-        await supabase
-          .from("hotel_settings")
-          .select("*")
-          .single()
+      if (roomsError) {
+        console.error(roomsError)
+      }
+
+      const {
+        data: settingsData,
+        error: settingsError,
+      } = await supabase
+        .from("hotel_settings")
+        .select("*")
+        .single()
+
+      if (settingsError) {
+        console.error(settingsError)
+      }
 
       setRooms(roomsData || [])
 
       if (settingsData) {
         setSettings(settingsData)
       }
-
     } catch (error) {
-
       console.error(error)
-
     } finally {
-
       setLoading(false)
     }
   }
 
-  async function updateRoom(
-    roomId: number,
-    field: string,
+  // =========================
+  // UPDATE ROOM LOCAL STATE
+  // =========================
+
+  function handleRoomChange(
+    roomId: string,
+    field: keyof Room,
     value: any
   ) {
-
-    try {
-
-      await supabase
-        .from("rooms")
-        .update({
-          [field]: value,
-        })
-        .eq("id", roomId)
-
-      setRooms((prev) =>
-        prev.map((room) =>
-          room.id === roomId
-            ? {
-                ...room,
-                [field]: value,
-              }
-            : room
-        )
+    setRooms((prev) =>
+      prev.map((room) =>
+        room.id === roomId
+          ? {
+              ...room,
+              [field]: value,
+            }
+          : room
       )
+    )
+  }
 
+  // =========================
+  // SAVE ROOM
+  // =========================
+
+  async function saveRoom(room: Room) {
+    try {
+      setSavingRoom(room.id)
+
+      const { error } =
+        await supabase
+          .from("rooms")
+          .update({
+            name: room.name,
+            description: room.description,
+            size: room.size,
+
+            one_person_price:
+              room.one_person_price,
+
+            two_people_price:
+              room.two_people_price,
+
+            image_1: room.image_1,
+            image_2: room.image_2,
+            image_3: room.image_3,
+          })
+          .eq("id", room.id)
+
+      console.log(error)
+
+if (error) {
+        alert(
+          "Erreur lors de la sauvegarde"
+        )
+        return
+      }
+
+      alert(
+        `Chambre "${room.name}" sauvegardée`
+      )
     } catch (error) {
-
       console.error(error)
+
+      alert(
+        "Erreur lors de la sauvegarde"
+      )
+    } finally {
+      setSavingRoom(null)
     }
   }
 
-  async function updateSetting(
-    field: string,
+  // =========================
+  // SETTINGS LOCAL STATE
+  // =========================
+
+  function handleSettingChange(
+    field: keyof HotelSettings,
     value: number
   ) {
+    if (!settings) return
 
+    setSettings({
+      ...settings,
+      [field]: value,
+    })
+  }
+
+  // =========================
+  // SAVE SETTINGS
+  // =========================
+
+  async function saveSettings() {
     if (!settings) return
 
     try {
+      setSavingSettings(true)
 
-      await supabase
-        .from("hotel_settings")
-        .update({
-          [field]: value,
-        })
-        .eq("id", settings.id)
+      const { error } =
+        await supabase
+          .from("hotel_settings")
+          .update({
+            breakfast:
+              settings.breakfast,
 
-      setSettings({
-        ...settings,
-        [field]: value,
-      })
+            lunch:
+              settings.lunch,
 
+            dinner:
+              settings.dinner,
+
+            pet:
+              settings.pet,
+
+            tourist_tax:
+              settings.tourist_tax,
+
+            extra_bed:
+              settings.extra_bed,
+          })
+          .eq("id", settings.id)
+
+      if (error) {
+        console.error(error)
+
+        alert(
+          "Erreur sauvegarde paramètres"
+        )
+
+        return
+      }
+
+      alert(
+        "Paramètres sauvegardés"
+      )
     } catch (error) {
-
       console.error(error)
+
+      alert(
+        "Erreur sauvegarde paramètres"
+      )
+    } finally {
+      setSavingSettings(false)
     }
   }
 
   if (loading) {
-
     return (
-      <div className="
-        flex
-        min-h-screen
-        items-center
-        justify-center
-        bg-[#f5f1ea]
-      ">
+      <div
+        className="
+          flex
+          min-h-screen
+          items-center
+          justify-center
+          bg-[#f5f1ea]
+        "
+      >
         Chargement...
       </div>
     )
   }
 
   return (
-
-    <main className="
-      min-h-screen
-      bg-[#f5f1ea]
-      p-10
-      text-[#2f241d]
-    ">
+    <main
+      className="
+        min-h-screen
+        bg-[#f5f1ea]
+        p-10
+        text-[#2f241d]
+      "
+    >
+      {/* HEADER */}
 
       <div className="mb-12">
-
-        <h1 className="
-          text-5xl
-          font-bold
-          font-serif
-        ">
+        <h1
+          className="
+            font-serif
+            text-5xl
+            font-bold
+          "
+        >
           Gestion Hôtel
         </h1>
 
-        <p className="
-          mt-2
-          text-[#6b5b4f]
-        ">
-          Toutes les modifications sont
-          appliquées automatiquement
-          sur le site.
+        <p
+          className="
+            mt-2
+            text-[#6b5b4f]
+          "
+        >
+          Gérez les chambres,
+          tarifs et paramètres
+          de réservation.
         </p>
-
       </div>
 
-      {/* TARIFS GÉNÉRAUX */}
+      {/* SETTINGS */}
 
       {settings && (
+        <section
+          className="
+            mb-12
+            rounded-[36px]
+            bg-white
+            p-8
+            shadow-xl
+          "
+        >
+          <div
+            className="
+              mb-8
+              flex
+              items-center
+              justify-between
+            "
+          >
+            <h2
+              className="
+                font-serif
+                text-3xl
+                font-bold
+              "
+            >
+              Tarifs supplémentaires
+            </h2>
 
-        <section className="
-          mb-12
-          rounded-[36px]
-          bg-white
-          p-8
-          shadow-xl
-        ">
+            <button
+              onClick={saveSettings}
+              disabled={savingSettings}
+              className="
+                rounded-2xl
+                bg-[#2f241d]
+                px-6
+                py-3
+                font-bold
+                text-white
+                transition
+                hover:opacity-90
+                disabled:opacity-50
+              "
+            >
+              {savingSettings
+                ? "Sauvegarde..."
+                : "Sauvegarder"}
+            </button>
+          </div>
 
-          <h2 className="
-            mb-8
-            text-3xl
-            font-bold
-            font-serif
-          ">
-            Tarifs supplémentaires
-          </h2>
-
-          <div className="
-            grid
-            gap-6
-            md:grid-cols-2
-            xl:grid-cols-3
-          ">
-
+          <div
+            className="
+              grid
+              gap-6
+              md:grid-cols-2
+              xl:grid-cols-3
+            "
+          >
             <div>
               <label className="mb-2 block font-bold">
                 Petit déjeuner
@@ -222,7 +352,7 @@ export default function HotelAdminPage() {
                 type="number"
                 value={settings.breakfast}
                 onChange={(e) =>
-                  updateSetting(
+                  handleSettingChange(
                     "breakfast",
                     Number(e.target.value)
                   )
@@ -245,7 +375,7 @@ export default function HotelAdminPage() {
                 type="number"
                 value={settings.lunch}
                 onChange={(e) =>
-                  updateSetting(
+                  handleSettingChange(
                     "lunch",
                     Number(e.target.value)
                   )
@@ -268,7 +398,7 @@ export default function HotelAdminPage() {
                 type="number"
                 value={settings.dinner}
                 onChange={(e) =>
-                  updateSetting(
+                  handleSettingChange(
                     "dinner",
                     Number(e.target.value)
                   )
@@ -291,7 +421,7 @@ export default function HotelAdminPage() {
                 type="number"
                 value={settings.pet}
                 onChange={(e) =>
-                  updateSetting(
+                  handleSettingChange(
                     "pet",
                     Number(e.target.value)
                   )
@@ -314,7 +444,7 @@ export default function HotelAdminPage() {
                 type="number"
                 value={settings.extra_bed}
                 onChange={(e) =>
-                  updateSetting(
+                  handleSettingChange(
                     "extra_bed",
                     Number(e.target.value)
                   )
@@ -336,9 +466,11 @@ export default function HotelAdminPage() {
               <input
                 type="number"
                 step="0.1"
-                value={settings.tourist_tax}
+                value={
+                  settings.tourist_tax
+                }
                 onChange={(e) =>
-                  updateSetting(
+                  handleSettingChange(
                     "tourist_tax",
                     Number(e.target.value)
                   )
@@ -351,19 +483,14 @@ export default function HotelAdminPage() {
                 "
               />
             </div>
-
           </div>
-
         </section>
-
       )}
 
-      {/* CHAMBRES */}
+      {/* ROOMS */}
 
       <div className="space-y-10">
-
         {rooms.map((room) => (
-
           <section
             key={room.id}
             className="
@@ -373,15 +500,65 @@ export default function HotelAdminPage() {
               shadow-xl
             "
           >
+            <div
+              className="
+                mb-8
+                flex
+                items-center
+                justify-between
+              "
+            >
+              <div>
+                <h2
+                  className="
+                    font-serif
+                    text-3xl
+                    font-bold
+                  "
+                >
+                  {room.name}
+                </h2>
 
-            <div className="
-              grid
-              gap-8
-              lg:grid-cols-2
-            ">
+                <p className="mt-1 text-sm text-[#6b5b4f]">
+                  Slug : {room.slug}
+                </p>
+              </div>
+
+              <button
+                onClick={() =>
+                  saveRoom(room)
+                }
+                disabled={
+                  savingRoom === room.id
+                }
+                className="
+                  rounded-2xl
+                  bg-[#2f241d]
+                  px-6
+                  py-3
+                  font-bold
+                  text-white
+                  transition
+                  hover:opacity-90
+                  disabled:opacity-50
+                "
+              >
+                {savingRoom === room.id
+                  ? "Sauvegarde..."
+                  : "Sauvegarder"}
+              </button>
+            </div>
+
+            <div
+              className="
+                grid
+                gap-8
+                lg:grid-cols-2
+              "
+            >
+              {/* IMAGE */}
 
               <div>
-
                 <img
                   src={room.image_1}
                   alt={room.name}
@@ -392,18 +569,13 @@ export default function HotelAdminPage() {
                     object-cover
                   "
                 />
-
               </div>
 
+              {/* FORM */}
+
               <div className="space-y-5">
-
                 <div>
-
-                  <label className="
-                    mb-2
-                    block
-                    font-bold
-                  ">
+                  <label className="mb-2 block font-bold">
                     Nom
                   </label>
 
@@ -411,7 +583,7 @@ export default function HotelAdminPage() {
                     type="text"
                     value={room.name}
                     onChange={(e) =>
-                      updateRoom(
+                      handleRoomChange(
                         room.id,
                         "name",
                         e.target.value
@@ -424,16 +596,10 @@ export default function HotelAdminPage() {
                       p-4
                     "
                   />
-
                 </div>
 
                 <div>
-
-                  <label className="
-                    mb-2
-                    block
-                    font-bold
-                  ">
+                  <label className="mb-2 block font-bold">
                     Taille
                   </label>
 
@@ -441,7 +607,7 @@ export default function HotelAdminPage() {
                     type="text"
                     value={room.size}
                     onChange={(e) =>
-                      updateRoom(
+                      handleRoomChange(
                         room.id,
                         "size",
                         e.target.value
@@ -454,23 +620,19 @@ export default function HotelAdminPage() {
                       p-4
                     "
                   />
-
                 </div>
 
                 <div>
-
-                  <label className="
-                    mb-2
-                    block
-                    font-bold
-                  ">
+                  <label className="mb-2 block font-bold">
                     Description
                   </label>
 
                   <textarea
-                    value={room.description}
+                    value={
+                      room.description || ""
+                    }
                     onChange={(e) =>
-                      updateRoom(
+                      handleRoomChange(
                         room.id,
                         "description",
                         e.target.value
@@ -484,33 +646,32 @@ export default function HotelAdminPage() {
                       p-4
                     "
                   />
-
                 </div>
 
-                <div className="
-                  grid
-                  gap-4
-                  md:grid-cols-2
-                ">
-
+                <div
+                  className="
+                    grid
+                    gap-4
+                    md:grid-cols-2
+                  "
+                >
                   <div>
-
-                    <label className="
-                      mb-2
-                      block
-                      font-bold
-                    ">
+                    <label className="mb-2 block font-bold">
                       Prix 1 personne
                     </label>
 
                     <input
                       type="number"
-                      value={room.one_person_price}
+                      value={
+                        room.one_person_price || 0
+                      }
                       onChange={(e) =>
-                        updateRoom(
+                        handleRoomChange(
                           room.id,
                           "one_person_price",
-                          Number(e.target.value)
+                          Number(
+                            e.target.value
+                          )
                         )
                       }
                       className="
@@ -520,27 +681,25 @@ export default function HotelAdminPage() {
                         p-4
                       "
                     />
-
                   </div>
 
                   <div>
-
-                    <label className="
-                      mb-2
-                      block
-                      font-bold
-                    ">
+                    <label className="mb-2 block font-bold">
                       Prix 2 personnes
                     </label>
 
                     <input
                       type="number"
-                      value={room.two_people_price}
+                      value={
+                        room.two_people_price || 0
+                      }
                       onChange={(e) =>
-                        updateRoom(
+                        handleRoomChange(
                           room.id,
                           "two_people_price",
-                          Number(e.target.value)
+                          Number(
+                            e.target.value
+                          )
                         )
                       }
                       className="
@@ -550,21 +709,15 @@ export default function HotelAdminPage() {
                         p-4
                       "
                     />
-
                   </div>
-
                 </div>
 
-                <div className="
-                  grid
-                  gap-4
-                ">
-
+                <div className="grid gap-4">
                   <input
                     type="text"
-                    value={room.image_1}
+                    value={room.image_1 || ""}
                     onChange={(e) =>
-                      updateRoom(
+                      handleRoomChange(
                         room.id,
                         "image_1",
                         e.target.value
@@ -581,9 +734,9 @@ export default function HotelAdminPage() {
 
                   <input
                     type="text"
-                    value={room.image_2}
+                    value={room.image_2 || ""}
                     onChange={(e) =>
-                      updateRoom(
+                      handleRoomChange(
                         room.id,
                         "image_2",
                         e.target.value
@@ -600,9 +753,9 @@ export default function HotelAdminPage() {
 
                   <input
                     type="text"
-                    value={room.image_3}
+                    value={room.image_3 || ""}
                     onChange={(e) =>
-                      updateRoom(
+                      handleRoomChange(
                         room.id,
                         "image_3",
                         e.target.value
@@ -616,19 +769,12 @@ export default function HotelAdminPage() {
                       p-4
                     "
                   />
-
                 </div>
-
               </div>
-
             </div>
-
           </section>
-
         ))}
-
       </div>
-
     </main>
   )
 }
