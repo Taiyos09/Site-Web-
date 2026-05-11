@@ -10,7 +10,7 @@ export default function AdminNavbar() {
       className="
         sticky
         top-0
-        z-[9999]
+        z-50
         mb-10
         rounded-[28px]
         border

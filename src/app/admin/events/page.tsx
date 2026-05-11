@@ -94,8 +94,6 @@ export default function EventsPage() {
         text-[#2f241d]
       ">
 
-        <AdminNavbar />
-
         <div className="mt-10">
 
           {/* EVENEMENTS */}

@@ -190,8 +190,6 @@ export default function RestaurantAdminPage() {
         text-[#2f241d]
       ">
 
-        <AdminNavbar />
-
         <div className="mt-10">
 
           <div className="
