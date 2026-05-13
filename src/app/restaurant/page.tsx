@@ -1,8 +1,21 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useState, useMemo } from "react"
-import { RESTAURANT_CONFIG } from "@/data/restaurant"
+
+import {
+  motion,
+} from "framer-motion"
+
+import {
+  useEffect,
+  useState,
+} from "react"
+
+import Navbar from "@/components/Navbar"
+
+import {
+  RESTAURANT_CONFIG,
+} from "@/data/restaurant"
 
 const images = [
   "/images/restaurant1.jpeg",
@@ -11,387 +24,1024 @@ const images = [
 ]
 
 export default function RestaurantPage() {
-  const [restaurantConfig, setRestaurantConfig] = useState(RESTAURANT_CONFIG)
-  const [currentImage, setCurrentImage] = useState(0)
+
+  const [
+    restaurantConfig,
+    setRestaurantConfig,
+  ] = useState(RESTAURANT_CONFIG)
+
+  const [
+    currentImage,
+    setCurrentImage,
+  ] = useState(0)
+
+  /* ====================================== */
+  /* ANIMATIONS */
+  /* ====================================== */
+
+  const fadeUp = {
+
+    hidden: {
+      opacity: 0,
+      y: 40,
+    },
+
+    visible: {
+      opacity: 1,
+      y: 0,
+
+      transition: {
+        duration: 0.7,
+      },
+    },
+  }
+
+  /* ====================================== */
+  /* LOAD DATA */
+  /* ====================================== */
 
   useEffect(() => {
-    const readRestaurantConfig = () => {
-      const savedRestaurant = localStorage.getItem("restaurantData")
-      if (!savedRestaurant) return
 
-      setRestaurantConfig(JSON.parse(savedRestaurant))
-    }
+    const readRestaurantConfig =
+      () => {
+
+        const savedRestaurant =
+          localStorage.getItem(
+            "restaurantData"
+          )
+
+        if (!savedRestaurant)
+          return
+
+        setRestaurantConfig(
+          JSON.parse(savedRestaurant)
+        )
+      }
 
     readRestaurantConfig()
 
-    window.addEventListener("pricesUpdated", readRestaurantConfig)
+    window.addEventListener(
+      "pricesUpdated",
+      readRestaurantConfig
+    )
+
     return () => {
-      window.removeEventListener("pricesUpdated", readRestaurantConfig)
+
+      window.removeEventListener(
+        "pricesUpdated",
+        readRestaurantConfig
+      )
     }
+
   }, [])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prev) =>
-        prev === images.length - 1 ? 0 : prev + 1
-      )
-    }, 4000)
+  /* ====================================== */
+  /* AUTO SLIDER */
+  /* ====================================== */
 
-    return () => clearInterval(interval)
+  useEffect(() => {
+
+    const interval =
+      setInterval(() => {
+
+        setCurrentImage((prev) =>
+          prev === images.length - 1
+            ? 0
+            : prev + 1
+        )
+
+      }, 4000)
+
+    return () =>
+      clearInterval(interval)
+
   }, [])
 
   return (
-    <div className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth bg-[#f5f1ea] text-[#2f241d]">
+
+    <div
+      className="
+        
+        bg-[#f5f1ea]
+        text-[#2f241d]
+      "
+    >
+
+      {/* NAVBAR */}
+
+      <Navbar />
+
       {/* HERO */}
+
       <section
-        className="relative snap-start min-h-screen flex h-[60vh] items-center justify-center bg-cover bg-center"
+        className="
+          relative
+          flex
+          h-[82vh]
+          min-h-[700px]
+          items-center
+          justify-center
+          bg-cover
+          bg-center
+          border-b
+          border-[#e4d8c8]
+        "
         style={{
           backgroundImage:
             "url('/images/restaurant-hero.jpeg')",
         }}
       >
-        <div className="absolute inset-0 bg-black/50" />
 
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
+        <div
+          className="
+            absolute
+            inset-0
+            bg-black/50
+          "
+        />
+
+        <div
+          className="
+            relative
+            z-10
+            px-6
+            text-center
+            text-white
+          "
+        >
+
           <img
             src="/images/logo2.png"
             alt="Logo"
-            className="mb-4 h-100 w-auto drop-shadow-2xl"
+            className="
+              mx-auto
+              mb-6
+              h-52
+              w-auto
+              md:h-64
+              drop-shadow-2xl
+            "
           />
 
-          <p className="max-w-3xl text-lg md:text-2xl text-white/90"style={{
-    textShadow: `
-      0 0 3px rgba(0,0,0,0.95),
-    2px 2px 4px rgba(0,0,0,0.9),
-    4px 4px 8px rgba(0,0,0,0.85),
-    6px 6px 12px rgba(0,0,0,0.75)
-    `,
-    transform: 'translateY(2px)',
-    opacity: '1'
-  }}>
-            Cuisine maison, terroir bourbonnais et ambiance conviviale.
+          <p
+            className="
+              mx-auto
+              max-w-2xl
+              text-[20px]
+              leading-relaxed
+              text-white/90
+              md:text-xl
+            "
+          >
+            Cuisine maison,
+            terroir bourbonnais
+            et ambiance conviviale.
           </p>
+
         </div>
+
       </section>
 
       {/* PRESENTATION */}
-      <section
-  id="restaurant"
-  className="snap-start min-h-screen flex items-center justify-center bg-[#f5f1ea]"
->
-  <div className="mx-auto max-w-7xl px-6">
-    <div className="grid items-center gap-12 md:grid-cols-2">
-      <div>
-      <h2 className="mb-6 text-4xl font-serif font-bold">
-        Une auberge authentique
-      </h2>
 
-      <p className="mb-4 text-lg leading-relaxed font-sans text-[#5a4c42]">
-        Située au cœur de la campagne bourbonnaise, dans un cadre calme et
-        authentique, l’Auberge de St Aubin vous accueille pour partager un
-        moment convivial autour d’une cuisine généreuse et traditionnelle.
-        Que ce soit pour une pause au bar, un repas en famille ou un séjour
-        au calme dans l’Allier, l’auberge vous ouvre ses portes dans une
-        ambiance chaleureuse et familiale.
-      </p>
+      <motion.section
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{
+          once: true,
+          amount: 0.15,
+        }}
+        className="
+          border-t
+          border-[#e4d8c8]
+          py-20
+          md:py-28
+        "
+      >
 
-      <p className="text-lg leading-relaxed font-sans text-[#5a4c42]">
-        Entre chambres confortables, cuisine maison et événements du vendredi
-        soir, découvrez une ambiance rustique moderne pensée pour tous.
-      </p>
-      </div>
+        <div
+          className="
+            mx-auto
+            grid
+            max-w-6xl
+            items-center
+            gap-16
+            px-6
+            lg:grid-cols-2
+          "
+        >
 
-      <div className="overflow-hidden rounded-3xl shadow-2xl bg-[#f5f1ea] h-[280px] sm:h-[360px] md:h-[420px]">
-        <img
-          src={images[currentImage]}
-          alt="Auberge"
-          className="h-full w-full object-cover rounded-3xl"
-        />
-      </div>
-    </div>
-  </div>
-</section>
+          {/* TEXTE */}
 
-     {/* CARTE + MENU */}
-<section
-  className="relative snap-start min-h-screen overflow-hidden py-24"
-  style={{
-    backgroundImage:
-      "url('/images/restaurant-propos.png')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  }}
->
+          <div
+            className="
+              rounded-[28px]
+              bg-white
+              p-8
+              shadow-xl
+            "
+          >
 
-  {/* OVERLAY SOMBRE */}
-  <div className="absolute inset-0 bg-black/10" />
+            <p
+              className="
+                mb-3
+                text-sm
+                uppercase
+                tracking-[0.3em]
+                text-[#b18752]
+              "
+            >
+              Restaurant
+            </p>
 
-{/* TITRE */}
-    <div className="mb-10 text-center">
-      <h2 className="mb-3 text-5xl font-serif font-bold text-[rgba(0, 0, 0, 0.8)]">
-        Nos Propositions culinaires
-      </h2>
+            <h2
+              className="
+                mb-6
+                font-serif
+                text-4xl
+                font-bold
+                leading-tight
+                md:text-4xl
+              "
+            >
+              Une cuisine généreuse
+              et authentique
+            </h2>
 
-      <p className="mx-auto max-w-2xl text-lg text-[rgba(0, 0, 0, 0.8)] font-sans">
-        Découvrez notre cuisine maison et notre menu du jour.
-      </p>
-    </div>
+            <div
+              className="
+                space-y-5
+                text-[20px]
+                leading-relaxed
+                text-[#5a4c42]
+              "
+            >
 
-    {/* CONTENU */}
-    <div className="grid items-start gap-8 xl:grid-cols-[1.75fr_0.55fr]">
+              <p>
+                Située au cœur de la
+                campagne bourbonnaise,
+                l’Auberge de St Aubin
+                vous accueille dans
+                une ambiance chaleureuse
+                et familiale.
+              </p>
+
+              <p>
+                Découvrez une cuisine
+                maison inspirée du
+                terroir, avec des plats
+                simples, généreux
+                et conviviaux.
+              </p>
+
+              <p>
+                Entre repas en famille,
+                menu du jour et soirées
+                animées, profitez d’un
+                véritable moment
+                de partage.
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* IMAGE */}
+
+          <div
+            className="
+              overflow-hidden
+              rounded-[28px]
+              shadow-2xl
+            "
+          >
+
+            <img
+              src={images[currentImage]}
+              alt="Restaurant"
+              className="
+                h-[420px]
+                w-full
+                object-cover
+              "
+            />
+
+          </div>
+
+        </div>
+
+      </motion.section>
 
       {/* CARTE */}
-      <div className="grid gap-8 md:grid-cols-3">
 
-        {/* ENTREES */}
-        <div className="rounded-3xl bg-[#faf7f2]/80 p-8 shadow-xl">
-          <h3 className="mb-10 text-center text-3xl font-serif font-bold">
-            Entrées
-          </h3>
+      <motion.section
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{
+          once: true,
+          amount: 0.15,
+        }}
+        className="
+          relative
+          border-t
+          border-[#e4d8c8]
+          bg-cover
+          bg-center
+          py-20
+          md:py-28
+        "
+        style={{
+          backgroundImage:
+            "url('/images/restaurant-propos.png')",
+        }}
+      >
 
-          <div className="space-y-6 font-sans">
-            {restaurantConfig.entrees.map((item, index) => (
-              <div
-                key={index}
-                className="flex justify-between"
-              >
-                <span>{item.name}</span>
-                <span>{item.price}€</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <div
+          className="
+            absolute
+            inset-0
+            bg-black/10
+          "
+        />
 
-        {/* PLATS */}
-        <div className="rounded-3xl bg-[#faf7f2]/80 p-8 shadow-xl">
-          <h3 className="mb-10 text-center text-3xl font-serif font-bold">
-            Plats
-          </h3>
+        <div
+          className="
+            relative
+            z-10
+            mx-auto
+            max-w-7xl
+            px-6
+          "
+        >
 
-          <div className="space-y-6 font-sans">
-            {restaurantConfig.plats.map((item, index) => (
-              <div
-                key={index}
-                className="flex justify-between"
-              >
-                <span>{item.name}</span>
-                <span>{item.price}€</span>
-              </div>
-            ))}
-          </div>
-        </div>
+          {/* TITRE */}
 
-        {/* DESSERTS */}
-        <div className="rounded-3xl bg-[#faf7f2]/80 p-8 shadow-xl">
-          <h3 className="mb-10 text-center text-3xl font-serif font-bold">
-            Desserts
-          </h3>
+          <div className="mb-16 text-center">
 
-          <div className="space-y-6 font-sans">
-            {restaurantConfig.desserts.map((item, index) => (
-              <div
-                key={index}
-                className="flex justify-between"
-              >
-                <span>{item.name}</span>
-                <span>{item.price}€</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+            <p
+              className="
+                mb-3
+                text-sm
+                uppercase
+                tracking-[0.3em]
+                text-[#8a6330]
+              "
+            >
+              Cuisine maison
+            </p>
 
-      {/* COLONNE DROITE */}
-      <div className="-mt-25 flex flex-col gap-6">
-
-        {/* MENU DU JOUR */}
-        <div className="rounded-[32px] bg-[#2f241d] p-7 text-white shadow-2xl">
-
-          <div className="mb-8 text-center">
-            <h2 className="mb-4 text-3xl font-bold font-serif">
-              {restaurantConfig.menuDuJour.title}
+            <h2
+              className="
+                mb-4
+                font-serif
+                text-4xl
+                font-bold
+                md:text-4xl
+              "
+            >
+              Nos propositions culinaires
             </h2>
 
-            <p className="text-lg font-sans text-white/80">
-              {restaurantConfig.menuDuJour.description}
+            <p
+              className="
+                mx-auto
+                max-w-2xl
+                text-lg
+                text-[#5a4c42]
+              "
+            >
+              Découvrez notre carte
+              et nos menus du moment.
             </p>
+
           </div>
 
-          <div className="space-y-4 text-center text-xl">
-            <p>
-              🥗 {restaurantConfig.menuDuJour.starter}
-            </p>
+          {/* CONTENU */}
 
-            <p>
-              🍖 {restaurantConfig.menuDuJour.main}
-            </p>
+<div
+  className="
+    grid
+    items-start
+    gap-10
+    xl:grid-cols-[0.72fr_1.28fr]
+  "
+>
 
-            <p>
-              🍰 {restaurantConfig.menuDuJour.dessert}
-            </p>
+  {/* MENUS EN AVANT */}
 
-            <div className="pt-6 text-4xl font-bold text-[#c89b5f]">
-              {restaurantConfig.menuDuJour.price}€
-            </div>
-          </div>
-        </div>
+  <div className="space-y-6">
 
-        {/* MENU ENFANT */}
-        <div className="rounded-[32px] bg-[#c89b5f] p-6 text-white shadow-2xl">
+    {/* MENU JOUR */}
 
-          <div className="mb-8 text-center">
-            <h2 className="mb-3 text-3xl font-bold font-serif">
-              Menu enfant
-            </h2>
+    <div
+      className="
+        rounded-[32px]
+        max-w-[520px]
+        bg-[#2f241d]
+        p-6
+        text-white
+        shadow-[0_18px_45px_rgba(0,0,0,0.22)]
+        border
+        border-[#c89b5f]/30
+        transition-all
+        duration-300
+        hover:-translate-y-1
+      "
+    >
 
-            <p className="font-sans text-white/90">
-              Pour les petits gourmands.
-            </p>
-          </div>
+      <div className="mb-6 text-center">
 
-          <div className="space-y-5 text-center">
+        <p
+          className="
+            mb-2
+            text-xs
+            uppercase
+            tracking-[0.35em]
+            text-[#c89b5f]
+          "
+        >
+          Formule
+        </p>
 
-            <p className="font-sans text-lg">
-              🍗 {restaurantConfig.menuEnfant.main}
-            </p>
+        <h2
+          className="
+            mb-3
+            font-serif
+            text-3xl
+            font-bold
+            md:text-4xl
+          "
+        >
+          Menu du jour
+        </h2>
 
-            <p className="font-sans text-lg">
-              🍟 {restaurantConfig.menuEnfant.side}
-            </p>
-
-            <p className="font-sans text-lg">
-              🧃 {restaurantConfig.menuEnfant.drink}
-            </p>
-
-            <p className="font-sans text-lg">
-              🍦 {restaurantConfig.menuEnfant.dessert}
-            </p>
-
-            <div className="pt-4 text-3xl font-bold text-[#2f241d]">
-              {restaurantConfig.menuEnfant.price}€
-            </div>
-          </div>
-        </div>
+        <p
+          className="
+            text-lg
+            text-white/80
+          "
+        >
+          Disponible du lundi
+          au vendredi midi.
+        </p>
 
       </div>
+
+      <div
+        className="
+          space-y-4
+          text-center
+          text-lg
+          leading-relaxed
+        "
+      >
+
+        <p>
+          🥗 {restaurantConfig.menuDuJour.starter}
+        </p>
+
+        <p>
+          🍖 {restaurantConfig.menuDuJour.main}
+        </p>
+
+        <p>
+          🍰 {restaurantConfig.menuDuJour.dessert}
+        </p>
+
       </div>
-</section>
 
-      {/* HORAIRES */}
-<section className="snap-start min-h-screen flex items-center justify-center bg-[#f5f1ea]"
-style={{
-  backgroundImage: "url('/images/stone-bg.png')",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-}}>
-
-  <div className="mx-auto max-w-5xl px-6">
-
-    {/* TITRE */}
-    <div className="mb-14 text-center">
-
-      <h2
-  className="mb-4 text-5xl font-bold text-white"
-  style={{
-    textShadow: `
-      0 0 4px rgba(0,0,0,0.95),
-      2px 2px 6px rgba(0,0,0,0.9),
-      4px 4px 12px rgba(0,0,0,0.8)
-    `,
-  }}
->
-  Horaires du restaurant
-</h2>
-
-<p
-  className="text-xl text-white/95"
-  style={{
-    textShadow: `
-      0 0 4px rgba(0,0,0,0.95),
-      2px 2px 6px rgba(0,0,0,0.9),
-      4px 4px 12px rgba(0,0,0,0.8)
-    `,
-  }}
->
-  Retrouvez nos horaires de service.
-</p>
+      <div
+        className="
+          mt-6
+          text-center
+          text-4xl
+          font-bold
+          text-[#c89b5f]
+        "
+      >
+        {restaurantConfig.menuDuJour.price}€
+      </div>
 
     </div>
 
-    {/* CARD */}
-    <div className="rounded-3xl bg-[#faf7f2]/50 p-10 shadow-xl">
+    {/* MENU ENFANT */}
 
-      <div className="space-y-4 text-lg">
+    <div
+      className="
+        rounded-[32px]
+        max-w-[520px]
+        bg-[#c89b5f]
+        p-6
+        text-white
+        shadow-[0_18px_45px_rgba(0,0,0,0.18)]
+        transition-all
+        duration-300
+        hover:-translate-y-1
+      "
+    >
 
-        {restaurantConfig.restaurantHoraires.map(
-          (horaire, index) => (
+      <div className="mb-6 text-center">
+
+        <p
+          className="
+            mb-2
+            text-xs
+            uppercase
+            tracking-[0.35em]
+            text-white/80
+          "
+        >
+          Enfants
+        </p>
+
+        <h2
+          className="
+            mb-3
+            font-serif
+            text-3xl
+            font-bold
+            md:text-4xl
+          "
+        >
+          Menu enfant
+        </h2>
+
+        <p
+          className="
+            text-lg
+            text-white/90
+          "
+        >
+          Pour les petits gourmands.
+        </p>
+
+      </div>
+
+      <div
+        className="
+          space-y-4
+          text-center
+          text-lg
+          leading-relaxed
+        "
+      >
+
+        <p>
+          🍗 {restaurantConfig.menuEnfant.main}
+        </p>
+
+        <p>
+          🍟 {restaurantConfig.menuEnfant.side}
+        </p>
+
+        <p>
+          🧃 {restaurantConfig.menuEnfant.drink}
+        </p>
+
+        <p>
+          🍦 {restaurantConfig.menuEnfant.dessert}
+        </p>
+
+      </div>
+
+      <div
+        className="
+          mt-6
+          text-center
+          text-4xl
+          font-bold
+          text-[#2f241d]
+        "
+      >
+        {restaurantConfig.menuEnfant.price}€
+      </div>
+
+    </div>
+
+  </div>
+
+  {/* CARTE */}
+
+  <div
+    className="
+      grid
+      gap-6
+      sm:grid-cols-2
+      xl:grid-cols-3
+    "
+  >
+
+    {/* ENTREES */}
+
+    <div
+      className="
+        rounded-[26px]
+        bg-[#faf7f2]/88
+        p-7
+        shadow-lg
+        backdrop-blur-sm
+      "
+    >
+
+      <h3
+        className="
+          mb-6
+          text-center
+          font-serif
+          text-2xl
+          font-bold
+        "
+      >
+        Entrées
+      </h3>
+
+      <div className="space-y-4">
+
+        {restaurantConfig.entrees.map(
+          (item, index) => (
 
             <div
               key={index}
-              className="flex justify-between border-b border-[#e5ddd2] pb-3"
+              className="
+                flex
+                justify-between
+                gap-4
+                border-b
+                border-[#ddd2c3]
+                pb-3
+                text-lg
+              "
             >
-              <span>{horaire.day}</span>
 
-              <span>{horaire.hours}</span>
+              <span>
+                {item.name}
+              </span>
+
+              <span>
+                {item.price}€
+              </span>
+
             </div>
 
           )
         )}
 
       </div>
+
     </div>
-  </div>
-</section>
-      {/* CONTACT */}
-<section
-  className="relative mx-auto flex min-h-screen snap-start items-center justify-center overflow-hidden px-6 text-center"
-  style={{
-    backgroundImage: "url('/images/stone-bg.png')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  }}
->
 
-  {/* OVERLAY */}
-  <div className="absolute inset-0 bg-black/35" />
+    {/* PLATS */}
 
-  {/* CONTENU */}
-  <div className="relative z-10 rounded-[40px] bg-[rgba(255,248,240,0.82)] p-14 shadow-2xl backdrop-blur-sm">
-
-    <h2
-      className="mb-6 text-5xl font-bold text-[#2f241d]"
-      style={{
-        textShadow:
-          "0 2px 10px rgba(255,255,255,0.35)",
-      }}
+    <div
+      className="
+        rounded-[26px]
+        bg-[#faf7f2]/88
+        p-7
+        shadow-lg
+        backdrop-blur-sm
+      "
     >
-      Informations pratiques
-    </h2>
 
-    <div className="space-y-5 text-xl text-[#4e4036]">
+      <h3
+        className="
+          mb-6
+          text-center
+          font-serif
+          text-2xl
+          font-bold
+        "
+      >
+        Plats
+      </h3>
 
-      <p>📍 Auberge de St Aubin - 21 Rue Saint-Barnabé, 03160 Saint-Aubin-le-Monial</p>
+      <div className="space-y-4">
 
-      <p>📞 04 70 66 50 97</p>
+        {restaurantConfig.plats.map(
+          (item, index) => (
 
-      <p>🍷 Bar & restaurant convivial</p>
+            <div
+              key={index}
+              className="
+                flex
+                justify-between
+                gap-4
+                border-b
+                border-[#ddd2c3]
+                pb-3
+                text-lg
+              "
+            >
 
-      <p>🚗 Parking disponible</p>
+              <span>
+                {item.name}
+              </span>
+
+              <span>
+                {item.price}€
+              </span>
+
+            </div>
+
+          )
+        )}
+
+      </div>
 
     </div>
 
-    <div className="mt-12">
-      <Link
-        href="/"
-        className="rounded-2xl bg-[#2f241d] px-8 py-4 text-lg font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:bg-[#43352c]"
+    {/* DESSERTS */}
+
+    <div
+      className="
+        rounded-[26px]
+        bg-[#faf7f2]/88
+        p-7
+        shadow-lg
+        backdrop-blur-sm
+      "
+    >
+
+      <h3
+        className="
+          mb-6
+          text-center
+          font-serif
+          text-2xl
+          font-bold
+        "
       >
-        Retour à l’accueil
-      </Link>
+        Desserts
+      </h3>
+
+      <div className="space-y-4">
+
+        {restaurantConfig.desserts.map(
+          (item, index) => (
+
+            <div
+              key={index}
+              className="
+                flex
+                justify-between
+                gap-4
+                border-b
+                border-[#ddd2c3]
+                pb-3
+                text-lg
+              "
+            >
+
+              <span>
+                {item.name}
+              </span>
+
+              <span>
+                {item.price}€
+              </span>
+
+            </div>
+
+          )
+        )}
+
+      </div>
+
     </div>
 
   </div>
-</section>
+
+</div>
+</div>
+
+      </motion.section>
+
+      {/* HORAIRES */}
+
+      <motion.section
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{
+          once: true,
+          amount: 0.15,
+        }}
+        className="
+          border-t
+          border-[#e4d8c8]
+          bg-[#efe7db]
+          py-20
+          md:py-28
+        "
+      >
+
+        <div
+          className="
+            mx-auto
+            max-w-5xl
+            px-6
+          "
+        >
+
+          <div className="mb-14 text-center">
+
+            <p
+              className="
+                mb-3
+                text-sm
+                uppercase
+                tracking-[0.3em]
+                text-[#b18752]
+              "
+            >
+              Informations
+            </p>
+
+            <h2
+              className="
+                font-serif
+                text-4xl
+                font-bold
+                md:text-5xl
+              "
+            >
+              Horaires du restaurant
+            </h2>
+
+          </div>
+
+          <div
+            className="
+              rounded-[28px]
+              bg-white
+              p-8
+              shadow-xl
+            "
+          >
+
+            <div className="space-y-4 text-[20px]">
+
+              {restaurantConfig.restaurantHoraires.map(
+                (horaire, index) => (
+
+                  <div
+                    key={index}
+                    className="
+                      flex
+                      justify-between
+                      border-b
+                      border-[#e5ddd2]
+                      pb-3
+                    "
+                  >
+
+                    <span>
+                      {horaire.day}
+                    </span>
+
+                    <span>
+                      {horaire.hours}
+                    </span>
+
+                  </div>
+
+                )
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </motion.section>
+
+      {/* INFOS */}
+
+      <motion.section
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{
+          once: true,
+          amount: 0.15,
+        }}
+        className="
+          relative
+          border-t
+          border-[#e4d8c8]
+          bg-cover
+          bg-center
+          py-20
+          md:py-28
+        "
+        style={{
+          backgroundImage:
+            "url('/images/stone-bg.png')",
+        }}
+      >
+
+        <div
+          className="
+            absolute
+            inset-0
+            bg-black/35
+          "
+        />
+
+        <div
+          className="
+            relative
+            z-10
+            mx-auto
+            max-w-5xl
+            px-6
+          "
+        >
+
+          <div
+            className="
+              rounded-[32px]
+              bg-[rgba(255,248,240,0.88)]
+              p-7
+              text-center
+              shadow-2xl
+              backdrop-blur-sm
+            "
+          >
+
+            <h2
+              className="
+                mb-8
+                font-serif
+                text-4xl
+                font-bold
+                md:text-4xl
+              "
+            >
+              Informations pratiques
+            </h2>
+
+            <div
+              className="
+                space-y-5
+                text-[20px]
+                leading-relaxed
+                text-[#4e4036]
+              "
+            >
+
+              <p>
+                📍 Auberge de St Aubin
+                <br />
+                21 Rue Saint-Barnabé
+                <br />
+                03160 Saint-Aubin-le-Monial
+              </p>
+
+              <p>
+                📞 04 70 66 50 97
+              </p>
+
+              <p>
+                🍷 Bar & restaurant convivial
+              </p>
+
+              <p>
+                🚗 Parking disponible
+              </p>
+
+            </div>
+
+            <div className="mt-12">
+
+              <Link
+                href="/"
+                className="
+                  inline-block
+                  rounded-2xl
+                  bg-[#2f241d]
+                  px-8
+                  py-4
+                  text-[20px]
+                  font-semibold
+                  text-white
+                  transition
+                  hover:bg-[#43352c]
+                "
+              >
+                Retour à l’accueil
+              </Link>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </motion.section>
+
     </div>
   )
 }

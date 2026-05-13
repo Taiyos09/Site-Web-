@@ -1,6 +1,12 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
+
+import { motion } from "framer-motion"
 import { getHotelData } from "@/lib/hotel"
 import Link from "next/link"
 
@@ -24,18 +30,6 @@ export default function HotelPage() {
   const [petCount, setPetCount] =
     useState(0)
 
-  const [babyCount, setBabyCount] =
-    useState(0)
-
-  const [babyBed, setBabyBed] =
-    useState(false)
-
-  const [highChair, setHighChair] =
-    useState(false)
-
-  const [acceptTerms, setAcceptTerms] =
-    useState(false)
-
   const [people, setPeople] =
     useState(0)
 
@@ -45,23 +39,33 @@ export default function HotelPage() {
   const [checkOut, setCheckOut] =
     useState("")
 
-  const [firstName, setFirstName] =
-    useState("")
-
-  const [lastName, setLastName] =
-    useState("")
-
-  const [email, setEmail] =
-    useState("")
-
-  const [phone, setPhone] =
-    useState("")
-
-  const [message, setMessage] =
-    useState("")
-
   const [loading, setLoading] =
     useState(false)
+
+  /* ====================================== */
+  /* ANIMATION */
+  /* ====================================== */
+
+  const fadeUp = {
+
+    hidden: {
+      opacity: 0,
+      y: 40,
+    },
+
+    visible: {
+      opacity: 1,
+      y: 0,
+
+      transition: {
+        duration: 0.7,
+      },
+    },
+  }
+
+  /* ====================================== */
+  /* NIGHTS */
+  /* ====================================== */
 
   const nights = useMemo(() => {
 
@@ -86,6 +90,10 @@ export default function HotelPage() {
     return total > 0 ? total : 1
 
   }, [checkIn, checkOut])
+
+  /* ====================================== */
+  /* LOAD HOTEL */
+  /* ====================================== */
 
   useEffect(() => {
 
@@ -130,26 +138,6 @@ export default function HotelPage() {
 
             touristTax:
               data.settings?.tourist_tax || 0,
-
-            extraBed:
-              data.settings?.extra_bed || 0,
-          },
-
-          roomPrices: {
-
-            onePerson:
-              formattedRooms[0]
-                ?.one_person_price || 0,
-
-            twoPeople:
-              formattedRooms[0]
-                ?.two_people_price || 0,
-
-            doubleRoom:
-              (
-                formattedRooms[0]
-                  ?.two_people_price || 0
-              ) * 2,
           },
         })
 
@@ -160,6 +148,17 @@ export default function HotelPage() {
 
     loadHotel()
 
+  }, [])
+
+  /* ====================================== */
+  /* AUTO SLIDER */
+  /* ====================================== */
+
+  useEffect(() => {
+
+    if (!hotelConfig?.rooms)
+      return
+
     const interval =
       setInterval(() => {
 
@@ -169,7 +168,7 @@ export default function HotelPage() {
             (value, index) => {
 
               const totalImages =
-                hotelConfig?.rooms?.[
+                hotelConfig.rooms[
                   index
                 ]?.images?.length || 1
 
@@ -182,215 +181,117 @@ export default function HotelPage() {
 
       }, 3500)
 
-    return () => clearInterval(interval)
+    return () =>
+      clearInterval(interval)
 
   }, [hotelConfig])
 
   if (!hotelConfig) {
 
     return (
-      <div className="
-        flex
-        min-h-screen
-        items-center
-        justify-center
-        bg-[#f5f1ea]
-      ">
+
+      <div
+        className="
+          flex
+          min-h-screen
+          items-center
+          justify-center
+          bg-[#f5f1ea]
+        "
+      >
         Chargement...
       </div>
     )
   }
 
-  let roomsNeeded = 0
-  let roomTotal = 0
-  let bookingPossible = true
-
-  if (people === 1) {
-
-    roomsNeeded = 1
-
-    roomTotal =
-      hotelConfig.roomPrices.onePerson *
-      nights
-  }
-
-  else if (people === 2) {
-
-    roomsNeeded = 1
-
-    roomTotal =
-      hotelConfig.roomPrices.twoPeople *
-      nights
-  }
-
-  else if (people === 3) {
-
-    roomsNeeded = 1
-
-    roomTotal =
-      hotelConfig.roomPrices.doubleRoom *
-      nights
-  }
-
-  else if (people === 4) {
-
-    roomsNeeded = 2
-
-    roomTotal =
-      hotelConfig.roomPrices.twoPeople *
-      2 *
-      nights
-  }
-
-  else if (people === 5) {
-
-    roomsNeeded = 2
-
-    roomTotal =
-      (
-        hotelConfig.roomPrices.doubleRoom +
-        hotelConfig.roomPrices.twoPeople
-      ) * nights
-  }
-
-  else if (people === 6) {
-
-    roomsNeeded = 3
-
-    roomTotal =
-      (
-        hotelConfig.roomPrices.twoPeople *
-        2 +
-        hotelConfig.roomPrices.doubleRoom
-      ) * nights
-  }
-
-  else if (people === 7) {
-
-    roomsNeeded = 3
-
-    roomTotal =
-      (
-        hotelConfig.roomPrices.twoPeople *
-        2 +
-        hotelConfig.roomPrices.doubleRoom
-      ) * nights
-  }
-
-  else if (people > 7) {
-
-    bookingPossible = false
-
-    roomsNeeded = 3
-
-    roomTotal =
-      (
-        hotelConfig.roomPrices.twoPeople *
-        2 +
-        hotelConfig.roomPrices.doubleRoom
-      ) * nights
-  }
-
-  const breakfastTotal =
-    breakfast
-      ? hotelConfig.options.breakfast *
-        people *
-        nights
-      : 0
-
-  const lunchTotal =
-    lunch
-      ? hotelConfig.options.lunch *
-        people *
-        nights
-      : 0
-
-  const dinnerTotal =
-    dinner
-      ? hotelConfig.options.dinner *
-        people *
-        nights
-      : 0
-
-  const petTotal =
-    petCount *
-    hotelConfig.options.pet *
-    nights
-
-  const touristTaxTotal =
-    hotelConfig.options.touristTax *
-    people *
-    nights
-
-  const totalPrice =
-    roomTotal +
-    breakfastTotal +
-    lunchTotal +
-    dinnerTotal +
-    petTotal +
-    touristTaxTotal
-
   return (
 
-    <div className="
-      min-h-screen
-      bg-[#f5f1ea]
-      text-[#2f241d]
-    ">
+    <div
+      className="
+        bg-[#f5f1ea]
+        text-[#2f241d]
+      "
+    >
 
       {/* HERO */}
 
       <section
-        className="
-          relative
-          min-h-screen
-          snap-start
-          flex
-          h-[60vh]
-          items-center
-          justify-center
-          bg-cover
-          bg-center
-        "
+  className="
+    relative
+    flex
+    h-screen
+    min-h-[760px]
+    items-center
+    justify-center
+    bg-cover
+    bg-center
+    border-b
+    border-[#e4d8c8]
+  "
         style={{
           backgroundImage:
             "url('/images/hotel/HERO.jpg')",
         }}
       >
 
-        <div className="
-          absolute
-          inset-0
-          bg-black/50
-        " />
+        <div
+  className="
+    absolute
+    inset-x-0
+    bottom-0
+    h-24
+    bg-gradient-to-t
+    from-[#f5f1ea]
+    via-[#f5f1ea]/70
+    to-transparent
+    pointer-events-none
+  "
+/>
 
-        <div className="
-          relative
-          z-10
-          px-6
-          text-center
-          text-white
-        ">
+        <div
+          className="
+            absolute
+            inset-0
+            bg-black/45
+          "
+        />
+        <div
+          className="
+            relative
+            z-10
+            px-6
+            text-center
+            text-white
+          "
+        >
 
-          <h1 className="
-            mb-4
-            text-5xl
-            font-bold
-            md:text-7xl
-          ">
+          <h1
+            className="
+              mb-5
+              font-serif
+              text-5xl
+              font-bold
+              md:text-7xl
+            "
+          >
             Hôtel
           </h1>
 
-          <p className="
-            mx-auto
-            max-w-2xl
-            text-lg
-            text-white/90
-            md:text-xl
-          ">
-            Découvrez nos chambres chaleureuses
-            et profitez d'un séjour confortable
-            à L'auberge de St Aubin.
+          <p
+            className="
+              mx-auto
+              max-w-2xl
+              text-lg
+              leading-relaxed
+              text-white/90
+              md:text-xl
+            "
+          >
+            Découvrez nos chambres
+            chaleureuses et profitez
+            d’un séjour confortable
+            dans une ambiance simple
+            et conviviale.
           </p>
 
         </div>
@@ -398,66 +299,299 @@ export default function HotelPage() {
       </section>
 
       {/* PRESENTATION */}
-<section
-  id="presentation"
-  className="relative snap-start min-h-screen bg-cover bg-center"
-  style={{
-    backgroundImage: "url('/images/hotel/fd1.png')",
-  }}
->
-  {/* voile sombre léger */}
-  <div className="absolute inset-0 bg-black/40"></div>
 
-  <div className="relative z-10 mx-auto flex min-h-screen max-w-[1800px] items-center px-10">
-    <div className="grid items-center gap-16 md:grid-cols-2">
-      
-      {/* TEXTE */}
-      <div className="rounded-3xl bg-white/55 p-8 backdrop-blur-sm">
-        <h2 className="mb-6 text-3xl font-bold leading-tight md:text-5xl text-[rgba(46, 21, 14, 0.9)]">
-          Un séjour au calme au cœur de la campagne bourbonnaise
-        </h2>
+      <motion.section
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{
+          once: true,
+          amount: 0.15,
+        }}
+        className="
+          relative
+          border-t
+          border-[#e4d8c8]
+          bg-cover
+          bg-center
+          py-20
+          md:py-28
+          pt-24
+        "
+        style={{
+          backgroundImage:
+            "url('/images/hotel/fd1.png')",
+        }}
+      >
 
-        <p className="mb-5 text-base leading-relaxed md:text-lg text-[rgba(46, 21, 14, 0.9)]">
-          Nos chambres vous accueillent dans une ambiance simple,
-          chaleureuse et authentique, idéale pour se reposer loin
-          de l’agitation.
-        </p>
-
-        <p className="mb-5 text-base leading-relaxed md:text-lg text-[rgba(46, 21, 14, 0.9)]">
-          Que vous soyez de passage dans l’Allier, en déplacement
-          ou en séjour dans la région, l’auberge vous propose
-          différentes formules avec possibilité de petit déjeuner
-          et de restauration sur place selon vos envies.
-        </p>
-
-        <p className="text-base leading-relaxed md:text-lg text-[rgba(46, 21, 14, 0.9)]">
-          Lors de votre réservation, vous pourrez ajouter
-          différentes options comme le petit déjeuner ou les
-          repas du midi et du soir.
-        </p>
-      </div>
-
-      {/* IMAGE */}
-      <div className="flex justify-center">
-        <img
-          src="/images/gab.png"
-          alt="Chambre"
-          className="max-h-[950px] w-full max-w-[750px] rounded-3xl object-cover shadow-2xl"
+        <div
+          className="
+            absolute
+            inset-0
+            bg-black/25
+          "
         />
-      </div>
-    </div>
-  </div>
-</section>
+
+        <div
+          className="
+            relative
+            z-10
+            mx-auto
+            grid
+            max-w-6xl
+            items-center
+            gap-16
+            px-6
+            lg:grid-cols-2
+          "
+        >
+
+          {/* TEXTE */}
+
+          <div
+            className="
+              rounded-[28px]
+              bg-[#f6f1e8]/88
+              p-8
+              shadow-xl
+              backdrop-blur-sm
+            "
+          >
+
+            <h2
+              className="
+                mb-6
+                font-serif
+                text-4xl
+                font-bold
+                leading-tight
+                md:text-5xl
+              "
+            >
+              Un séjour au calme
+              au cœur de la
+              campagne bourbonnaise
+            </h2>
+
+            <div
+              className="
+                space-y-5
+                text-lg
+                leading-relaxed
+                text-[#5a4c42]
+              "
+            >
+
+              <p>
+                Nos chambres vous
+                accueillent dans une
+                ambiance simple,
+                chaleureuse et
+                authentique.
+              </p>
+
+              <p>
+                Que vous soyez de
+                passage dans l’Allier
+                ou en séjour dans la
+                région, profitez d’un
+                cadre calme et familial.
+              </p>
+
+              <p>
+                Lors de votre réservation,
+                vous pourrez ajouter
+                différentes options
+                comme le petit déjeuner
+                ou les repas.
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* IMAGE */}
+
+          <div className="flex justify-center">
+
+            <img
+              src="/images/gab.png"
+              alt="Chambre"
+              className="
+                max-h-[620px]
+                w-full
+                max-w-[680px]
+                rounded-[28px]
+                object-cover
+                shadow-2xl
+              "
+            />
+
+          </div>
+
+        </div>
+
+      </motion.section>
+
+      {/* INFOS */}
+
+      <motion.section
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{
+          once: true,
+          amount: 0.15,
+        }}
+        className="
+          border-t
+          border-[#e4d8c8]
+          bg-[#efe7db]
+          py-20
+          md:py-28
+        "
+      >
+
+        <div
+          className="
+            mx-auto
+            max-w-6xl
+            px-6
+          "
+        >
+
+          <div className="mb-14 text-center">
+
+            <p
+              className="
+                mb-3
+                text-sm
+                uppercase
+                tracking-[0.3em]
+                text-[#b18752]
+              "
+            >
+              Informations pratiques
+            </p>
+
+            <h2
+              className="
+                font-serif
+                text-4xl
+                font-bold
+                md:text-5xl
+              "
+            >
+              Horaires & services
+            </h2>
+
+          </div>
+
+          <div
+            className="
+              grid
+              gap-8
+              md:grid-cols-2
+              xl:grid-cols-4
+            "
+          >
+
+            {[
+              {
+                title: "🛎️ Arrivée",
+                text: "Check-in à partir de",
+                value: "16h00",
+              },
+
+              {
+                title: "🚪 Départ",
+                text: "Check-out avant",
+                value: "11h00",
+              },
+
+              {
+                title: "🥐 Petit déjeuner",
+                text: "Service de",
+                value: "7h00 à 9h00",
+              },
+
+              {
+                title: "🍽️ Restaurant",
+                text: "Midi : 12h00 - 14h00\nSoir : 19h00 - 21h00",
+                value: "",
+              },
+            ].map((item, index) => (
+
+              <div
+                key={index}
+                className="
+                  rounded-[28px]
+                  bg-white
+                  p-8
+                  shadow-md
+                "
+              >
+
+                <h3
+                  className="
+                    mb-5
+                    font-serif
+                    text-2xl
+                    font-bold
+                  "
+                >
+                  {item.title}
+                </h3>
+
+                <p
+                  className="
+                    whitespace-pre-line
+                    text-lg
+                    leading-relaxed
+                    text-[#5a4c42]
+                  "
+                >
+                  {item.text}
+
+                  {item.value && (
+                    <>
+                      <br />
+
+                      <span className="font-bold">
+                        {item.value}
+                      </span>
+                    </>
+                  )}
+
+                </p>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+
+      </motion.section>
 
       {/* CHAMBRES */}
 
-      <section
+      <motion.section
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{
+          once: true,
+          amount: 0.15,
+        }}
         className="
-          snap-start
-          min-h-screen
+          border-t
+          border-[#e4d8c8]
           bg-cover
           bg-center
-          py-24
+          py-20
+          md:py-28
         "
         style={{
           backgroundImage:
@@ -465,36 +599,49 @@ export default function HotelPage() {
         }}
       >
 
-        <div className="
-          mx-auto
-          max-w-[1800px]
-          px-10
-        ">
+        <div
+          className="
+            mx-auto
+            max-w-7xl
+            px-6
+          "
+        >
 
-          <div className="
-            mb-14
-            text-center
-          ">
+          <div className="mb-16 text-center">
 
-            <h2 className="
-              mb-4
-              text-4xl
-              font-bold
-            ">
+            <p
+              className="
+                mb-3
+                text-sm
+                uppercase
+                tracking-[0.3em]
+                text-[#b18752]
+              "
+            >
+              Hébergement
+            </p>
+
+            <h2
+              className="
+                font-serif
+                text-4xl
+                font-bold
+                md:text-5xl
+              "
+            >
               Nos chambres
             </h2>
 
           </div>
 
-          <div className="
-            mx-auto
-            grid
-            max-w-[1800px]
-            grid-cols-1
-            gap-14
-            md:grid-cols-2
-            2xl:grid-cols-3
-          ">
+          <div
+            className="
+  grid
+  gap-8
+  md:grid-cols-2
+  xl:grid-cols-3
+"
+          >
 
             {(hotelConfig?.rooms ?? []).map(
               (room: any, roomIndex: number) => (
@@ -502,25 +649,26 @@ export default function HotelPage() {
                 <div
                   key={room.id}
                   className="
-                    mx-auto
-                    w-full
-                    max-w-[650px]
                     overflow-hidden
-                    rounded-3xl
+                    rounded-[28px]
                     bg-[#f3ede3]/95
-                    shadow-2xl
-                    backdrop-blur
+                    shadow-xl
+                    backdrop-blur-sm
                     transition-all
-                    duration-500
-                    hover:-translate-y-2
+                    duration-300
+                    hover:shadow-[0_18px_40px_rgba(0,0,0,0.12)]
                   "
                 >
 
-                  <div className="
-                    relative
-                    h-[280px]
-                    overflow-hidden
-                  ">
+                  {/* IMAGES */}
+
+                  <div
+                    className="
+                      relative
+                      h-[240px]
+                      overflow-hidden
+                    "
+                  >
 
                     {(room.images ?? []).map(
                       (
@@ -533,10 +681,12 @@ export default function HotelPage() {
                           src={img}
                           alt={room.name}
                           className={`
-                            absolute inset-0
-                            h-full w-full
+                            absolute
+                            inset-0
+                            h-full
+                            w-full
                             object-cover
-                            transition-all
+                            transition-opacity
                             duration-1000
                             ${
                               imgIndex ===
@@ -554,63 +704,77 @@ export default function HotelPage() {
                       )
                     )}
 
-                    <div className="
-                      absolute
-                      right-4
-                      top-4
-                      rounded-full
-                      bg-[#f3ede3]/90
-                      px-4
-                      py-2
-                      text-sm
-                      font-bold
-                      text-[#8a6330]
-                    ">
+                    <div
+                      className="
+                        absolute
+                        right-4
+                        top-4
+                        rounded-full
+                        bg-[#f3ede3]/90
+                        px-4
+                        py-2
+                        text-sm
+                        font-bold
+                        text-[#8a6330]
+                      "
+                    >
                       {room.size}
                     </div>
 
                   </div>
 
+                  {/* CONTENU */}
+
                   <div className="p-6">
 
-                    <h3 className="
-                      mb-4
-                      text-2xl
-                      font-bold
-                      font-serif
-                    ">
+                    <h3
+                      className="
+                        mb-4
+                        font-serif
+                        text-2xl
+                        font-bold
+                      "
+                    >
                       {room.name}
                     </h3>
 
-                    <p className="
-                      mb-6
-                      leading-relaxed
-                      text-[#5a4c42]
-                    ">
+                    <p
+                      className="
+                        mb-6
+                        leading-relaxed
+                        text-[#5a4c42]
+                      "
+                    >
                       {room.description}
                     </p>
 
-                    <div className="
-                      mb-6
-                      flex
-                      items-center
-                      justify-between
-                      border-t
-                      border-[#d8cbbb]
-                      pt-4
-                    ">
+                    <div
+                      className="
+                        mb-6
+                        flex
+                        items-center
+                        justify-between
+                        border-t
+                        border-[#d8cbbb]
+                        pt-5
+                      "
+                    >
 
-                      <span className="
-                        text-3xl
-                        font-bold
-                      ">
+                      <span
+                        className="
+                          text-2xl
+                          font-bold
+                        "
+                      >
                         {room.one_person_price}€
                       </span>
 
-                      <span className="
-                        text-sm
-                        text-[#7a6a5d]
-                      ">
+                      <span
+                        className="
+                          text-sm
+                          text-[#7a6a5d]
+                        "
+                      >
                         par nuit
                       </span>
 
@@ -625,13 +789,12 @@ export default function HotelPage() {
                         rounded-2xl
                         bg-[#2f241d]
                         px-6
-                        py-4
+                        py-3.5
                         text-lg
                         font-semibold
                         text-white
-                        transition-all
-                        duration-300
-                        hover:scale-[1.02]
+                        transition
+                        hover:bg-[#43352c]
                       "
                     >
                       Découvrir la chambre
@@ -648,7 +811,7 @@ export default function HotelPage() {
 
         </div>
 
-      </section>
+      </motion.section>
 
     </div>
   )

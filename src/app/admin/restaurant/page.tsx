@@ -390,6 +390,260 @@ export default function RestaurantAdminPage() {
                   )
                 )}
 
+                {/* MENU DU JOUR */}
+
+<div
+  className="
+    rounded-3xl
+    bg-[#faf7f2]
+    p-8
+  "
+>
+
+  <h3
+    className="
+      mb-8
+      text-3xl
+      font-bold
+      font-serif
+    "
+  >
+    Menu du jour
+  </h3>
+
+  <div
+    className="
+      grid gap-4
+      md:grid-cols-2
+    "
+  >
+
+    <input
+      type="text"
+      placeholder="Titre"
+      value={restaurantData.menuDuJour.title}
+      onChange={(e) =>
+        updateMenuDuJour(
+          "title",
+          e.target.value
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+
+    <input
+      type="number"
+      placeholder="Prix"
+      value={restaurantData.menuDuJour.price}
+      onChange={(e) =>
+        updateMenuDuJour(
+          "price",
+          Number(e.target.value)
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+
+    <input
+      type="text"
+      placeholder="Description"
+      value={restaurantData.menuDuJour.description}
+      onChange={(e) =>
+        updateMenuDuJour(
+          "description",
+          e.target.value
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+        md:col-span-2
+      "
+    />
+
+    <input
+      type="text"
+      placeholder="Entrée"
+      value={restaurantData.menuDuJour.starter}
+      onChange={(e) =>
+        updateMenuDuJour(
+          "starter",
+          e.target.value
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+
+    <input
+      type="text"
+      placeholder="Plat"
+      value={restaurantData.menuDuJour.main}
+      onChange={(e) =>
+        updateMenuDuJour(
+          "main",
+          e.target.value
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+
+    <input
+      type="text"
+      placeholder="Dessert"
+      value={restaurantData.menuDuJour.dessert}
+      onChange={(e) =>
+        updateMenuDuJour(
+          "dessert",
+          e.target.value
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+        md:col-span-2
+      "
+    />
+
+  </div>
+
+</div>
+
+{/* MENU ENFANT */}
+
+<div
+  className="
+    rounded-3xl
+    bg-[#faf7f2]
+    p-8
+  "
+>
+
+  <h3
+    className="
+      mb-8
+      text-3xl
+      font-bold
+      font-serif
+    "
+  >
+    Menu enfant
+  </h3>
+
+  <div
+    className="
+      grid gap-4
+      md:grid-cols-2
+    "
+  >
+
+    <input
+      type="text"
+      placeholder="Plat"
+      value={restaurantData.menuEnfant.main}
+      onChange={(e) =>
+        updateMenuEnfant(
+          "main",
+          e.target.value
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+
+    <input
+      type="text"
+      placeholder="Accompagnement"
+      value={restaurantData.menuEnfant.side}
+      onChange={(e) =>
+        updateMenuEnfant(
+          "side",
+          e.target.value
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+
+    <input
+      type="text"
+      placeholder="Boisson"
+      value={restaurantData.menuEnfant.drink}
+      onChange={(e) =>
+        updateMenuEnfant(
+          "drink",
+          e.target.value
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+
+    <input
+      type="text"
+      placeholder="Dessert"
+      value={restaurantData.menuEnfant.dessert}
+      onChange={(e) =>
+        updateMenuEnfant(
+          "dessert",
+          e.target.value
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+
+    <input
+      type="number"
+      placeholder="Prix"
+      value={restaurantData.menuEnfant.price}
+      onChange={(e) =>
+        updateMenuEnfant(
+          "price",
+          Number(e.target.value)
+        )
+      }
+      className="
+        rounded-2xl
+        border
+        p-4
+        md:col-span-2
+      "
+    />
+
+  </div>
+
+</div>
+
               {/* HORAIRES BAR */}
               <div className="
                 rounded-3xl
