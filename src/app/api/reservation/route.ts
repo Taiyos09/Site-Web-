@@ -1,6 +1,54 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import nodemailer from "nodemailer"
+import { z } from "zod"
+import { ratelimit }
+from "@/lib/rate-limit"
+
+const reservationSchema = z.object({
+
+  first_name:
+    z.string().min(2).max(50),
+
+  last_name:
+    z.string().min(2).max(50),
+
+  email:
+    z.email(),
+
+  phone:
+    z.string().min(6).max(30),
+
+  arrival:
+    z.string(),
+
+  departure:
+    z.string(),
+
+  people:
+    z.number().min(1).max(10),
+
+  pets:
+    z.boolean(),
+
+  breakfast:
+    z.boolean(),
+
+  lunch:
+    z.boolean(),
+
+  dinner:
+    z.boolean(),
+
+  baby:
+    z.boolean(),
+
+  roomSlug:
+    z.string(),
+
+  message:
+    z.string().max(1000).optional(),
+})
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,7 +70,44 @@ export async function POST(
 
   try {
 
+    const ip =
+  req.headers.get(
+    "x-forwarded-for"
+  ) ?? "anonymous"
+
+const { success } =
+  await ratelimit.limit(ip)
+
+if (!success) {
+
+  return NextResponse.json(
+    {
+      error:
+        "Trop de requêtes. Réessayez plus tard.",
+    },
+    {
+      status: 429,
+    }
+  )
+}
+
     const body = await req.json()
+
+    const parsed =
+  reservationSchema.safeParse(body)
+
+if (!parsed.success) {
+
+  return NextResponse.json(
+    {
+      error:
+        "Données invalides",
+    },
+    {
+      status: 400,
+    }
+  )
+}
 
     const { data: room, error: roomFetchError } =
   await supabase
@@ -635,6 +720,175 @@ html: `
 
       Auberge Saint Aubin<br />
       Demande envoyée depuis le site internet
+
+    </div>
+
+  </div>
+
+</div>
+`,
+    })
+
+        /* ---------------- EMAIL CLIENT ---------------- */
+
+    await transporter.sendMail({
+
+      from:
+        process.env.EMAIL_USER,
+
+      to:
+        body.email,
+
+      subject:
+        "Votre demande de réservation - Auberge St Aubin",
+
+      html: `
+<div style="
+  background:#f5f1ea;
+  padding:40px;
+  font-family:Arial,sans-serif;
+  color:#2f241d;
+">
+
+  <div style="
+    max-width:700px;
+    margin:auto;
+    background:white;
+    border-radius:30px;
+    overflow:hidden;
+    box-shadow:0 15px 40px rgba(0,0,0,0.08);
+  ">
+
+    <!-- HEADER -->
+
+    <div style="
+      background:#2f241d;
+      padding:40px;
+      text-align:center;
+    ">
+
+      <h1 style="
+        color:white;
+        margin:0;
+        font-size:36px;
+      ">
+        Auberge de St Aubin
+      </h1>
+
+      <p style="
+        color:#d6c3aa;
+        margin-top:12px;
+        font-size:16px;
+      ">
+        Demande de réservation reçue
+      </p>
+
+    </div>
+
+    <!-- CONTENT -->
+
+    <div style="padding:40px;">
+
+      <h2 style="
+        margin-top:0;
+        font-size:28px;
+      ">
+        Bonjour ${body.first_name},
+      </h2>
+
+      <p style="
+        font-size:18px;
+        line-height:1.7;
+        color:#5a4c42;
+      ">
+
+        Nous avons bien reçu votre
+        demande de réservation.
+
+        Notre équipe va vérifier
+        la disponibilité et vous
+        recontactera rapidement.
+
+      </p>
+
+      <div style="
+        background:#faf7f2;
+        border-radius:24px;
+        padding:30px;
+        margin-top:30px;
+      ">
+
+        <h3 style="
+          margin-top:0;
+          font-size:24px;
+        ">
+          Récapitulatif
+        </h3>
+
+        <p>
+          <strong>Chambre :</strong>
+          ${body.roomName}
+        </p>
+
+        <p>
+          <strong>Arrivée :</strong>
+          ${body.arrival}
+        </p>
+
+        <p>
+          <strong>Départ :</strong>
+          ${body.departure}
+        </p>
+
+        <p>
+          <strong>Personnes :</strong>
+          ${body.people}
+        </p>
+
+        <p>
+          <strong>Total estimé :</strong>
+          ${total}€
+        </p>
+
+      </div>
+
+      <div style="
+        margin-top:35px;
+        text-align:center;
+      ">
+
+        <a
+          href="https://auberge-st-aubin.fr"
+          style="
+            display:inline-block;
+            background:#c89b5f;
+            color:white;
+            text-decoration:none;
+            padding:16px 28px;
+            border-radius:18px;
+            font-weight:bold;
+          "
+        >
+          Voir le site
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div style="
+      padding:30px;
+      text-align:center;
+      background:#faf7f2;
+      color:#7d6d60;
+      font-size:14px;
+    ">
+
+      Auberge de St Aubin<br />
+      21 Rue Saint-Barnabé<br />
+      03160 Saint-Aubin-le-Monial
 
     </div>
 

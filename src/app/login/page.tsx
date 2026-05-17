@@ -8,36 +8,83 @@ export default function LoginPage() {
 
   const router = useRouter()
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] =
+    useState("")
 
-  const handleLogin = async () => {
+  const [password, setPassword] =
+    useState("")
 
-  const { error } =
-    await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+  const [loading, setLoading] =
+    useState(false)
 
-  if (error) {
-    alert(error.message)
-    return
+  const [error, setError] =
+    useState("")
+
+  const handleLogin = async (
+    e: React.FormEvent
+  ) => {
+
+    e.preventDefault()
+
+    setLoading(true)
+    setError("")
+
+    const { error } =
+      await supabase.auth.signInWithPassword({
+
+        email,
+        password,
+
+      })
+
+    if (error) {
+
+      setError(error.message)
+      setLoading(false)
+
+      return
+    }
+
+    setLoading(false)
+
+    router.push("/admin")
   }
 
-  localStorage.setItem(
-    "adminLogged",
-    "true"
-  )
-
-  router.push("/admin")
-}
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f5f1ea]">
 
-      <div className="w-full max-w-md rounded-[32px] bg-white p-10 shadow-2xl">
+    <div
+      className="
+        flex
+        min-h-screen
+        items-center
+        justify-center
+        bg-[#f5f1ea]
+        px-6
+      "
+    >
 
-        <h1 className="mb-8 text-center text-4xl font-bold font-serif text-[#2f241d]">
+      <form
+        onSubmit={handleLogin}
+        className="
+          w-full
+          max-w-md
+          rounded-[32px]
+          bg-white
+          p-10
+          shadow-2xl
+        "
+      >
+
+        <h1
+          className="
+            mb-8
+            text-center
+            font-serif
+            text-4xl
+            font-bold
+            text-[#2f241d]
+          "
+        >
           Connexion admin
         </h1>
 
@@ -50,7 +97,16 @@ export default function LoginPage() {
             onChange={(e) =>
               setEmail(e.target.value)
             }
-            className="w-full text-black rounded-2xl border p-4"
+            className="
+              w-full
+              rounded-2xl
+              border
+              border-[#ddd]
+              p-4
+              text-black
+              outline-none
+            "
+            required
           />
 
           <input
@@ -60,18 +116,53 @@ export default function LoginPage() {
             onChange={(e) =>
               setPassword(e.target.value)
             }
-            className="w-full text-black rounded-2xl border p-4"
+            className="
+              w-full
+              rounded-2xl
+              border
+              border-[#ddd]
+              p-4
+              text-black
+              outline-none
+            "
+            required
           />
 
+          {error && (
+
+            <p className="text-red-500">
+              {error}
+            </p>
+
+          )}
+
           <button
-            onClick={handleLogin}
-            className="w-full rounded-2xl bg-[#2f241d] py-4 text-lg font-bold text-white"
+            type="submit"
+            disabled={loading}
+            className="
+              w-full
+              rounded-2xl
+              bg-[#2f241d]
+              py-4
+              text-lg
+              font-bold
+              text-white
+              transition
+              hover:bg-[#43352c]
+              disabled:opacity-50
+            "
           >
-            Se connecter
+
+            {loading
+              ? "Connexion..."
+              : "Se connecter"}
+
           </button>
 
         </div>
-      </div>
+
+      </form>
+
     </div>
   )
 }

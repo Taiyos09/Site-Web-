@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import AdminNavbar from "@/components/AdminNavbar"
 import { RESTAURANT_CONFIG } from "@/data/restaurant"
 
+
 export default function RestaurantAdminPage() {
 
   const [restaurantData, setRestaurantData] =

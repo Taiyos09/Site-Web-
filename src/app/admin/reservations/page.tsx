@@ -47,6 +47,12 @@ export default function ReservationsPage() {
   const [showModal, setShowModal] =
     useState(false)
 
+  const [search, setSearch] =
+  useState("")
+
+const [statusFilter, setStatusFilter] =
+  useState("all")
+
   const [
     manualReservation,
     setManualReservation,
@@ -582,22 +588,24 @@ for (
 
         if (error) {
 
-          console.error(error)
+  console.error(
+    "RESERVATION INSERT ERROR",
+    error
+  )
 
-          alert(
-            "Erreur création réservation"
-          )
+  alert(error.message)
 
-          return
-        }
+  return
+}
 
         for (
           const room of roomDetails
         ) {
 
-          await supabase
-            .from("reservation_rooms")
-            .insert({
+          const roomInsert =
+  await supabase
+    .from("reservation_rooms")
+    .insert({
 
               reservation_id:
                 reservationData.id,
@@ -611,6 +619,10 @@ for (
               room_total:
                 room.room_total,
             })
+            console.log(
+  "ROOM INSERT",
+  roomInsert
+)
 
           const roomData =
   roomsData.find(
@@ -619,9 +631,10 @@ for (
       room.room_name.trim().toLowerCase()
   )
 
-await supabase
-  .from("blocked_dates")
-  .insert({
+const blockedInsert =
+  await supabase
+    .from("blocked_dates")
+    .insert({
 
     reservation_id:
       reservationData.id,
@@ -638,6 +651,11 @@ await supabase
     to_date:
       manualReservation.departure,
   })
+
+  console.log(
+  "BLOCKED INSERT",
+  blockedInsert
+)
         }
 
         await fetch(
@@ -799,6 +817,112 @@ await supabase
     petsTotal +
     touristTax
 
+  const getStatusStyle = (
+  status: string
+) => {
+
+  switch (status) {
+
+    case "confirmed":
+
+      return {
+        label: "Confirmée",
+
+        className:
+          `
+            bg-green-100
+            text-green-700
+            border-green-300
+          `,
+      }
+
+    case "checked_in":
+
+      return {
+        label: "Check-in",
+
+        className:
+          `
+            bg-blue-100
+            text-blue-700
+            border-blue-300
+          `,
+      }
+
+    case "checked_out":
+
+      return {
+        label: "Check-out",
+
+        className:
+          `
+            bg-gray-100
+            text-gray-700
+            border-gray-300
+          `,
+      }
+
+    case "rejected":
+
+      return {
+        label: "Refusée",
+
+        className:
+          `
+            bg-red-100
+            text-red-700
+            border-red-300
+          `,
+      }
+
+    default:
+
+      return {
+        label: "En attente",
+
+        className:
+          `
+            bg-yellow-100
+            text-yellow-700
+            border-yellow-300
+          `,
+      }
+  }
+}
+
+const filteredReservations =
+  reservations.filter(
+    (reservation) => {
+
+      const matchesSearch =
+
+        `${reservation.first_name}
+        ${reservation.last_name}
+        ${reservation.email}
+        ${reservation.phone}`
+
+          .toLowerCase()
+
+          .includes(
+            search.toLowerCase()
+          )
+
+      const matchesStatus =
+
+        statusFilter === "all"
+
+          ? true
+
+          : reservation.status ===
+            statusFilter
+
+      return (
+        matchesSearch &&
+        matchesStatus
+      )
+    }
+  )
+
   return (
 
     <main className="
@@ -838,6 +962,310 @@ await supabase
           Ajouter une réservation
         </button>
 
+        <div
+  className="
+    mt-8
+    flex
+    flex-col
+    gap-4
+
+    lg:flex-row
+    lg:items-center
+    lg:justify-between
+  "
+>
+
+  {/* RECHERCHE */}
+
+  <input
+    type="text"
+
+    placeholder="
+      Rechercher un client...
+    "
+
+    value={search}
+
+    onChange={(e) =>
+      setSearch(e.target.value)
+    }
+
+    className="
+      w-full
+      rounded-2xl
+      border
+      border-[#e7ded2]
+      bg-white
+      px-5
+      py-4
+
+      lg:max-w-md
+    "
+  />
+
+  {/* FILTRES */}
+
+  <div
+    className="
+      flex
+      flex-wrap
+      gap-3
+    "
+  >
+
+    {[
+      {
+        label: "Toutes",
+        value: "all",
+      },
+
+      {
+        label: "Confirmées",
+        value: "confirmed",
+      },
+
+      {
+        label: "En attente",
+        value: "pending",
+      },
+
+      {
+        label: "Refusées",
+        value: "rejected",
+      },
+    ].map((filter) => (
+
+      <button
+        key={filter.value}
+
+        onClick={() =>
+          setStatusFilter(
+            filter.value
+          )
+        }
+
+        className={`
+          rounded-2xl
+          px-5
+          py-3
+          font-semibold
+          transition
+
+          ${
+            statusFilter ===
+            filter.value
+
+              ? `
+                bg-[#2f241d]
+                text-white
+              `
+
+              : `
+                border
+                bg-white
+                hover:bg-[#faf7f2]
+              `
+          }
+        `}
+      >
+
+        {filter.label}
+
+      </button>
+
+    ))}
+
+  </div>
+
+</div>
+
+{/* STATS */}
+
+<div
+  className="
+    mt-8
+    grid
+    gap-6
+
+    md:grid-cols-2
+    xl:grid-cols-4
+  "
+>
+
+  {/* TOTAL RESERVATIONS */}
+
+  <div
+    className="
+      rounded-[32px]
+      bg-white
+      p-8
+      shadow-xl
+    "
+  >
+
+    <p
+      className="
+        text-sm
+        font-semibold
+        uppercase
+        tracking-wide
+        text-[#6b5b4f]
+      "
+    >
+      Réservations
+    </p>
+
+    <h2
+      className="
+        mt-4
+        text-5xl
+        font-bold
+      "
+    >
+      {reservations.length}
+    </h2>
+
+  </div>
+
+  {/* CONFIRMEES */}
+
+  <div
+    className="
+      rounded-[32px]
+      bg-green-600
+      p-8
+      text-white
+      shadow-xl
+    "
+  >
+
+    <p
+      className="
+        text-sm
+        font-semibold
+        uppercase
+        tracking-wide
+        opacity-80
+      "
+    >
+      Confirmées
+    </p>
+
+    <h2
+      className="
+        mt-4
+        text-5xl
+        font-bold
+      "
+    >
+      {
+        reservations.filter(
+          (r) =>
+            r.status ===
+            "confirmed"
+        ).length
+      }
+    </h2>
+
+  </div>
+
+  {/* EN ATTENTE */}
+
+  <div
+    className="
+      rounded-[32px]
+      bg-yellow-500
+      p-8
+      text-white
+      shadow-xl
+    "
+  >
+
+    <p
+      className="
+        text-sm
+        font-semibold
+        uppercase
+        tracking-wide
+        opacity-80
+      "
+    >
+      En attente
+    </p>
+
+    <h2
+      className="
+        mt-4
+        text-5xl
+        font-bold
+      "
+    >
+      {
+        reservations.filter(
+          (r) =>
+            r.status ===
+            "pending"
+        ).length
+      }
+    </h2>
+
+  </div>
+
+  {/* CHIFFRE AFFAIRES */}
+
+  <div
+    className="
+      rounded-[32px]
+      bg-[#2f241d]
+      p-8
+      text-white
+      shadow-xl
+    "
+  >
+
+    <p
+      className="
+        text-sm
+        font-semibold
+        uppercase
+        tracking-wide
+        opacity-80
+      "
+    >
+      Chiffre d’affaires
+    </p>
+
+    <h2
+      className="
+        mt-4
+        text-5xl
+        font-bold
+      "
+    >
+      {
+        reservations
+          .filter(
+            (r) =>
+              r.status ===
+              "confirmed"
+          )
+          .reduce(
+            (
+              total,
+              reservation
+            ) =>
+              total +
+              reservation.total,
+
+            0
+          )
+      }€
+    </h2>
+
+  </div>
+
+</div>
+
         <section
           className="
             mt-8
@@ -851,350 +1279,670 @@ await supabase
 
           <div className="space-y-6">
 
-            {reservations.map(
-              (reservation) => (
+            {filteredReservations.map(
+  (reservation) => (
 
-                <div
-                  key={reservation.id}
-                  className="
-                    rounded-3xl
-                    bg-[#faf7f2]
-                    p-8
-                  "
-                >
+    <div
+      key={reservation.id}
+      className="
+        overflow-hidden
+        rounded-[36px]
+        border
+        border-[#e7ded2]
+        bg-white
+        shadow-xl
+      "
+    >
 
-                  <div className="
-                    flex
-                    flex-col
-                    gap-4
-                  ">
+      {/* HEADER */}
 
-                    <h2 className="
-                      text-2xl
-                      font-bold
-                    ">
-                      {reservation.first_name}
-                      {" "}
-                      {reservation.last_name}
-                    </h2>
+      <div
+        className="
+          flex
+          flex-col
+          gap-6
+          border-b
+          border-[#efe7dc]
+          bg-[#faf7f2]
+          p-8
 
-                    <p>
-  {reservation.email}
-</p>
+          lg:flex-row
+          lg:items-center
+          lg:justify-between
+        "
+      >
 
-<p>
-  {reservation.phone}
-</p>
+        <div>
 
-<p>
-  Arrivée :
-  {" "}
-  {new Date(
-    reservation.arrival
-  ).toLocaleDateString("fr-FR")}
-</p>
+          <h2
+            className="
+              font-serif
+              text-4xl
+              font-bold
+              text-[#2f241d]
+            "
+          >
+            {reservation.first_name}
+            {" "}
+            {reservation.last_name}
+          </h2>
 
-<p>
-  Départ :
-  {" "}
-  {new Date(
-    reservation.departure
-  ).toLocaleDateString("fr-FR")}
-</p>
+          <p
+            className="
+              mt-2
+              text-[#6b5b4f]
+            "
+          >
+            Séjour du{" "}
 
-<p>
-  Personnes :
-  {" "}
-  {reservation.people}
-</p>
+            {new Date(
+              reservation.arrival
+            ).toLocaleDateString("fr-FR")}
 
-{/* CHAMBRES */}
+            {" "}au{" "}
 
-<div>
-
-  <p className="font-semibold">
-    Chambres réservées :
-  </p>
-
-  <div className="mt-2 space-y-1">
-
-    {reservation.reservation_rooms?.map(
-      (room) => (
-
-        <div
-          key={room.id}
-          className="
-            rounded-xl
-            bg-white
-            px-4
-            py-2
-            text-sm
-          "
-        >
-
-          {room.room_name}
-          {" "}
-          —
-          {" "}
-          {room.room_total}€
+            {new Date(
+              reservation.departure
+            ).toLocaleDateString("fr-FR")}
+          </p>
 
         </div>
 
-      )
-    )}
+        <div>
 
-  </div>
+          <span
+            className={`
+              rounded-full
+              border
+              px-5
+              py-3
+              text-sm
+              font-bold
 
-</div>
+              ${
+                getStatusStyle(
+                  reservation.status
+                ).className
+              }
+            `}
+          >
 
-{/* OPTIONS */}
+            {
+              getStatusStyle(
+                reservation.status
+              ).label
+            }
 
-<div className="space-y-1">
+          </span>
 
-  <p className="font-semibold">
-    Options :
-  </p>
+        </div>
 
-  <div className="text-sm">
+      </div>
 
-    Petit déjeuner :
-    {" "}
-    {reservation.breakfast
-      ? "Oui"
-      : "Non"}
+      {/* BODY */}
 
-  </div>
+      <div
+        className="
+          grid
+          gap-8
+          p-8
 
-  <div className="text-sm">
+          lg:grid-cols-3
+        "
+      >
 
-    Repas midi :
-    {" "}
-    {reservation.lunch
-      ? "Oui"
-      : "Non"}
+        {/* CLIENT */}
 
-  </div>
+        <div
+          className="
+            rounded-3xl
+            bg-[#faf7f2]
+            p-6
+          "
+        >
 
-  <div className="text-sm">
+          <h3
+            className="
+              mb-4
+              text-lg
+              font-bold
+            "
+          >
+            Client
+          </h3>
 
-    Repas soir :
-    {" "}
-    {reservation.dinner
-      ? "Oui"
-      : "Non"}
+          <div className="space-y-3">
 
-  </div>
+            <p>
+              {reservation.email}
+            </p>
 
-  <div className="text-sm">
+            <p>
+              {reservation.phone}
+            </p>
 
-    Animal :
-    {" "}
-    {reservation.pets
-      ? "Oui"
-      : "Non"}
+            <p>
+              {reservation.people}
+              {" "}
+              personnes
+            </p>
 
-  </div>
+          </div>
 
-  <div className="text-sm">
+        </div>
 
-    Bébé :
-    {" "}
-    {reservation.baby
-      ? "Oui"
-      : "Non"}
+        {/* CHAMBRES */}
 
-  </div>
+        <div
+          className="
+            rounded-3xl
+            bg-[#faf7f2]
+            p-6
+          "
+        >
 
-</div>
+          <h3
+            className="
+              mb-4
+              text-lg
+              font-bold
+            "
+          >
+            Chambres
+          </h3>
 
-{reservation.message && (
+          <div className="space-y-3">
 
-  <div>
+            {reservation.reservation_rooms?.map(
+              (room) => (
 
-    <p className="font-semibold">
-      Message :
-    </p>
+                <div
+                  key={room.id}
+                  className="
+                    rounded-2xl
+                    bg-white
+                    px-4
+                    py-3
+                    text-sm
+                    font-semibold
+                  "
+                >
 
-    <p className="
-      mt-1
-      rounded-2xl
-      bg-white
-      p-4
-      text-sm
-    ">
-      {reservation.message}
-    </p>
-
-  </div>
-
-)}
-
-<p className="
-  text-xl
-  font-bold
-">
-
-  Total :
-  {" "}
-  {reservation.total}€
-
-</p>
-
-<p>
-
-  Statut :
-  {" "}
-
-  <strong>
-    {reservation.status}
-  </strong>
-
-</p>
-
-                    <div className="
-                      flex
-                      gap-4
-                      flex-wrap
-                    ">
-
-                      <button
-                        onClick={() =>
-                          updateReservationStatus(
-                            reservation,
-                            "confirmed"
-                          )
-                        }
-                        className="
-                          rounded-xl
-                          bg-green-600
-                          px-5
-                          py-3
-                          text-white
-                          font-bold
-                        "
-                      >
-                        Confirmer
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          updateReservationStatus(
-                            reservation,
-                            "rejected"
-                          )
-                        }
-                        className="
-                          rounded-xl
-                          bg-red-600
-                          px-5
-                          py-3
-                          text-white
-                          font-bold
-                        "
-                      >
-                        Refuser
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          deleteReservation(
-                            reservation.id
-                          )
-                        }
-                        className="
-                          rounded-xl
-                          bg-black
-                          px-5
-                          py-3
-                          text-white
-                          font-bold
-                        "
-                      >
-                        Supprimer
-                      </button>
-
-                      <button
-  onClick={async () => {
-
-    try {
-
-      const response = await fetch(
-        "/api/generate-invoice",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-
-            ...reservation,
-
-            rooms:
-              reservation.reservation_rooms || [],
-          }),
-        }
-      )
-
-      if (!response.ok) {
-
-        throw new Error(
-          "Erreur génération PDF"
-        )
-      }
-
-      const blob =
-        await response.blob()
-
-      const url =
-        window.URL.createObjectURL(blob)
-
-      const a =
-        document.createElement("a")
-
-      a.href = url
-
-      a.download =
-        `facture-${reservation.id}.pdf`
-
-      document.body.appendChild(a)
-
-      a.click()
-
-      a.remove()
-
-      window.URL.revokeObjectURL(url)
-
-    } catch (error) {
-
-      console.error(error)
-
-      alert(
-        "Erreur génération facture"
-      )
-    }
-  }}
-  className="
-    rounded-xl
-    bg-[#c89b5f]
-    px-5
-    py-3
-    text-white
-    font-bold
-  "
->
-  Facture PDF
-</button>
-
-                    </div>
-
-                  </div>
+                  {room.room_name}
+                  {" "}
+                  —
+                  {" "}
+                  {room.room_total}€
 
                 </div>
 
               )
             )}
+
+          </div>
+
+        </div>
+
+        {/* OPTIONS */}
+
+        <div
+          className="
+            rounded-3xl
+            bg-[#faf7f2]
+            p-6
+          "
+        >
+
+          <h3
+            className="
+              mb-4
+              text-lg
+              font-bold
+            "
+          >
+            Options
+          </h3>
+
+          <div
+            className="
+              flex
+              flex-wrap
+              gap-3
+            "
+          >
+
+            <div
+              className="
+                rounded-full
+                bg-white
+                px-4
+                py-2
+                text-sm
+                font-semibold
+              "
+            >
+              🥐 Petit déjeuner :
+              {" "}
+              {reservation.breakfast
+                ? "Oui"
+                : "Non"}
+            </div>
+
+            <div
+              className="
+                rounded-full
+                bg-white
+                px-4
+                py-2
+                text-sm
+                font-semibold
+              "
+            >
+              🍽 Midi :
+              {" "}
+              {reservation.lunch
+                ? "Oui"
+                : "Non"}
+            </div>
+
+            <div
+              className="
+                rounded-full
+                bg-white
+                px-4
+                py-2
+                text-sm
+                font-semibold
+              "
+            >
+              🌙 Soir :
+              {" "}
+              {reservation.dinner
+                ? "Oui"
+                : "Non"}
+            </div>
+
+            <div
+              className="
+                rounded-full
+                bg-white
+                px-4
+                py-2
+                text-sm
+                font-semibold
+              "
+            >
+              🐶 Animal :
+              {" "}
+              {reservation.pets
+                ? "Oui"
+                : "Non"}
+            </div>
+
+            <div
+              className="
+                rounded-full
+                bg-white
+                px-4
+                py-2
+                text-sm
+                font-semibold
+              "
+            >
+              👶 Bébé :
+              {" "}
+              {reservation.baby
+                ? "Oui"
+                : "Non"}
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* MESSAGE */}
+
+        {reservation.message && (
+
+          <div
+            className="
+              rounded-3xl
+              bg-[#faf7f2]
+              p-6
+
+              lg:col-span-3
+            "
+          >
+
+            <h3
+              className="
+                mb-4
+                text-lg
+                font-bold
+              "
+            >
+              Message
+            </h3>
+
+            <p
+              className="
+                rounded-2xl
+                bg-white
+                p-4
+                text-sm
+              "
+            >
+              {reservation.message}
+            </p>
+
+          </div>
+
+        )}
+
+        {/* TOTAL */}
+
+        <div
+          className="
+            rounded-3xl
+            bg-[#2f241d]
+            p-6
+            text-white
+
+            lg:col-span-3
+          "
+        >
+
+          <div
+            className="
+              flex
+              items-center
+              justify-between
+            "
+          >
+
+            <span className="text-xl">
+              Total réservation
+            </span>
+
+            <span
+              className="
+                text-4xl
+                font-bold
+              "
+            >
+              {reservation.total}€
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* ACTIONS */}
+
+      <div
+        className="
+          flex
+          flex-wrap
+          gap-4
+
+          border-t
+          border-[#efe7dc]
+
+          p-8
+        "
+      >
+
+        <button
+          disabled={
+            reservation.status ===
+            "confirmed"
+          }
+
+          onClick={() =>
+            updateReservationStatus(
+              reservation,
+              "confirmed"
+            )
+          }
+
+          className={`
+            rounded-xl
+            px-5
+            py-3
+            font-bold
+            text-white
+            transition
+
+            ${
+              reservation.status ===
+              "confirmed"
+
+                ? "cursor-not-allowed bg-green-300"
+
+                : "bg-green-600 hover:bg-green-700"
+            }
+          `}
+        >
+          Confirmer
+        </button>
+
+        <button
+  disabled={
+    reservation.status ===
+    "checked_in"
+  }
+
+  onClick={() =>
+    updateReservationStatus(
+      reservation,
+      "checked_in"
+    )
+  }
+
+  className={`
+    rounded-xl
+    px-5
+    py-3
+    font-bold
+    text-white
+    transition
+
+    ${
+      reservation.status ===
+      "checked_in"
+
+        ? `
+          cursor-not-allowed
+          bg-blue-300
+        `
+
+        : `
+          bg-blue-600
+          hover:bg-blue-700
+        `
+    }
+  `}
+>
+  Check-in
+</button>
+
+<button
+  disabled={
+    reservation.status ===
+    "checked_out"
+  }
+
+  onClick={() =>
+    updateReservationStatus(
+      reservation,
+      "checked_out"
+    )
+  }
+
+  className={`
+    rounded-xl
+    px-5
+    py-3
+    font-bold
+    text-white
+    transition
+
+    ${
+      reservation.status ===
+      "checked_out"
+
+        ? `
+          cursor-not-allowed
+          bg-gray-300
+        `
+
+        : `
+          bg-gray-700
+          hover:bg-gray-800
+        `
+    }
+  `}
+>
+  Check-out
+</button>
+
+        <button
+          disabled={
+            reservation.status ===
+            "rejected"
+          }
+
+          onClick={() =>
+            updateReservationStatus(
+              reservation,
+              "rejected"
+            )
+          }
+
+          className={`
+            rounded-xl
+            px-5
+            py-3
+            font-bold
+            text-white
+            transition
+
+            ${
+              reservation.status ===
+              "rejected"
+
+                ? "cursor-not-allowed bg-red-300"
+
+                : "bg-red-600 hover:bg-red-700"
+            }
+          `}
+        >
+          Refuser
+        </button>
+
+        <button
+          onClick={() =>
+            deleteReservation(
+              reservation.id
+            )
+          }
+          className="
+            rounded-xl
+            bg-black
+            px-5
+            py-3
+            font-bold
+            text-white
+          "
+        >
+          Supprimer
+        </button>
+
+        <button
+          onClick={async () => {
+
+            try {
+
+              const response =
+                await fetch(
+                  "/api/generate-invoice",
+                  {
+                    method: "POST",
+
+                    headers: {
+                      "Content-Type":
+                        "application/json",
+                    },
+
+                    body: JSON.stringify({
+
+                      ...reservation,
+
+                      rooms:
+                        reservation.reservation_rooms || [],
+                    }),
+                  }
+                )
+
+              if (!response.ok) {
+
+                throw new Error(
+                  "Erreur génération PDF"
+                )
+              }
+
+              const blob =
+                await response.blob()
+
+              const url =
+                window.URL.createObjectURL(blob)
+
+              const a =
+                document.createElement("a")
+
+              a.href = url
+
+              a.download =
+                `facture-${reservation.id}.pdf`
+
+              document.body.appendChild(a)
+
+              a.click()
+
+              a.remove()
+
+              window.URL.revokeObjectURL(url)
+
+            } catch (error) {
+
+              console.error(error)
+
+              alert(
+                "Erreur génération facture"
+              )
+            }
+          }}
+
+          className="
+            rounded-xl
+            bg-[#c89b5f]
+            px-5
+            py-3
+            font-bold
+            text-white
+          "
+        >
+          Facture PDF
+        </button>
+
+      </div>
+
+    </div>
+
+  )
+)}
 
           </div>
 
@@ -1435,6 +2183,42 @@ await supabase
 
           <option value={4}>
             4 personnes
+          </option>
+
+          <option value={1}>
+            5 personne
+          </option>
+
+          <option value={2}>
+            6 personnes
+          </option>
+
+          <option value={3}>
+            7 personnes
+          </option>
+
+          <option value={4}>
+            8 personnes
+          </option>
+
+          <option value={4}>
+            9 personnes
+          </option>
+
+          <option value={1}>
+            10 personne
+          </option>
+
+          <option value={2}>
+           11 personnes
+          </option>
+
+          <option value={3}>
+            12 personnes
+          </option>
+
+          <option value={4}>
+            13 personnes
           </option>
 
         </select>

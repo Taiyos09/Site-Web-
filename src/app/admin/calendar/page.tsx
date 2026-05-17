@@ -1,8 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+
 import { supabase } from "@/lib/supabase"
-import { addDays, format } from "date-fns"
+
+import {
+  addMonths,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  format,
+} from "date-fns"
+
 import { fr } from "date-fns/locale"
 
 type ReservationRoom = {
@@ -26,6 +35,8 @@ type Reservation = {
   breakfast: boolean
   lunch: boolean
   dinner: boolean
+  animals: boolean
+  baby: boolean
   reservation_rooms?: ReservationRoom[]
 }
 
@@ -36,47 +47,155 @@ const rooms = [
 ]
 
 export default function CalendarPage() {
+
   const [selectedReservation, setSelectedReservation] =
     useState<Reservation | null>(null)
 
   const [reservations, setReservations] =
     useState<Reservation[]>([])
 
+  const [currentMonth, setCurrentMonth] =
+    useState(new Date())
+
+  const calendarRef =
+  useRef<HTMLDivElement>(null)
+
+  /* ====================================== */
+  /* LOAD RESERVATIONS */
+  /* ====================================== */
+
   useEffect(() => {
-    const loadReservations = async () => {
-      try {
-        const { data, error } =
-          await supabase
-            .from("reservations")
-            .select(`
-              *,
-              reservation_rooms (*)
-            `)
-            .eq("status", "confirmed")
 
-        if (error) {
-          console.error(error)
-          return
-        }
+    const loadReservations =
+      async () => {
 
-        if (data) {
-          setReservations(data)
+        try {
+
+          const { data, error } =
+            await supabase
+              .from("reservations")
+              .select(`
+                *,
+                reservation_rooms (*)
+              `)
+
+          if (error) {
+
+            console.error(error)
+            return
+          }
+
+          if (data) {
+
+            setReservations(data)
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Erreur chargement calendrier :",
+            error
+          )
         }
-      } catch (error) {
-        console.error(
-          "Erreur chargement calendrier :",
-          error
-        )
       }
-    }
 
     loadReservations()
+
   }, [])
 
-  const days = Array.from(
-    { length: 30 },
-    (_, i) => addDays(new Date(), i)
-  )
+  const monthStart =
+    startOfMonth(currentMonth)
+
+  const monthEnd =
+    endOfMonth(currentMonth)
+
+  const days =
+    eachDayOfInterval({
+      start: monthStart,
+      end: monthEnd,
+    })
+
+  const scrollToToday = () => {
+
+  if (!calendarRef.current)
+    return
+
+  const today =
+    new Date()
+
+  const todayIndex =
+    days.findIndex(
+      (day) =>
+        format(day, "yyyy-MM-dd") ===
+        format(today, "yyyy-MM-dd")
+    )
+
+  if (todayIndex === -1)
+    return
+
+  const scrollPosition =
+    todayIndex * 120
+
+  calendarRef.current.scrollTo({
+    left:
+      scrollPosition - 400,
+
+    behavior: "smooth",
+  })
+}
+
+const updateReservationStatus =
+  async (
+    reservationId: number,
+    status: string
+  ) => {
+
+    try {
+
+      const { error } =
+        await supabase
+          .from("reservations")
+          .update({ status })
+          .eq("id", reservationId)
+
+      if (error) {
+
+        console.error(error)
+        return
+      }
+
+      setReservations((prev) =>
+        prev.map((reservation) =>
+
+          reservation.id ===
+          reservationId
+
+            ? {
+                ...reservation,
+                status,
+              }
+
+            : reservation
+        )
+      )
+
+      setSelectedReservation(
+        (prev) =>
+
+          prev
+            ? {
+                ...prev,
+                status,
+              }
+
+            : null
+      )
+
+    } catch (error) {
+
+      console.error(error)
+    }
+  }
 
   return (
     <>
@@ -96,7 +215,9 @@ export default function CalendarPage() {
       >
 
         <div className="mt-10">
+
           <div className="mb-10">
+
             <h1
               className="
                 font-serif
@@ -110,37 +231,272 @@ export default function CalendarPage() {
             <p className="mt-2 text-[#6b5b4f]">
               Gestion des disponibilités.
             </p>
+
           </div>
+
+          {/* LEGENDE */}
 
           <div
             className="
+              mb-6
+              flex
+              flex-wrap
+              gap-4
+            "
+          >
+
+            <div
+              className="
+                flex
+                items-center
+                gap-2
+              "
+            >
+
+              <div
+                className="
+                  h-4
+                  w-4
+                  rounded-full
+                  bg-green-600
+                "
+              />
+
+              <span>
+                Confirmée
+              </span>
+
+            </div>
+
+            <div
+              className="
+                flex
+                items-center
+                gap-2
+              "
+            >
+
+              <div
+                className="
+                  h-4
+                  w-4
+                  rounded-full
+                  bg-yellow-500
+                "
+              />
+
+              <span>
+                En attente
+              </span>
+
+            </div>
+
+            <div
+              className="
+                flex
+                items-center
+                gap-2
+              "
+            >
+
+              <div
+                className="
+                  h-4
+                  w-4
+                  rounded-full
+                  bg-red-600
+                "
+              />
+
+              <span>
+                Refusée
+              </span>
+
+            </div>
+
+          </div>
+
+          {/* TOOLBAR */}
+
+          <div
+            className="
+              mb-6
+              flex
+              items-center
+              justify-between
+              gap-4
+              flex-wrap
+            "
+          >
+
+            <div
+              className="
+                flex
+                items-center
+                gap-3
+              "
+            >
+
+              <button
+
+                onClick={() =>
+                  setCurrentMonth(
+                    addMonths(
+                      currentMonth,
+                      -1
+                    )
+                  )
+                }
+
+                className="
+                  rounded-2xl
+                  border
+                  bg-white
+                  px-5
+                  py-3
+                  font-semibold
+                  shadow-sm
+                  transition
+                  hover:bg-[#faf7f2]
+                "
+              >
+                ←
+              </button>
+
+              <button
+
+                onClick={() =>
+                  setCurrentMonth(
+                    addMonths(
+                      currentMonth,
+                      1
+                    )
+                  )
+                }
+
+                className="
+                  rounded-2xl
+                  border
+                  bg-white
+                  px-5
+                  py-3
+                  font-semibold
+                  shadow-sm
+                  transition
+                  hover:bg-[#faf7f2]
+                "
+              >
+                →
+              </button>
+
+              <div
+                className="
+                  rounded-2xl
+                  border
+                  bg-white
+                  px-6
+                  py-3
+                  font-bold
+                  shadow-sm
+                  capitalize
+                "
+              >
+                {format(
+                  currentMonth,
+                  "MMMM yyyy",
+                  { locale: fr }
+                )}
+              </div>
+
+            </div>
+
+            <button
+
+  onClick={() => {
+
+    setCurrentMonth(
+      new Date()
+    )
+
+    setTimeout(() => {
+
+      scrollToToday()
+
+    }, 100)
+  }}
+
+  className="
+    rounded-2xl
+    border
+    bg-white
+    px-6
+    py-3
+    font-semibold
+    shadow-sm
+    transition
+    hover:bg-[#faf7f2]
+  "
+>
+  Aujourd’hui
+</button>
+
+          </div>
+
+          {/* CALENDRIER */}
+
+          <div
+            ref={calendarRef}
+            className="
               overflow-x-auto
+              w-full
               rounded-[36px]
               bg-white
-              p-6
+              p-8
               shadow-2xl
             "
           >
+
             <div
               className="grid"
               style={{
-                gridTemplateColumns: `220px repeat(${days.length}, 120px)`,
+                gridTemplateColumns:
+                  `260px repeat(${days.length}, 120px)`,
               }}
             >
+
               {/* HEADER */}
+
               <div
-                className="
-                  sticky left-0 z-30
-                  border-b
-                  bg-white
-                  p-4
-                  font-bold
-                "
-              >
-                Chambres
-              </div>
+  className="
+    sticky
+    left-0
+    z-40
+
+    flex
+    items-center
+
+    border-b
+    border-r
+
+    bg-white
+
+    p-4
+
+    font-bold
+
+    shadow-[8px_0_12px_-8px_rgba(0,0,0,0.08)]
+  "
+
+  style={{
+    width: "260px",
+    minWidth: "260px",
+  }}
+>
+  Chambres
+</div>
 
               {days.map((day) => (
+
                 <div
                   key={day.toISOString()}
                   className="
@@ -152,18 +508,27 @@ export default function CalendarPage() {
                     font-bold
                   "
                 >
-                  <div>{format(day, "dd")}</div>
+
+                  <div>
+                    {format(day, "dd")}
+                  </div>
 
                   <div className="text-sm text-[#6b5b4f]">
+
                     {format(day, "MMM", {
                       locale: fr,
                     })}
+
                   </div>
+
                 </div>
+
               ))}
 
               {/* LIGNES */}
+
               {rooms.map((room) => {
+
                 const roomReservations =
                   reservations.filter((reservation) =>
                     reservation.reservation_rooms?.some(
@@ -172,55 +537,87 @@ export default function CalendarPage() {
                   )
 
                 return (
+
                   <div
                     key={room}
                     className="contents"
                   >
+
                     {/* NOM CHAMBRE */}
+
                     <div
-                      className="
-                        sticky left-0 z-20
-                        border-r
-                        border-t
-                        bg-white
-                        p-4
-                        font-bold
-                      "
-                    >
-                      {room}
-                    </div>
+  className="
+    sticky
+    left-0
+    z-30
+
+    flex
+    items-center
+
+    border-r
+    border-t
+
+    bg-white
+
+    p-4
+
+    font-bold
+
+    shadow-[8px_0_12px_-8px_rgba(0,0,0,0.08)]
+  "
+
+  style={{
+    width: "260px",
+    minWidth: "260px",
+  }}
+>
+  {room}
+</div>
 
                     {/* LIGNE */}
+
                     <div
                       className="
                         relative
                         border-t
                       "
                       style={{
-                        gridColumn: `span ${days.length}`,
-                        height: "100px",
+                        gridColumn:
+                          `span ${days.length}`,
+
+                        height: "170px",
                       }}
                     >
+
                       {/* GRILLE */}
+
                       <div
                         className="
-                          absolute inset-0
+                          absolute
+                          inset-0
                           grid
                         "
                         style={{
-                          gridTemplateColumns: `repeat(${days.length}, 1fr)`,
+                          gridTemplateColumns:
+                            `repeat(${days.length}, 1fr)`,
                         }}
                       >
+
                         {days.map((_, i) => (
+
                           <div
                             key={`grid-${room}-${i}`}
                             className="border-r"
                           />
+
                         ))}
+
                       </div>
 
                       {/* RESERVATIONS */}
+
                       {roomReservations.map((reservation) => {
+
                         const currentRoom =
                           reservation.reservation_rooms?.find(
                             (r) => r.room_name === room
@@ -255,43 +652,125 @@ export default function CalendarPage() {
                           return null
                         }
 
-                        const reservationColor =
-                          reservation.id % 4 === 0
-                            ? "bg-green-600"
-                            : reservation.id % 4 === 1
-                            ? "bg-blue-600"
-                            : reservation.id % 4 === 2
-                            ? "bg-orange-500"
-                            : "bg-purple-600"
+                        const colorPalette = [
+
+  `
+    bg-[#4f6f52]
+    border-[#7da37f]
+  `,
+
+  `
+    bg-[#5b6c8f]
+    border-[#8ea1c7]
+  `,
+
+  `
+    bg-[#7b5b8a]
+    border-[#aa8dc0]
+  `,
+
+  `
+    bg-[#9c6b3f]
+    border-[#c89b5f]
+  `,
+
+  `
+    bg-[#7a4b4b]
+    border-[#b07a7a]
+  `,
+
+  `
+    bg-[#3f6f73]
+    border-[#6ea4aa]
+  `,
+]
+
+const clientKey =
+  `${reservation.id}`
+
+const clientHash =
+  clientKey
+    .split("")
+    .reduce(
+      (acc, char) =>
+        acc + char.charCodeAt(0),
+      0
+    )
+
+const clientColor =
+  colorPalette[
+    clientHash %
+    colorPalette.length
+  ]
+
+const reservationColor =
+
+  reservation.status ===
+  "rejected"
+
+    ? `
+      bg-red-600
+      border-red-300
+    `
+
+    : reservation.status ===
+      "pending"
+
+    ? `
+      bg-yellow-500
+      border-yellow-300
+    `
+
+    : clientColor
 
                         return (
+
                           <button
                             key={`${reservation.id}-${room}`}
+
                             onClick={() =>
                               setSelectedReservation(
                                 reservation
                               )
                             }
+
                             className={`
                               absolute
-                              top-2
-                              h-[80px]
+                              top-4
+                              h-[130px]
+
                               rounded-2xl
+                              border-2
+
                               px-4
                               py-3
+
                               text-left
                               text-white
+
                               shadow-xl
-                              transition
+                              backdrop-blur-sm
+
+                              transition-all
+                              duration-300
+
+                              hover:z-20
                               hover:scale-[1.02]
+                              hover:shadow-2xl
+
                               ${reservationColor}
                             `}
+
                             style={{
-                              left: `${(startIndex / days.length) * 100}%`,
-                              width: `${((endIndex - startIndex + 1.02) / days.length) * 100}%`,
+                              left:
+                                `${(startIndex / days.length) * 100}%`,
+
+                              width:
+                                `${((endIndex - startIndex + 1.02) / days.length) * 100}%`,
                             }}
                           >
-                            <div className="font-bold">
+
+                            <div className="font-bold text-lg">
                               {reservation.first_name}
                             </div>
 
@@ -299,183 +778,394 @@ export default function CalendarPage() {
                               {reservation.last_name}
                             </div>
 
-                            <div className="mt-1 text-xs opacity-80">
+                            <div
+                              className="
+                                mt-2
+                                inline-block
+                                rounded-full
+                                bg-white/20
+                                px-3
+                                py-1
+                                text-[10px]
+                                font-bold
+                                uppercase
+                                tracking-wide
+                              "
+                            >
+
+                              {reservation.status ===
+                              "confirmed"
+
+                                ? "Confirmée"
+
+                                : reservation.status ===
+                                  "pending"
+
+                                ? "En attente"
+
+                                : reservation.status ===
+                                  "rejected"
+
+                                ? "Refusée"
+
+                                : reservation.status}
+
+                            </div>
+
+                            <div className="mt-2 text-sm opacity-90">
                               {currentRoom?.people} pers.
                             </div>
+
                           </button>
+
                         )
                       })}
+
                     </div>
+
                   </div>
+
                 )
               })}
+
             </div>
+
           </div>
+
         </div>
 
         {/* MODAL */}
 
-{selectedReservation && (
+        {selectedReservation && (
 
-  <div
-    className="
-      fixed inset-0 z-50
-      flex items-center justify-center
-      bg-black/50
-      backdrop-blur-sm
-      p-6
-    "
-    onClick={() =>
-      setSelectedReservation(null)
-    }
+          <div
+            className="
+              fixed
+              inset-0
+              z-50
+              flex
+              items-center
+              justify-center
+              bg-black/50
+              backdrop-blur-sm
+              p-6
+            "
+            onClick={() =>
+              setSelectedReservation(null)
+            }
+          >
+
+            <div
+              className="
+                w-full
+                max-w-2xl
+                rounded-[36px]
+                bg-white
+                p-10
+                shadow-2xl
+              "
+              onClick={(e) =>
+                e.stopPropagation()
+              }
+            >
+
+              <div
+                className="
+                  mb-8
+                  flex
+                  items-center
+                  justify-between
+                "
+              >
+
+                <h2
+                  className="
+                    font-serif
+                    text-4xl
+                    font-bold
+                  "
+                >
+                  Réservation
+                </h2>
+
+                <button
+                  onClick={() =>
+                    setSelectedReservation(null)
+                  }
+                  className="
+                    rounded-xl
+                    bg-[#2f241d]
+                    px-4
+                    py-2
+                    text-white
+                  "
+                >
+                  Fermer
+                </button>
+
+              </div>
+
+              <div
+                className="
+                  space-y-4
+                  text-lg
+                "
+              >
+
+                <p>
+                  <strong>Client :</strong>
+                  {" "}
+                  {selectedReservation.first_name}
+                  {" "}
+                  {selectedReservation.last_name}
+                </p>
+
+                <p>
+                  <strong>Email :</strong>
+                  {" "}
+                  {selectedReservation.email}
+                </p>
+
+                <p>
+                  <strong>Téléphone :</strong>
+                  {" "}
+                  {selectedReservation.phone}
+                </p>
+
+                <p>
+                  <strong>Chambres :</strong>
+                  {" "}
+                  {selectedReservation
+                    .reservation_rooms
+                    ?.map(
+                      (room) => room.room_name
+                    )
+                    .join(", ")}
+                </p>
+
+                <p>
+                  <strong>Personnes :</strong>
+                  {" "}
+                  {selectedReservation.people}
+                </p>
+
+                <p>
+                  <strong>Arrivée :</strong>
+                  {" "}
+                  {new Date(
+                    selectedReservation.arrival
+                  ).toLocaleDateString("fr-FR")}
+                </p>
+
+                <p>
+                  <strong>Départ :</strong>
+                  {" "}
+                  {new Date(
+                    selectedReservation.departure
+                  ).toLocaleDateString("fr-FR")}
+                </p>
+
+                <p>
+  <strong>Petit déjeuner :</strong>
+  {" "}
+  {selectedReservation.breakfast
+    ? "Oui"
+    : "Non"}
+</p>
+
+<p>
+  <strong>Repas midi :</strong>
+  {" "}
+  {selectedReservation.lunch
+    ? "Oui"
+    : "Non"}
+</p>
+
+<p>
+  <strong>Repas soir :</strong>
+  {" "}
+  {selectedReservation.dinner
+    ? "Oui"
+    : "Non"}
+</p>
+
+<p>
+  <strong>Animaux :</strong>
+  {" "}
+  {selectedReservation.animals
+    ? "Oui"
+    : "Non"}
+</p>
+
+<p>
+  <strong>Enfant bas âge :</strong>
+  {" "}
+  {selectedReservation.baby
+    ? "Oui"
+    : "Non"}
+</p>
+
+                <p>
+                  <strong>Total :</strong>
+                  {" "}
+                  {selectedReservation.total}€
+                </p>
+
+                <p>
+  <strong>Statut :</strong>
+  {" "}
+
+  <span
+    className={`
+      rounded-full
+      px-4
+      py-2
+      text-sm
+      font-bold
+      text-white
+
+      ${
+        selectedReservation.status ===
+        "confirmed"
+
+          ? "bg-green-600"
+
+          : selectedReservation.status ===
+            "pending"
+
+          ? "bg-yellow-500"
+
+          : selectedReservation.status ===
+            "rejected"
+
+          ? "bg-red-600"
+
+          : "bg-gray-500"
+      }
+    `}
   >
 
-    <div
-      className="
-        w-full
-        max-w-2xl
-        rounded-[36px]
-        bg-white
-        p-10
-        shadow-2xl
-      "
-      onClick={(e) =>
-        e.stopPropagation()
-      }
-    >
+    {selectedReservation.status}
 
-      <div className="
-        mb-8
-        flex items-center justify-between
-      ">
+  </span>
 
-        <h2
-          className="
-            font-serif
-            text-4xl
-            font-bold
-          "
-        >
-          Réservation
-        </h2>
+</p>
 
-        <button
-          onClick={() =>
-            setSelectedReservation(null)
-          }
-          className="
-            rounded-xl
-            bg-[#2f241d]
-            px-4 py-2
-            text-white
-          "
-        >
-          Fermer
-        </button>
+<div
+  className="
+    mt-10
+    flex
+    flex-wrap
+    gap-4
+  "
+>
 
-      </div>
+  {/* CONFIRMER */}
 
-      <div className="
-        space-y-4
-        text-lg
-      ">
+  <button
+    onClick={() =>
+      updateReservationStatus(
+        selectedReservation.id,
+        "confirmed"
+      )
+    }
 
-        <p>
-          <strong>Client :</strong>
-          {" "}
-          {selectedReservation.first_name}
-          {" "}
-          {selectedReservation.last_name}
-        </p>
+    className="
+      rounded-2xl
+      bg-green-600
+      px-5
+      py-3
+      font-bold
+      text-white
+      transition
+      hover:bg-green-700
+    "
+  >
+    Confirmer
+  </button>
 
-        <p>
-          <strong>Email :</strong>
-          {" "}
-          {selectedReservation.email}
-        </p>
+  {/* CHECK-IN */}
 
-        <p>
-          <strong>Téléphone :</strong>
-          {" "}
-          {selectedReservation.phone}
-        </p>
+  <button
+    onClick={() =>
+      updateReservationStatus(
+        selectedReservation.id,
+        "checked_in"
+      )
+    }
 
-        <p>
-          <strong>Chambres :</strong>
-          {" "}
-          {selectedReservation
-            .reservation_rooms
-            ?.map(
-              (room) => room.room_name
-            )
-            .join(", ")}
-        </p>
+    className="
+      rounded-2xl
+      bg-blue-600
+      px-5
+      py-3
+      font-bold
+      text-white
+      transition
+      hover:bg-blue-700
+    "
+  >
+    Check-in
+  </button>
 
-        <p>
-          <strong>Personnes :</strong>
-          {" "}
-          {selectedReservation.people}
-        </p>
+  {/* CHECK-OUT */}
 
-        <p>
-          <strong>Arrivée :</strong>
-          {" "}
-          {new Date(
-            selectedReservation.arrival
-          ).toLocaleDateString("fr-FR")}
-        </p>
+  <button
+    onClick={() =>
+      updateReservationStatus(
+        selectedReservation.id,
+        "checked_out"
+      )
+    }
 
-        <p>
-          <strong>Départ :</strong>
-          {" "}
-          {new Date(
-            selectedReservation.departure
-          ).toLocaleDateString("fr-FR")}
-        </p>
+    className="
+      rounded-2xl
+      bg-gray-700
+      px-5
+      py-3
+      font-bold
+      text-white
+      transition
+      hover:bg-gray-800
+    "
+  >
+    Check-out
+  </button>
 
-        <p>
-          <strong>Petit déjeuner :</strong>
-          {" "}
-          {selectedReservation.breakfast
-            ? "Oui"
-            : "Non"}
-        </p>
+  {/* REFUSER */}
 
-        <p>
-          <strong>Repas midi :</strong>
-          {" "}
-          {selectedReservation.lunch
-            ? "Oui"
-            : "Non"}
-        </p>
+  <button
+    onClick={() =>
+      updateReservationStatus(
+        selectedReservation.id,
+        "rejected"
+      )
+    }
 
-        <p>
-          <strong>Repas soir :</strong>
-          {" "}
-          {selectedReservation.dinner
-            ? "Oui"
-            : "Non"}
-        </p>
+    className="
+      rounded-2xl
+      bg-red-600
+      px-5
+      py-3
+      font-bold
+      text-white
+      transition
+      hover:bg-red-700
+    "
+  >
+    Refuser
+  </button>
 
-        <p>
-          <strong>Total :</strong>
-          {" "}
-          {selectedReservation.total}€
-        </p>
+</div>
 
-        <p>
-          <strong>Statut :</strong>
-          {" "}
-          {selectedReservation.status}
-        </p>
+              </div>
 
-      </div>
+            </div>
 
-    </div>
+          </div>
 
-  </div>
+        )}
 
-)}
       </main>
     </>
   )

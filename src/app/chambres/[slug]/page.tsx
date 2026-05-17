@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+import Image from "next/image"
 
 type Props = {
   params: Promise<{
@@ -43,9 +44,10 @@ export default async function RoomPage({
 
       <section className="relative h-[72vh] overflow-hidden">
 
-        <img
+        <Image
           src={images[0]}
           alt={room.name}
+          fill
           className="absolute inset-0 h-full w-full object-cover"
         />
 

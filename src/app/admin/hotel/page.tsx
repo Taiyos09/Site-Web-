@@ -33,6 +33,7 @@ type HotelSettings = {
 }
 
 export default function HotelAdminPage() {
+  
   const [rooms, setRooms] =
     useState<Room[]>([])
 
@@ -52,6 +53,8 @@ export default function HotelAdminPage() {
     loadData()
   }, [])
 
+  
+
   async function loadData() {
     try {
       const { data: roomsData, error: roomsError } =
@@ -63,6 +66,7 @@ export default function HotelAdminPage() {
       if (roomsError) {
         console.error(roomsError)
       }
+      
 
       const {
         data: settingsData,
@@ -86,7 +90,9 @@ export default function HotelAdminPage() {
     } finally {
       setLoading(false)
     }
+    
   }
+  
 
   // =========================
   // UPDATE ROOM LOCAL STATE

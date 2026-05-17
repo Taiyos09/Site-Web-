@@ -2,7 +2,77 @@
 
 import Link from "next/link"
 
+import {
+  usePathname,
+  useRouter,
+} from "next/navigation"
+
+import {
+  LayoutDashboard,
+  BedDouble,
+  UtensilsCrossed,
+  CalendarDays,
+  CalendarRange,
+  PartyPopper,
+  LogOut,
+  Home,
+} from "lucide-react"
+
+import { supabase } from "@/lib/supabase"
+
+const links = [
+
+  {
+    label: "Dashboard",
+    href: "/admin",
+    icon: LayoutDashboard,
+  },
+
+  {
+    label: "Tarifs hôtel",
+    href: "/admin/hotel",
+    icon: BedDouble,
+  },
+
+  {
+    label: "Restaurant",
+    href: "/admin/restaurant",
+    icon: UtensilsCrossed,
+  },
+
+  {
+    label: "Événements",
+    href: "/admin/events",
+    icon: PartyPopper,
+  },
+
+  {
+    label: "Réservations",
+    href: "/admin/reservations",
+    icon: CalendarDays,
+  },
+
+  {
+    label: "Calendrier",
+    href: "/admin/calendar",
+    icon: CalendarRange,
+  },
+
+]
+
 export default function AdminNavbar() {
+
+  const pathname = usePathname()
+
+  const router = useRouter()
+
+  const handleLogout =
+    async () => {
+
+      await supabase.auth.signOut()
+
+      router.push("/login")
+    }
 
   return (
 
@@ -11,172 +81,192 @@ export default function AdminNavbar() {
         sticky
         top-0
         z-50
-        mb-10
-        rounded-[28px]
-        border
+        border-b
         border-[#e7ded2]
-        bg-white/95
+        bg-[#f9f5ef]/90
         backdrop-blur-xl
-        shadow-xl
       "
     >
 
       <div
         className="
+          mx-auto
           flex
-          flex-wrap
-          items-center
-          justify-between
-          gap-4
-          px-8
-          py-5
+          max-w-7xl
+          flex-col
+          gap-6
+          px-3
+          py-2
+          md:px-6
+          lg:flex-row
+          lg:items-center
+          lg:justify-between
         "
       >
 
-        <div>
+        {/* LOGO */}
 
-          <h2
-            className="
-              font-serif
-              text-3xl
-              font-bold
-              text-[#2f241d]
-            "
-          >
-            Administration
-          </h2>
-
-          <p className="text-[#6b5b4f]">
-            Gestion de l’auberge
-          </p>
-
-        </div>
-
-        <nav
+        <div
           className="
             flex
-            flex-wrap
             items-center
-            gap-3
+            justify-between
+            gap-6
           "
         >
+
+          <div>
+
+            <h2
+              className="
+                font-serif
+                text-2xl
+                font-bold
+                text-[#2f241d]
+              "
+            >
+              Administration
+            </h2>
+
+            <p
+              className="
+                mt-1
+                text-[#6b5b4f]
+              "
+            >
+              Gestion Hotel
+            </p>
+
+          </div>
+
+          {/* HOME */}
 
           <Link
             href="/"
             className="
+              hidden
+              items-center
+              gap-2
               rounded-2xl
+              border
+              border-[#ddd2c3]
               bg-white
               px-5
               py-3
               font-semibold
               text-[#2f241d]
-              border
-              transition
-              hover:bg-[#faf7f2]
+              transition-all
+              duration-300
+              hover:bg-[#f5efe6]
+              md:flex
             "
           >
-            Accueil Site
+
+            <Home size={18} />
+
+            Site
+
           </Link>
-          
-          <Link
-            href="/admin"
+
+        </div>
+
+        {/* NAV */}
+
+        <nav
+          className="
+            whitespace-nowrap
+            flex
+            flex-nowrap
+            gap-1
+            flex-1
+            justify-end
+          "
+        >
+
+          {links.map((link) => {
+
+            const Icon =
+              link.icon
+
+            const isActive =
+              pathname === link.href
+
+            return (
+
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`
+                  flex
+                  items-center
+                  gap-2
+
+                  rounded-2xl
+                  px-3
+                  py-2
+
+                  text-sm
+                  font-semibold
+
+                  transition-all
+                  duration-300
+
+                  ${
+                    isActive
+                      ? `
+                        bg-[#2f241d]
+                        text-white
+                        shadow-lg
+                      `
+                      : `
+                        border
+                        border-[#ddd2c3]
+                        bg-white
+                        text-[#2f241d]
+                        hover:bg-[#f5efe6]
+                      `
+                  }
+                `}
+              >
+
+                <Icon size={18} />
+
+                {link.label}
+
+              </Link>
+            )
+          })}
+
+          {/* LOGOUT */}
+
+          <button
+            onClick={handleLogout}
             className="
+              flex
+              items-center
+              gap-2
+
               rounded-2xl
-              bg-white
-              px-5
-              py-3
-              font-semibold
-              text-[#2f241d]
-              border
-              transition
-              hover:bg-[#faf7f2]
-            "
-          >
-            Accueil Admin
-          </Link>
-          
-          <Link
-            href="/admin/hotel"
-            className="
-              rounded-2xl
-              bg-[#2f241d]
-              px-5
-              py-3
+              bg-red-600
+              px-3
+              py-2
+
+              text-sm
               font-semibold
               text-white
-              transition
-              hover:bg-[#43352c]
-            "
-          >
-            Tarif hôtel
-          </Link>
 
-          <Link
-            href="/admin/restaurant"
-            className="
-              rounded-2xl
-              bg-white
-              px-5
-              py-3
-              font-semibold
-              text-[#2f241d]
-              border
-              transition
-              hover:bg-[#faf7f2]
-            "
-          >
-            Tarif restaurant
-          </Link>
+              transition-all
+              duration-300
 
-          <Link
-            href="/admin/events"
-            className="
-              rounded-2xl
-              bg-white
-              px-5
-              py-3
-              font-semibold
-              text-[#2f241d]
-              border
-              transition
-              hover:bg-[#faf7f2]
+              hover:bg-red-700
             "
           >
-            Événements
-          </Link>
 
-          <Link
-            href="/admin/reservations"
-            className="
-              rounded-2xl
-              bg-white
-              px-5
-              py-3
-              font-semibold
-              text-[#2f241d]
-              border
-              transition
-              hover:bg-[#faf7f2]
-            "
-          >
-            Réservations
-          </Link>
+            <LogOut size={18} />
 
-          <Link
-            href="/admin/calendar"
-            className="
-              rounded-2xl
-              bg-green-600
-              px-5
-              py-3
-              font-semibold
-              text-white
-              transition
-              hover:bg-green-700
-            "
-          >
-            Calendrier chambres
-          </Link>
+            Déconnexion
+
+          </button>
 
         </nav>
 
