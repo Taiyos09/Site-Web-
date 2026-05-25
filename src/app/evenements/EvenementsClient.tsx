@@ -182,7 +182,7 @@ const [currentImage, setCurrentImage] = useState(0)
 
       : event.gallery[
           currentImage % event.gallery.length
-        ]?.url
+        ]
   }
   alt={event.title}
   fill

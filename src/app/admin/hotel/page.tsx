@@ -21,7 +21,7 @@ type Room = {
 type HotelSettings = {
   id: number
 
-  breakfast: number
+
   lunch: number
   dinner: number
 
@@ -196,8 +196,6 @@ if (error) {
         await supabase
           .from("hotel_settings")
           .update({
-            breakfast:
-              settings.breakfast,
 
             lunch:
               settings.lunch,
@@ -349,28 +347,6 @@ if (error) {
               xl:grid-cols-3
             "
           >
-            <div>
-              <label className="mb-2 block font-bold">
-                Petit déjeuner
-              </label>
-
-              <input
-                type="number"
-                value={settings.breakfast}
-                onChange={(e) =>
-                  handleSettingChange(
-                    "breakfast",
-                    Number(e.target.value)
-                  )
-                }
-                className="
-                  w-full
-                  rounded-2xl
-                  border
-                  p-4
-                "
-              />
-            </div>
 
             <div>
               <label className="mb-2 block font-bold">
@@ -781,6 +757,7 @@ if (error) {
           </section>
         ))}
       </div>
+
     </main>
   )
 }

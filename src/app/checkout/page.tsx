@@ -12,7 +12,6 @@ type ReservationData = {
   people: number
   touristTaxTotal: number
   pets: boolean
-  breakfast: boolean
   lunch: boolean
   dinner: boolean
   baby: boolean
@@ -88,7 +87,6 @@ export default function CheckoutPage() {
     people: reservation.people,
 
     pets: reservation.pets,
-    breakfast: reservation.breakfast,
     lunch: reservation.lunch,
     dinner: reservation.dinner,
     baby: reservation.baby,
@@ -315,19 +313,18 @@ export default function CheckoutPage() {
                 </span>
             </div>
 
-            {reservation.breakfast && (
-              <div className="flex justify-between border-b pb-3">
-                <span>Petit déjeuner</span>
-                <span>Oui</span>
-              </div>
-            )}
-
             {reservation.lunch && (
               <div className="flex justify-between border-b pb-3">
                 <span>Repas midi</span>
                 <span>Oui</span>
               </div>
             )}
+
+            <div className="flex justify-between border-b pb-3">
+                <span>Petit Déjeuner</span>
+                <span>Compris</span>
+              </div>
+            
 
             {reservation.dinner && (
               <div className="flex justify-between border-b pb-3">

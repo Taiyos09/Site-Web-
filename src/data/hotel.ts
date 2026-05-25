@@ -6,7 +6,6 @@ export const HOTEL_CONFIG = {
   },
 
   options: {
-  breakfast: 8,
   lunch: 15,
   dinner: 20,
   pet: 5,

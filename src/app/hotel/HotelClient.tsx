@@ -22,9 +22,6 @@ export default function HotelPage() {
   const [currentImages, setCurrentImages] =
     useState<number[]>([])
 
-  const [breakfast, setBreakfast] =
-    useState(false)
-
   const [lunch, setLunch] =
     useState(false)
 
@@ -101,14 +98,30 @@ export default function HotelPage() {
 
   useEffect(() => {
 
-    const loadHotel =
-      async () => {
+  const loadHotel =
+    async () => {
+
+      try {
 
         const data =
           await getHotelData()
 
+        console.log(
+          "HOTEL DATA:",
+          data
+        )
+
+        if (!data) {
+
+          console.error(
+            "Aucune donnée hôtel"
+          )
+
+          return
+        }
+
         const formattedRooms =
-          data.rooms.map(
+          (data.rooms || []).map(
             (room: any) => ({
 
               ...room,
@@ -128,9 +141,6 @@ export default function HotelPage() {
 
           options: {
 
-            breakfast:
-              data.settings?.breakfast || 0,
-
             lunch:
               data.settings?.lunch || 0,
 
@@ -148,11 +158,21 @@ export default function HotelPage() {
         setCurrentImages(
           formattedRooms.map(() => 0)
         )
+
+      } catch (error) {
+
+        console.error(
+          "Erreur chargement hôtel :",
+          error
+        )
+
       }
 
-    loadHotel()
+    }
 
-  }, [])
+  loadHotel()
+
+}, [])
 
   /* ====================================== */
   /* AUTO SLIDER */
@@ -560,7 +580,7 @@ export default function HotelPage() {
               },
 
               {
-                title: "🥐 Petit déjeuner",
+                title: "🥐 Petit déjeuner Compris",
                 text: "Service de",
                 value: "7h00 à 9h00",
               },
@@ -804,6 +824,7 @@ export default function HotelPage() {
                     >
                       {room.description}
                     </p>
+                    
 
                     <div
                       className="

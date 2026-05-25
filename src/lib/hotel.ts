@@ -14,7 +14,7 @@ export async function getHotelData() {
   } = await supabase
     .from("hotel_settings")
     .select("*")
-    .single()
+    .maybeSingle()
 
   if (roomsError) {
     console.error(roomsError)
@@ -23,6 +23,9 @@ export async function getHotelData() {
   if (settingsError) {
     console.error(settingsError)
   }
+
+  console.log("ROOMS", rooms)
+  console.log("SETTINGS", settings)
 
   return {
     rooms: rooms || [],

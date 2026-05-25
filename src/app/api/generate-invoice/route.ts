@@ -4,85 +4,51 @@ import { NextResponse } from "next/server"
 import PDFDocument from "pdfkit"
 import { Buffer } from "buffer"
 import path from "path"
+import fs from "fs"
+
+import { supabase } from "@/lib/supabase"
 
 export async function POST(req: Request) {
 
   try {
 
-    const regularFont =
-  path.join(
-    process.cwd(),
-    "public",
-    "fonts",
-    "Roboto-Regular.ttf"
-  )
-
-const boldFont =
-  path.join(
-    process.cwd(),
-    "public",
-    "fonts",
-    "Roboto-Bold.ttf"
-  )
-
     const reservation =
       await req.json()
 
-    const doc =
-      new PDFDocument({
-        margin: 50,
-        size: "A4",
-      })
+    /* =========================
+       SETTINGS SUPABASE
+    ========================= */
 
-      doc.registerFont(
-  "Regular",
-  regularFont
-)
+    const {
+      data: settings,
+      error: settingsError,
+    } = await supabase
+      .from("hotel_settings")
+      .select("*")
+      .maybeSingle()
 
-doc.registerFont(
-  "Bold",
-  boldFont
-)
+    if (settingsError) {
 
-doc.font("Regular")
-
-    const buffers: Uint8Array[] = []
-
-    doc.on(
-      "data",
-      buffers.push.bind(buffers)
-    )
-
-    const endPromise =
-      new Promise<Buffer>((resolve) => {
-
-        doc.on("end", () => {
-
-          resolve(
-            Buffer.concat(buffers)
-          )
-        })
-      })
-
-    const today =
-      new Date()
-
-    const invoiceNumber =
-      `FA-${today.getFullYear()}-${reservation.id}`
-
-    const formatDate = (
-      date: string
-    ) => {
-
-      return new Date(date)
-        .toLocaleDateString("fr-FR")
+      console.error(
+        "SETTINGS ERROR:",
+        settingsError
+      )
     }
+
+    /* =========================
+       DATES
+    ========================= */
 
     const nights =
       Math.ceil(
         (
-          new Date(reservation.departure).getTime() -
-          new Date(reservation.arrival).getTime()
+          new Date(
+            reservation.departure
+          ).getTime()
+          -
+          new Date(
+            reservation.arrival
+          ).getTime()
         ) /
         (
           1000 *
@@ -92,461 +58,767 @@ doc.font("Regular")
         )
       )
 
-    /* ---------------- HEADER ---------------- */
+    /* =========================
+       SETTINGS
+    ========================= */
+
+    const lunchPrice =
+      Number(
+        settings?.lunch || 15
+      )
+
+    const dinnerPrice =
+      Number(
+        settings?.dinner || 20
+      )
+
+    const petPrice =
+      Number(
+        settings?.pet || 5
+      )
+
+    const touristTaxPrice =
+      Number(
+        settings?.tourist_tax || 1.30
+      )
+
+    /* =========================
+       PDF
+    ========================= */
+
+    const doc =
+      new PDFDocument({
+        margin: 40,
+        size: "A4",
+      })
+
+    const buffers:
+      Uint8Array[] = []
+
+    doc.on(
+      "data",
+      buffers.push.bind(buffers)
+    )
+
+    const endPromise =
+      new Promise<Buffer>(
+        (resolve) => {
+
+          doc.on(
+            "end",
+            () => {
+
+              resolve(
+                Buffer.concat(buffers)
+              )
+            }
+          )
+        }
+      )
+
+    /* =========================
+       COLORS
+    ========================= */
+
+    const brown =
+      "#2f241d"
+
+    const lightGray =
+      "#f5f5f5"
+
+    const border =
+      "#dddddd"
+
+    
+    /* =========================
+       HEADER
+    ========================= */
 
     doc
-      .rect(0, 0, 595, 120)
-      .fill("#2f241d")
-
-      const logoPath =
-  path.join(
-    process.cwd(),
-    "public",
-    "logo2.png"
-  )
-
-doc.image(
-  logoPath,
-  20,
-  10,
-  {
-    width: 150,
-  }
-)
+      .rect(
+        0,
+        0,
+        595,
+        120
+      )
+      .fill(brown)
 
     doc
       .fillColor("white")
       .fontSize(28)
-      .text(
-        "Auberge de Saint Aubin",
-        250,
-        40
-      )
+      .font("Helvetica-Bold")
+
+    doc.text(
+      "Auberge de Saint Aubin",
+      230,
+      40
+    )
 
     doc
       .fontSize(12)
-      .text(
-        "Bar • Restaurant • Hôtel",
-        400,
-        75
+      .font("Helvetica")
+
+    doc.text(
+      "Bar • Restaurant • Chambre d'hôte",
+      350,
+      75
+    )
+
+    /* =========================
+       LOGO
+    ========================= */
+
+    const logoPath =
+      path.join(
+        process.cwd(),
+        "public",
+        "logo2.png"
       )
 
-    /* ---------------- FACTURE ---------------- */
+      console.log(logoPath)
+      console.log(
+     fs.existsSync(logoPath)
+    )
+
+    if (
+      fs.existsSync(logoPath)
+    ) {
+
+      try {
+
+        doc.image(
+          logoPath,
+          10,
+          5,
+          {
+            width: 180,
+          }
+        )
+
+      } catch (e) {
+
+        console.log(
+          "Logo error"
+        )
+      }
+    }
+
+    /* =========================
+       FACTURE
+    ========================= */
 
     doc
       .fillColor("#000")
-      .fontSize(26)
-      .text(
-        "FACTURE",
-        400,
-        140
-      )
+      .fontSize(28)
+      .font("Helvetica-Bold")
+
+    doc.text(
+      "FACTURE",
+      380,
+      145
+    )
+
+    const today =
+      new Date()
+
+    const invoiceNumber =
+      `FA-${today.getFullYear()}-${reservation.id}`
 
     doc
+      .font("Helvetica")
       .fontSize(11)
-      .text(
-        `Facture n° : ${invoiceNumber}`,
-        350,
-        180
-      )
+
+    doc.text(
+      `Facture n° : ${invoiceNumber}`,
+      350,
+      185
+    )
 
     doc.text(
       `Date : ${today.toLocaleDateString("fr-FR")}`,
       350,
-      200
+      203
     )
 
-    /* ---------------- ENTREPRISE ---------------- */
+    /* =========================
+       COMPANY
+    ========================= */
 
     doc
-      .fontSize(12)
-      .font("Regular")
-      .text(
-        "Émetteur",
-        50,
-        150
+      .rect(
+        40,
+        240,
+        230,
+        115
       )
+      .fill(lightGray)
 
     doc
-      .font("Regular")
+      .fillColor("#000")
+      .fontSize(15)
+      .font("Helvetica-Bold")
+
+    doc.text(
+      "Émetteur",
+      55,
+      255
+    )
+
+    doc
       .fontSize(10)
-      .text(
-        "Auberge de Saint Aubin",
-        50,
-        175
-      )
+      .font("Helvetica")
+
+    doc.text(
+      "Auberge de Saint Aubin",
+      55,
+      285
+    )
 
     doc.text(
       "21 Rue Saint-Barnabé",
-      50,
-      190
+      55,
+      302
     )
 
     doc.text(
       "03160 Saint Aubin le Monial",
-      50,
-      205
+      55,
+      319
     )
 
     doc.text(
       "Téléphone : 04 70 66 50 97",
-      50,
-      220
+      55,
+      336
     )
 
-    doc.text(
-      "Email : contact@auberge-saint-aubin.fr",
-      50,
-      235
-    )
-
-    doc.text(
-      "SIRET : 000 000 000 00000",
-      50,
-      250
-    )
-
-    /* ---------------- CLIENT ---------------- */
-
-    doc
-      .font("Bold")
-      .fontSize(12)
-      .text(
-        "Client",
-        350,
-        240
-      )
-
-    doc
-      .font("Regular")
-      .fontSize(10)
-      .text(
-        `${reservation.first_name} ${reservation.last_name}`,
-        350,
-        260
-      )
-
-    doc.text(
-      reservation.email,
-      350,
-      275
-    )
-
-    doc.text(
-      reservation.phone,
-      350,
-      290
-    )
-
-    /* ---------------- TABLEAU ---------------- */
-
-    const tableTop = 340
+    /* =========================
+       CLIENT
+    ========================= */
 
     doc
       .rect(
-        50,
-        tableTop,
-        495,
-        30
+        325,
+        240,
+        230,
+        115
       )
-      .fill("#2f241d")
+      .fill(lightGray)
+
+    doc
+      .fillColor("#000")
+      .fontSize(15)
+      .font("Helvetica-Bold")
+
+    doc.text(
+      "Client",
+      340,
+      255
+    )
+
+    doc
+      .fontSize(10)
+      .font("Helvetica")
+
+    doc.text(
+      `${reservation.first_name || ""} ${reservation.last_name || ""}`,
+      340,
+      285
+    )
+
+    doc.text(
+      reservation.email || "-",
+      340,
+      302
+    )
+
+    doc.text(
+      reservation.phone || "-",
+      340,
+      319
+    )
+
+    /* =========================
+       TABLE
+    ========================= */
+
+    const tableTop = 390
+
+    const columns = {
+  description: 55,
+  persons: 255,
+  nights: 300,
+  unit: 335,
+  ht: 400,
+  tva: 460,
+  ttc: 500,
+}
+
+    /* HEADER */
+
+    doc
+      .rect(
+        40,
+        tableTop,
+        520,
+        32
+      )
+      .fill(brown)
 
     doc
       .fillColor("white")
+      .font("Helvetica-Bold")
       .fontSize(10)
-      .font("Bold")
 
     doc.text(
       "Description",
-      60,
+      columns.description,
       tableTop + 10
     )
 
     doc.text(
-  "Pers.",
-  250,
-  tableTop + 10
-)
+      "Pers.",
+      columns.persons,
+      tableTop + 10,
+      {
+        width: 35,
+        align: "center",
+      }
+    )
 
-doc.text(
-  "Nuits",
-  300,
-  tableTop + 10
-)
+    doc.text(
+      "Nuits",
+      columns.nights,
+      tableTop + 10,
+      {
+        width: 40,
+        align: "center",
+      }
+    )
 
-doc.text(
-  "HT",
-  360,
-  tableTop + 10
-)
+    doc.text(
+      "PU TTC",
+      columns.unit,
+      tableTop + 10,
+      {
+        width: 55,
+        align: "right",
+      }
+    )
 
-doc.text(
-  "TVA",
-  430,
-  tableTop + 10
-)
+    doc.text(
+      "HT",
+      columns.ht,
+      tableTop + 10,
+      {
+        width: 40,
+        align: "right",
+      }
+    )
 
-doc.text(
-  "TTC",
-  500,
-  tableTop + 10
-)
+    doc.text(
+      "TVA",
+      columns.tva,
+      tableTop + 10,
+      {
+        width: 35,
+        align: "right",
+      }
+    )
+
+    doc.text(
+      "TTC",
+      columns.ttc,
+      tableTop + 10,
+      {
+        width: 45,
+        align: "right",
+      }
+    )
 
     let currentY =
-      tableTop + 40
+      tableTop + 32
 
-    doc
-      .font("Regular")
-      .fillColor("#000")
+    /* =========================
+       TOTALS
+    ========================= */
 
-    /* ---------------- CHAMBRES ---------------- */
+    let totalHT = 0
+    let totalTVA = 0
+    let totalTTC = 0
 
-    reservation.rooms?.forEach(
+    /* =========================
+       CHAMBRES
+    ========================= */
+
+    ;(
+      reservation.rooms || []
+    ).forEach(
       (room: any) => {
 
         const roomTTC =
-          Number(room.room_total)
+          Number(
+            room.room_total
+          )
 
         const roomHT =
           Number(
-            (roomTTC / 1.1)
-            .toFixed(2)
+            (
+              roomTTC / 1.1
+            ).toFixed(2)
           )
 
         const roomTVA =
           Number(
-            (roomTTC - roomHT)
-            .toFixed(2)
+            (
+              roomTTC -
+              roomHT
+            ).toFixed(2)
           )
+
+        const unitPrice =
+          roomTTC /
+          reservation.people /
+          nights
+
+        totalHT += roomHT
+        totalTVA += roomTVA
+        totalTTC += roomTTC
 
         doc
           .rect(
-            50,
-            currentY - 5,
-            495,
-            28
+            40,
+            currentY,
+            520,
+            38
           )
-          .stroke("#e5e5e5")
+          .stroke(border)
+
+        doc
+          .fillColor("#000")
+          .font("Helvetica")
+          .fontSize(10)
 
         doc.text(
           room.room_name,
-          60,
-          currentY + 4
+          columns.description,
+          currentY + 12,
+          {
+            width: 190,
+          }
         )
 
         doc.text(
-  `${reservation.people}`,
-  260,
-  currentY + 4
-)
+          `${reservation.people}`,
+          columns.persons,
+          currentY + 12,
+          {
+            width: 35,
+            align: "center",
+          }
+        )
 
-doc.text(
-  `${nights}`,
-  310,
-  currentY + 4
-)
+        doc.text(
+          `${nights}`,
+          columns.nights,
+          currentY + 12,
+          {
+            width: 40,
+            align: "center",
+          }
+        )
 
-doc.text(
-  `${roomHT.toFixed(2)} €`,
-  350,
-  currentY + 4
-)
+        doc.text(
+          `${unitPrice.toFixed(2)} €`,
+          columns.unit,
+          currentY + 12,
+          {
+            width: 55,
+            align: "right",
+          }
+        )
 
-doc.text(
-  `${roomTVA.toFixed(2)} €`,
-  425,
-  currentY + 4
-)
+        doc.text(
+          `${roomHT.toFixed(2)} €`,
+          columns.ht,
+          currentY + 12,
+          {
+            width: 50,
+            align: "right",
+          }
+        )
 
-doc.text(
-  `${roomTTC.toFixed(2)} €`,
-  495,
-  currentY + 4
-)
+        doc.text(
+          `${roomTVA.toFixed(2)} €`,
+          columns.tva,
+          currentY + 12,
+          {
+            width: 35,
+            align: "right",
+          }
+        )
 
-        currentY += 28
+        doc.text(
+          `${roomTTC.toFixed(2)} €`,
+          columns.ttc,
+          currentY + 12,
+          {
+            width: 45,
+            align: "right",
+          }
+        )
+
+        currentY += 38
       }
     )
 
-    /* ---------------- OPTIONS ---------------- */
+    /* =========================
+       OPTIONS
+    ========================= */
 
-    const breakfastPrice = 4
-    const lunchPrice = 15
-    const dinnerPrice = 20
-    const petPrice = 8
-    const touristTaxPrice = 1.30
+    const invoiceOptions = [
 
-    const invoiceOptions: {
-  label: string
-  enabled: boolean
-  price: number
-  noVat?: boolean
-}[] = [
+      {
+        label:
+          "Petit déjeuner compris",
 
-  {
-    label: "Petit déjeuner",
-    enabled: reservation.breakfast,
-    price:
-      reservation.breakfast
-        ? reservation.people *
-          breakfastPrice *
-          nights
-        : 0,
-  },
+        enabled: true,
 
-  {
-    label: "Repas midi",
-    enabled: reservation.lunch,
-    price:
-      reservation.lunch
-        ? reservation.people *
+        included: true,
+      },
+
+      {
+        label:
+          "Repas midi",
+
+        enabled:
+          reservation.lunch,
+
+        unitPrice:
+          lunchPrice,
+
+        total:
           lunchPrice *
-          nights
-        : 0,
-  },
+          reservation.people *
+          nights,
+      },
 
-  {
-    label: "Repas soir",
-    enabled: reservation.dinner,
-    price:
-      reservation.dinner
-        ? reservation.people *
+      {
+        label:
+          "Repas soir",
+
+        enabled:
+          reservation.dinner,
+
+        unitPrice:
+          dinnerPrice,
+
+        total:
           dinnerPrice *
-          nights
-        : 0,
-  },
+          reservation.people *
+          nights,
+      },
 
-  {
-    label: "Animal",
-    enabled: reservation.pets,
-    price:
-      reservation.pets
-        ? petPrice * nights
-        : 0,
-  },
+      {
+        label:
+          "Animal",
 
-  {
-    label: "Taxe de séjour",
-    enabled: true,
-    price:
-      reservation.people *
-      touristTaxPrice *
-      nights,
-    noVat: true,
-  },
-]
+        enabled:
+          reservation.pets,
 
-    invoiceOptions.forEach((option) => {
+        unitPrice:
+          petPrice,
 
-  if (option.enabled) {
+        total:
+          petPrice *
+          nights,
+      },
 
-    const optionTTC =
-      Number(option.price)
+      {
+        label:
+          "Taxe de séjour",
 
-    const optionHT =
-      option.noVat
-        ? optionTTC
-        : Number(
-            (optionTTC / 1.1)
-            .toFixed(2)
+        enabled: true,
+
+        unitPrice:
+          touristTaxPrice,
+
+        total:
+          touristTaxPrice *
+          reservation.people *
+          nights,
+
+        noTVA: true,
+      },
+    ]
+
+    invoiceOptions.forEach(
+      (option: any) => {
+
+        if (
+          !option.enabled
+        ) {
+          return
+        }
+
+        const optionTTC =
+          Number(
+            option.total || 0
           )
 
-    const optionTVA =
-      option.noVat
-        ? 0
-        : Number(
-            (optionTTC - optionHT)
-            .toFixed(2)
+        const optionHT =
+          option.noTVA
+            ? optionTTC
+            : Number(
+                (
+                  optionTTC / 1.1
+                ).toFixed(2)
+              )
+
+        const optionTVA =
+          option.noTVA
+            ? 0
+            : Number(
+                (
+                  optionTTC -
+                  optionHT
+                ).toFixed(2)
+              )
+
+        totalHT += optionHT
+        totalTVA += optionTVA
+        totalTTC += optionTTC
+
+        doc
+          .rect(
+            40,
+            currentY,
+            520,
+            38
+          )
+          .stroke(border)
+
+        doc.text(
+          option.label,
+          columns.description,
+          currentY + 12,
+          {
+            width: 190,
+          }
+        )
+
+        doc.text(
+          `${reservation.people}`,
+          columns.persons,
+          currentY + 12,
+          {
+            width: 35,
+            align: "center",
+          }
+        )
+
+        doc.text(
+          `${nights}`,
+          columns.nights,
+          currentY + 12,
+          {
+            width: 40,
+            align: "center",
+          }
+        )
+
+        if (
+          option.included
+        ) {
+
+          doc.text(
+            "-",
+            columns.unit,
+            currentY + 12,
+            {
+              width: 55,
+              align: "right",
+            }
           )
 
-    doc
-      .rect(
-        50,
-        currentY - 5,
-        495,
-        28
-      )
-      .stroke("#e5e5e5")
+          doc.text(
+            "Inclus",
+            columns.ttc,
+            currentY + 12,
+            {
+              width: 45,
+              align: "right",
+            }
+          )
 
-    doc.text(
-      option.label,
-      60,
-      currentY + 4
+        } else {
+
+          doc.text(
+            `${option.unitPrice.toFixed(2)} €`,
+            columns.unit,
+            currentY + 12,
+            {
+              width: 55,
+              align: "right",
+            }
+          )
+
+          doc.text(
+            `${optionHT.toFixed(2)} €`,
+            columns.ht,
+            currentY + 12,
+            {
+              width: 50,
+              align: "right",
+            }
+          )
+
+          doc.text(
+            `${optionTVA.toFixed(2)} €`,
+            columns.tva,
+            currentY + 12,
+            {
+              width: 35,
+              align: "right",
+            }
+          )
+
+          doc.text(
+            `${optionTTC.toFixed(2)} €`,
+            columns.ttc,
+            currentY + 12,
+            {
+              width: 45,
+              align: "right",
+            }
+          )
+        }
+
+        currentY += 38
+      }
     )
 
-    doc.text(
-  `${reservation.people}`,
-  260,
-  currentY + 4
-)
+    /* =========================
+       TOTALS
+    ========================= */
 
-doc.text(
-  `${nights}`,
-  310,
-  currentY + 4
-)
-
-doc.text(
-  `${optionHT.toFixed(2)} €`,
-  350,
-  currentY + 4
-)
-
-doc.text(
-  `${optionTVA.toFixed(2)} €`,
-  425,
-  currentY + 4
-)
-
-doc.text(
-  `${optionTTC.toFixed(2)} €`,
-  495,
-  currentY + 4
-)
-
-    currentY += 28
-  }
-})
-
-    /* ---------------- TOTAUX ---------------- */
-
-    const totalTTC =
-  Number(reservation.total)
-
-const touristTaxTotal =
-  reservation.people *
-  touristTaxPrice *
-  nights
-
-const totalWithoutTouristTax =
-  totalTTC - touristTaxTotal
-
-const totalHT =
-  Number(
-    (
-      (totalWithoutTouristTax / 1.1) +
-      touristTaxTotal
-    ).toFixed(2)
-  )
-
-const totalTVA =
-  Number(
-    (
-      totalTTC - totalHT
-    ).toFixed(2)
-  )
-
-    currentY += 35
+    currentY += 30
 
     doc
-      .moveTo(330, currentY)
-      .lineTo(545, currentY)
+      .moveTo(
+        330,
+        currentY
+      )
+      .lineTo(
+        545,
+        currentY
+      )
       .stroke()
 
     currentY += 20
 
     doc
-      .font("Regular")
+      .font("Helvetica")
       .fontSize(12)
 
     doc.text(
@@ -575,84 +847,57 @@ const totalTVA =
       currentY
     )
 
-    currentY += 35
+    currentY += 20
 
     doc
-      .font("Bold")
-      .fontSize(18)
-      .fillColor("#2f241d")
+      .font("Helvetica-Bold")
+      .fontSize(16)
+      .fillColor(brown)
 
     doc.text(
       "TOTAL TTC :",
-      330,
+      340,
       currentY
     )
 
     doc.text(
       `${totalTTC.toFixed(2)} €`,
-      460,
+      450,
       currentY
     )
 
-    /* ---------------- INFOS SÉJOUR ---------------- */
-
-currentY += 70
-
-doc
-  .font("Bold")
-  .fontSize(12)
-  .fillColor("#000")
-
-doc.text(
-  "Informations séjour",
-  50,
-  currentY
-)
-
-currentY += 25
-
-doc
-  .font("Regular")
-  .fontSize(10)
-
-doc.text(
-  `Séjour du ${formatDate(reservation.arrival)} au ${formatDate(reservation.departure)}`,
-  50,
-  currentY,
-  {
-    width: 250,
-    lineBreak: false,
-  }
-)
-
-currentY += 18
-
-doc.text(
-  `Nombre de personnes : ${reservation.people}`,
-  50,
-  currentY,
-  {
-    width: 250,
-    lineBreak: false,
-  }
-)
-    /* ---------------- FOOTER ---------------- */
-
-    currentY += 5
+    /* =========================
+       FOOTER
+    ========================= */
 
     doc
-      .fontSize(9)
-      .fillColor("#777")
+      .font("Helvetica")
+      .fontSize(7)
+      .fillColor("#666")
 
     doc.text(
-      "",
-      50,
-      760,
+      "SARL Auberge de Saint Aubin - Capital social : 5 000 € - SIRET : XXXXXXXX - TVA Intracom : FRXXXXXXXX",
+      10,
+      782,
       {
+        width: 520,
         align: "center",
-        width: 500,
       }
     )
+
+    doc.text(
+      "En cas de retard de paiement, des pénalités au taux légal seront appliquées ainsi qu’une indemnité forfaitaire de 40 € pour frais de recouvrement.",
+      10,
+      790,
+      {
+        width: 520,
+        align: "center",
+      }
+    )
+
+    /* =========================
+       END
+    ========================= */
 
     doc.end()
 
@@ -660,11 +905,11 @@ doc.text(
       await endPromise
 
     return new NextResponse(
-      pdfBuffer,
+      new Uint8Array(
+        pdfBuffer
+      ),
       {
-
         headers: {
-
           "Content-Type":
             "application/pdf",
 

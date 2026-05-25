@@ -40,6 +40,7 @@ const cards = [
     color:
       "from-[#17a63d] to-[#32c95c]",
   },
+
 ]
 
 export default function AdminDashboard() {

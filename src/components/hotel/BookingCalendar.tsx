@@ -32,9 +32,6 @@ export default function BookingCalendar({
   const [people, setPeople] =
     useState(2)
 
-  const [breakfast, setBreakfast] =
-    useState(false)
-
   const [lunch, setLunch] =
     useState(false)
 
@@ -176,13 +173,6 @@ if (!data) {
         nights
       : 0
 
-  const breakfastTotal =
-    breakfast
-      ? people *
-        (settings?.breakfast || 8) *
-        nights
-      : 0
-
   const lunchTotal =
     lunch
       ? people *
@@ -208,7 +198,6 @@ if (!data) {
     roomTotal +
     extraBedTotal +
     petTotal +
-    breakfastTotal +
     lunchTotal +
     dinnerTotal +
     touristTaxTotal
@@ -396,12 +385,7 @@ if (!data) {
         >
 
           {[
-            {
-              label: "Petit déjeuner",
-              checked: breakfast,
-              set: setBreakfast,
-              price: `${settings?.breakfast || 8}€ / pers / nuit`,
-            },
+            
             {
               label: "Repas midi",
               checked: lunch,
@@ -551,41 +535,6 @@ if (!data) {
 
               )}
 
-              {/* PETIT DEJ */}
-
-              {breakfastTotal > 0 && (
-
-                <div className="
-                  flex
-                  items-center
-                  justify-between
-                ">
-
-                  <div>
-
-                    <p className="font-semibold">
-                      Petit déjeuner
-                    </p>
-
-                    <p className="text-sm text-[#6b5b4f]">
-                      {settings?.breakfast || 8}€
-                      {" "}×{" "}
-                      {people}
-                      {" "}personne(s)
-                      {" "}×{" "}
-                      {nights}
-                      {" "}nuits
-                    </p>
-
-                  </div>
-
-                  <span>
-                    {breakfastTotal.toFixed(2)}€
-                  </span>
-
-                </div>
-
-              )}
 
               {/* MIDI */}
 
@@ -793,7 +742,6 @@ if (!data) {
                   nights,
                   people,
                   pets,
-                  breakfast,
                   lunch,
                   dinner,
                   baby,

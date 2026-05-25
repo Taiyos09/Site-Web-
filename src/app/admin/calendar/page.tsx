@@ -32,7 +32,6 @@ type Reservation = {
   arrival: string
   departure: string
   status: string
-  breakfast: boolean
   lunch: boolean
   dinner: boolean
   animals: boolean
@@ -964,14 +963,6 @@ const reservationColor =
                     selectedReservation.departure
                   ).toLocaleDateString("fr-FR")}
                 </p>
-
-                <p>
-  <strong>Petit déjeuner :</strong>
-  {" "}
-  {selectedReservation.breakfast
-    ? "Oui"
-    : "Non"}
-</p>
 
 <p>
   <strong>Repas midi :</strong>

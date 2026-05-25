@@ -31,9 +31,6 @@ const reservationSchema = z.object({
   pets:
     z.boolean(),
 
-  breakfast:
-    z.boolean(),
-
   lunch:
     z.boolean(),
 
@@ -297,15 +294,6 @@ const extraBedTotal =
 
 /* ---------- OPTIONS ---------- */
 
-const breakfastTotal =
-  body.breakfast
-    ? body.people *
-      Number(
-        settings.breakfast
-      ) *
-      nights
-    : 0
-
 const lunchTotal =
   body.lunch
     ? body.people *
@@ -342,7 +330,6 @@ const touristTaxTotal =
 const total =
   roomTotal +
   extraBedTotal +
-  breakfastTotal +
   lunchTotal +
   dinnerTotal +
   petTotal +
@@ -381,9 +368,6 @@ const total =
 
           pets:
             body.pets,
-
-          breakfast:
-            body.breakfast,
 
           lunch:
             body.lunch,
@@ -615,12 +599,6 @@ html: `
           Options
         </h3>
 
-        <p>
-          Petit déjeuner :
-          <strong>
-            ${body.breakfast ? "Oui" : "Non"}
-          </strong>
-        </p>
 
         <p>
           Repas midi :

@@ -67,10 +67,6 @@ export default async function RoomPage({
                 {room.name}
               </h1>
 
-              <p className="max-w-2xl text-xl leading-relaxed text-white/90">
-                {room.description}
-              </p>
-
             </div>
 
           </div>
@@ -142,26 +138,13 @@ export default async function RoomPage({
             <div className="mt-20">
 
               <h2 className="mb-8 font-serif text-5xl font-bold">
-                Une expérience chaleureuse
+                {room.name}
               </h2>
 
               <div className="space-y-6 text-lg leading-relaxed text-[#5a4c42]">
 
                 <p>
                   {room.description}
-                </p>
-
-                <p>
-                  Profitez d’un séjour paisible au cœur
-                  de la campagne dans une atmosphère
-                  authentique et conviviale.
-                </p>
-
-                <p>
-                  Chaque chambre de l’auberge possède
-                  son charme avec une décoration
-                  traditionnelle et tout le confort
-                  nécessaire pour un séjour reposant.
                 </p>
 
               </div>
@@ -221,8 +204,23 @@ export default async function RoomPage({
                     </div>
 
                     <div className="flex justify-between border-b pb-3">
+                      <span>Petit Déjeuner</span>
+                      <span>Inclus</span>
+                    </div>
+
+                    <div className="flex justify-between border-b pb-3">
                       <span>Salle de bain</span>
                       <span>Privative</span>
+                    </div>
+
+                    <div className="flex justify-between border-b pb-3">
+                      <span>Toilette</span>
+                      <span>Privative</span>
+                    </div>
+
+                    <div className="flex justify-between border-b pb-3">
+                      <span>Rangement</span>
+                      <span>Oui</span>
                     </div>
 
                     <div className="flex justify-between border-b pb-3">

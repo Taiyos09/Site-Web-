@@ -8,6 +8,8 @@ import Navbar from "@/components/Navbar"
 import { RESTAURANT_CONFIG } from "@/data/restaurant"
 import { EVENTS } from "@/data/events"
 import Image from "next/image"
+import RestaurantSection from "@/components/RestaurantSection"
+import RoomsSection from "@/components/RoomsSection"
 
 const images = [
   "/images/image1.jpg",
@@ -678,160 +680,9 @@ export default function AubergeSaintAubinHomepage() {
 
       </motion.section>
 
-      {/* RESTAURANT */}
+      <RestaurantSection />
 
-      <motion.section
-        variants={fadeUp}
-        initial={false}
-        whileInView="visible"
-        viewport={{
-          once: true,
-          amount: 0.15,
-        }}
-        className="
-    relative
-    overflow-hidden
-    border-t
-    border-[#e4d8c8]
-    py-20
-    md:py-28
-  "
->
-
-  <Image
-    src="/images/table.png"
-    alt="Fond restaurant"
-    fill
-    className="object-cover"
-    sizes="100vw"
-  />
-
-        <div className="absolute inset-0 bg-black/15" />
-
-        <div
-          className="
-            relative
-            z-10
-            mx-auto
-            grid
-            max-w-6xl
-            items-center
-            gap-16
-            px-6
-            lg:grid-cols-2
-          "
-        >
-
-          <div
-            className="
-              overflow-hidden
-              rounded-[28px]
-              shadow-2xl
-            "
-          >
-
-            <div
-  className="
-    relative
-    h-[420px]
-    w-full
-  "
->
-
-  <Image
-    src="/images/bar.jpeg"
-    alt="Restaurant Auberge de St Aubin"
-    fill
-    className="object-cover"
-    sizes="(max-width: 1024px) 100vw, 50vw"
-  />
-
-</div>
-
-          </div>
-
-          <div
-            className="
-              rounded-[28px]
-              bg-[#f6f1e8]/88
-              p-8
-              shadow-xl
-              backdrop-blur-sm
-            "
-          >
-
-            <p
-              className="
-                mb-3
-                text-sm
-                uppercase
-                tracking-[0.3em]
-                text-[#b18752]
-              "
-            >
-              Restaurant & Bar
-            </p>
-
-            <h2
-              className="
-                mb-6
-                font-serif
-                text-4xl
-                font-bold
-                md:text-5xl
-              "
-            >
-              Cuisine traditionnelle
-              et ambiance conviviale
-            </h2>
-
-            <div
-              className="
-                space-y-5
-                text-lg
-                leading-relaxed
-                text-[#5a4c42]
-              "
-            >
-
-              <p>
-                Découvrez une cuisine
-                conviviale avec carte fixe
-                et menu du jour.
-              </p>
-
-              <p>
-                Le bar accueille également
-                des soirées événements
-                et concerts occasionnels.
-              </p>
-
-            </div>
-
-            <Link
-              href="/restaurant#carte"
-              className="
-                mt-8
-                inline-block
-                rounded-2xl
-                bg-[#c89b5f]
-                px-7
-                py-4
-                text-base
-                font-semibold
-                text-white
-                transition
-                hover:bg-[#d6aa70]
-              "
-            >
-              Voir la carte
-            </Link>
-
-          </div>
-
-        </div>
-
-      </motion.section>
+      <RoomsSection />
 
       {/* EVENEMENTS */}
 
