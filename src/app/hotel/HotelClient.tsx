@@ -622,7 +622,7 @@ export default function HotelPage() {
               },
 
               {
-                title: "🥐 Petit déjeuner Compris",
+                title: "🥐 Petit déjeuner",
                 text: "Service de",
                 value: "7h00 à 9h00",
               },

@@ -37,7 +37,8 @@ export default function RoomsSection() {
       className="
         relative
         overflow-hidden
-        py-32
+        py-20
+        md:py-32
       "
     >
 
@@ -56,6 +57,7 @@ export default function RoomsSection() {
           alt="Background chambres"
           fill
           className="object-cover"
+          sizes="100vw"
         />
 
         <div
@@ -72,15 +74,15 @@ export default function RoomsSection() {
         className="
           relative
           z-10
-
           mx-auto
           grid
           max-w-7xl
           items-center
-          gap-20
-          px-6
-
+          gap-10
+          px-4
+          md:px-6
           lg:grid-cols-2
+          lg:gap-16
         "
       >
 
@@ -88,21 +90,25 @@ export default function RoomsSection() {
 
         <div
           className="
-            rounded-[40px]
+            rounded-[32px]
             bg-[#f7f2ea]/90
-            p-12
+            p-6
             shadow-2xl
             backdrop-blur-sm
+            md:p-10
+            lg:p-12
           "
         >
 
           <p
             className="
               mb-5
-              text-sm
+              text-xs
               uppercase
-              tracking-[0.4em]
+              tracking-[0.3em]
               text-[#c89b5f]
+              md:text-sm
+              md:tracking-[0.4em]
             "
           >
             Chambre d'hôte
@@ -111,9 +117,11 @@ export default function RoomsSection() {
           <h2
             className="
               font-serif
-              text-6xl
-              leading-none
+              text-4xl
+              leading-tight
               text-[#2f241d]
+              md:text-5xl
+              lg:text-6xl
             "
           >
             Des chambres
@@ -123,10 +131,13 @@ export default function RoomsSection() {
 
           <p
             className="
-              mt-8
-              text-xl
+              mt-6
+              text-base
               leading-relaxed
               text-[#6b5b4f]
+              md:mt-8
+              md:text-lg
+              lg:text-xl
             "
           >
             Profitez d’un séjour calme
@@ -138,110 +149,72 @@ export default function RoomsSection() {
 
           <div
             className="
-              mt-10
+              mt-8
               flex
               flex-wrap
-              gap-4
+              gap-3
+              md:mt-10
+              md:gap-4
             "
           >
-            <div
-              className="
-                rounded-full
-                bg-white
-                px-5
-                py-3
-                text-sm
-                font-semibold
-                shadow-md
-              "
-            >
-              🥐 Petit Déjeuner Compris
-            </div>
-            <div
-              className="
-                rounded-full
-                bg-white
-                px-5
-                py-3
-                text-sm
-                font-semibold
-                shadow-md
-              "
-            >
-              🛏 Chambres doubles
-            </div>
 
-            <div
-              className="
-                rounded-full
-                bg-white
-                px-5
-                py-3
-                text-sm
-                font-semibold
-                shadow-md
-              "
-            >
-              🚿 Salle de bain et toilette privatif
-            </div>
+            {[
+              "🥐 Petit Déjeuner Compris",
+              "🛏 Chambres doubles",
+              "🚿 Salle de bain et toilette privatif",
+              "📺 Télévision inclus",
+              "📶 Wi-Fi gratuit",
+            ].map((item) => (
 
-            <div
-              className="
-                rounded-full
-                bg-white
-                px-5
-                py-3
-                text-sm
-                font-semibold
-                shadow-md
-              "
-            >
-              📺 Télévision inclus
-            </div>
+              <div
+                key={item}
+                className="
+                  rounded-full
+                  bg-white
+                  px-4
+                  py-2
+                  text-xs
+                  font-semibold
+                  shadow-md
+                  md:px-5
+                  md:py-3
+                  md:text-sm
+                "
+              >
+                {item}
+              </div>
 
-            <div
-              className="
-                rounded-full
-                bg-white
-                px-5
-                py-3
-                text-sm
-                font-semibold
-                shadow-md
-              "
-            >
-              📶 Wi-Fi gratuit
-            </div>
+            ))}
 
           </div>
 
           {/* BUTTON */}
 
-          <div className="mt-12">
+          <div className="mt-10 md:mt-12">
 
             <Link
               href="/hotel?scroll=chambres"
 
               className="
                 inline-flex
+                w-full
                 items-center
                 justify-center
-
                 rounded-2xl
                 bg-[#2f241d]
-
-                px-8
-                py-5
-
-                text-lg
+                px-6
+                py-4
+                text-base
                 font-bold
                 text-white
-
                 transition-all
                 duration-300
-
-                hover:scale-105
+                hover:scale-[1.02]
                 hover:bg-[#43352c]
+                sm:w-auto
+                md:px-8
+                md:py-5
+                md:text-lg
               "
             >
               Réserver une chambre
@@ -256,10 +229,13 @@ export default function RoomsSection() {
         <div
           className="
             relative
-            h-[700px]
+            h-[320px]
             overflow-hidden
-            rounded-[40px]
+            rounded-[32px]
             shadow-2xl
+            sm:h-[420px]
+            md:h-[520px]
+            lg:h-[700px]
           "
         >
 
@@ -271,7 +247,6 @@ export default function RoomsSection() {
               className={`
                 absolute
                 inset-0
-
                 transition-all
                 duration-1000
 
@@ -296,6 +271,7 @@ export default function RoomsSection() {
                 alt="Chambre"
                 fill
                 className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
 
             </div>
@@ -347,23 +323,6 @@ export default function RoomsSection() {
         </div>
 
       </div>
-
-      {/* DEGRADE BAS */}
-
-  <div
-  className="
-    pointer-events-none
-    absolute
-    bottom-0
-    left-0
-    h-20
-    w-full
-    bg-gradient-to-b
-    from-transparent
-    via-[#f5f1ea]/40
-    to-[#f5f1ea]
-  "
-/>
 
     </section>
   )

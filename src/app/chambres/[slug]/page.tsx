@@ -1,6 +1,16 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import Image from "next/image"
+import {
+  Wifi,
+  Tv,
+  Bath,
+  ParkingCircle,
+  Croissant,
+  Toilet,
+  Briefcase,
+  Ruler,
+} from "lucide-react"
 
 type Props = {
   params: Promise<{
@@ -207,45 +217,238 @@ if (!room) {
 
                   <div className="space-y-4 text-[#5a4c42]">
 
-                    <div className="flex justify-between border-b pb-3">
-                      <span>Surface</span>
-                      <span>{room.size}</span>
-                    </div>
+                    <div
+  className="
+    flex
+    items-center
+    justify-between
+    border-b
+    border-[#ece4da]
+    pb-3
+  "
+>
 
-                    <div className="flex justify-between border-b pb-3">
-                      <span>Wi-Fi</span>
-                      <span>Inclus</span>
-                    </div>
+  <div className="flex items-center gap-3">
 
-                    <div className="flex justify-between border-b pb-3">
-                      <span>Petit Déjeuner</span>
-                      <span>Inclus</span>
-                    </div>
+    <Ruler
+      size={18}
+      className="text-[#8a7768]"
+    />
 
-                    <div className="flex justify-between border-b pb-3">
-                      <span>Salle de bain</span>
-                      <span>Privative</span>
-                    </div>
+    <span>
+      Surface
+    </span>
 
-                    <div className="flex justify-between border-b pb-3">
-                      <span>Toilette</span>
-                      <span>Privative</span>
-                    </div>
+  </div>
 
-                    <div className="flex justify-between border-b pb-3">
-                      <span>Rangement</span>
-                      <span>Oui</span>
-                    </div>
+  <span className="font-medium">
+    {room.size}
+  </span>
 
-                    <div className="flex justify-between border-b pb-3">
-                      <span>Télévision</span>
-                      <span>Oui</span>
-                    </div>
+</div>
 
-                    <div className="flex justify-between pb-3">
-                      <span>Parking</span>
-                      <span>Gratuit</span>
-                    </div>
+<div
+  className="
+    flex
+    items-center
+    justify-between
+    border-b
+    border-[#ece4da]
+    pb-3
+  "
+>
+
+  <div className="flex items-center gap-3">
+
+    <Wifi
+      size={18}
+      className="text-[#8a7768]"
+    />
+
+    <span>
+      Wi-Fi
+    </span>
+
+  </div>
+
+  <span> Inclus
+  </span>
+
+</div>
+
+<div
+  className="
+    flex
+    items-center
+    justify-between
+    border-b
+    border-[#ece4da]
+    pb-3
+  "
+>
+
+  <div className="flex items-center gap-3">
+
+    <Croissant
+      size={18}
+      className="text-[#8a7768]"
+    />
+
+    <span>
+      Petit Déjeuner
+    </span>
+
+  </div>
+
+  <span> Inclus
+  </span>
+
+</div>
+
+<div
+  className="
+    flex
+    items-center
+    justify-between
+    border-b
+    border-[#ece4da]
+    pb-3
+  "
+>
+
+  <div className="flex items-center gap-3">
+
+    <Bath
+      size={18}
+      className="text-[#8a7768]"
+    />
+
+    <span>
+      Salle de Bain
+    </span>
+
+  </div>
+
+  <span> Privative
+  </span>
+
+</div>
+
+<div
+  className="
+    flex
+    items-center
+    justify-between
+    border-b
+    border-[#ece4da]
+    pb-3
+  "
+>
+
+  <div className="flex items-center gap-3">
+
+    <Toilet
+      size={18}
+      className="text-[#8a7768]"
+    />
+
+    <span>
+      Toilette
+    </span>
+
+  </div>
+
+  <span> Privative
+  </span>
+
+</div>
+
+<div
+  className="
+    flex
+    items-center
+    justify-between
+    border-b
+    border-[#ece4da]
+    pb-3
+  "
+>
+
+  <div className="flex items-center gap-3">
+
+    <Briefcase
+      size={18}
+      className="text-[#8a7768]"
+    />
+
+    <span>
+      Rangement
+    </span>
+
+  </div>
+
+  <span> Oui
+  </span>
+
+</div>
+
+<div
+  className="
+    flex
+    items-center
+    justify-between
+    border-b
+    border-[#ece4da]
+    pb-3
+  "
+>
+
+  <div className="flex items-center gap-3">
+
+    <Tv
+      size={18}
+      className="text-[#8a7768]"
+    />
+
+    <span>
+      Télévision
+    </span>
+
+  </div>
+
+  <span> Oui
+  </span>
+
+</div>
+
+<div
+  className="
+    flex
+    items-center
+    justify-between
+    border-b
+    border-[#ece4da]
+    pb-3
+  "
+>
+
+  <div className="flex items-center gap-3">
+
+    <ParkingCircle
+      size={18}
+      className="text-[#8a7768]"
+    />
+
+    <span>
+      Parking
+    </span>
+
+  </div>
+
+  <span> Gratuit
+  </span>
+
+</div>
 
                   </div>
 

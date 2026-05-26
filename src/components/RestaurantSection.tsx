@@ -38,7 +38,8 @@ export default function RestaurantSection() {
         relative
         z-10
         overflow-hidden
-        py-32
+        py-20
+        md:py-32
       "
     >
 
@@ -75,10 +76,11 @@ export default function RestaurantSection() {
           grid
           max-w-7xl
           items-center
-          gap-20
-          px-6
-
+          gap-10
+          px-4
+          md:px-6
           lg:grid-cols-2
+          lg:gap-16
         "
       >
 
@@ -87,7 +89,10 @@ export default function RestaurantSection() {
         <div
           className="
             relative
-            h-[650px]
+            h-[320px]
+            sm:h-[420px]
+            md:h-[520px]
+            lg:h-[650px]
             overflow-hidden
             rounded-[40px]
             shadow-2xl
@@ -179,7 +184,9 @@ export default function RestaurantSection() {
           className="
             rounded-[40px]
             bg-[#f7f2ea]/88
-            p-12
+            p-6
+            md:p-10
+            lg:p-12
             shadow-2xl
             backdrop-blur-sm
           "
@@ -200,8 +207,10 @@ export default function RestaurantSection() {
           <h2
             className="
               font-serif
-              text-6xl
-              leading-none
+              text-4xl
+              leading-tight
+              md:text-5xl
+              lg:text-6xl
               text-[#2f241d]
             "
           >
@@ -213,7 +222,9 @@ export default function RestaurantSection() {
           <p
             className="
               mt-8
-              text-xl
+              text-base
+              md:text-lg
+              lg:text-xl
               leading-relaxed
               text-[#6b5b4f]
             "
@@ -240,9 +251,12 @@ export default function RestaurantSection() {
               className="
                 rounded-full
                 bg-white
-                px-5
-                py-3
-                text-sm
+                px-4
+                py-2
+                text-xs
+                md:px-5
+                md:py-3
+                md:text-sm
                 font-semibold
                 shadow-md
               "
@@ -254,9 +268,12 @@ export default function RestaurantSection() {
               className="
                 rounded-full
                 bg-white
-                px-5
-                py-3
-                text-sm
+                px-4
+                py-2
+                text-xs
+                md:px-5
+                md:py-3
+                md:text-sm
                 font-semibold
                 shadow-md
               "
@@ -268,9 +285,12 @@ export default function RestaurantSection() {
               className="
                 rounded-full
                 bg-white
-                px-5
-                py-3
-                text-sm
+                px-4
+                py-2
+                text-xs
+                md:px-5
+                md:py-3
+                md:text-sm
                 font-semibold
                 shadow-md
               "
@@ -282,9 +302,12 @@ export default function RestaurantSection() {
               className="
                 rounded-full
                 bg-white
-                px-5
-                py-3
-                text-sm
+                px-4
+                py-2
+                text-xs
+                md:px-5
+                md:py-3
+                md:text-sm
                 font-semibold
                 shadow-md
               "
@@ -303,9 +326,15 @@ export default function RestaurantSection() {
               shrink-0
               rounded-2xl
               bg-[#c89b5f]
-              px-8
-              py-5
-              text-lg
+              w-full
+              justify-center
+              px-6
+              py-4
+              text-base
+              sm:w-auto
+              md:text-lg
+              inline-flex
+              items-center
               font-bold
               text-white
               transition-all
