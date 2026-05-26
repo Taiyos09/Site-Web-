@@ -13,7 +13,7 @@ datasource db {
 model admins {
   id        Int      @id @default(autoincrement())
   username  String   @unique
-  password  String
+  password  String   @db.Text
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

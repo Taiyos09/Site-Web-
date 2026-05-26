@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "hash-passwords": "tsx scripts/hash-passwords.ts",
+    "create-admin": "tsx scripts/create-admin.ts",
+    "verify-passwords": "tsx scripts/verify-passwords.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
@@ -14,6 +17,7 @@
     "@supabase/supabase-js": "^2.105.4",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
+    "bcryptjs": "^3.0.3",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.16.0",
@@ -29,6 +33,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.0",
     "@types/pdfkit": "^0.17.6",

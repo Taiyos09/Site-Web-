@@ -1036,6 +1036,24 @@ export default function AubergeSaintAubinHomepage() {
     administration
   </Link>
 
+  <Link href="/mentions-legales">
+  Mentions légales
+</Link>
+
+<Link href="/confidentialite">
+  Confidentialité
+</Link>
+
+<Link href="/cgv">
+  CGV
+</Link>
+
+
+<Link href="/cookies">
+  Cookies
+</Link>
+
+
 </footer>
 
     </div>

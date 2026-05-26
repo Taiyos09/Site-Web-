@@ -15,11 +15,25 @@ export default function ContactPage() {
 
   const [loading, setLoading] = useState(false)
 
+  const [
+  acceptPrivacy,
+  setAcceptPrivacy,
+] = useState(false)
+
   const handleSubmit = async (
     e: React.FormEvent
   ) => {
 
     e.preventDefault()
+
+    if (!acceptPrivacy) {
+
+  alert(
+    "Veuillez accepter la politique de confidentialité"
+  )
+
+  return
+}
 
     setLoading(true)
 
@@ -257,12 +271,88 @@ export default function ContactPage() {
                   />
                 </div>
 
+                <div
+  className="
+    rounded-2xl
+    border
+    bg-[#faf8f5]
+    p-5
+  "
+>
+
+  <label
+    className="
+      flex
+      items-start
+      gap-3
+      text-sm
+      leading-6
+    "
+  >
+
+    <input
+      type="checkbox"
+      checked={
+        acceptPrivacy
+      }
+      onChange={(e) =>
+        setAcceptPrivacy(
+          e.target.checked
+        )
+      }
+      className="
+        mt-1
+        h-4
+        w-4
+      "
+    />
+
+    <span>
+
+      J&apos;accepte que mes données
+      soient utilisées afin de répondre
+      à ma demande conformément à la{" "}
+
+      <Link
+        href="/confidentialite"
+        target="_blank"
+        className="
+          font-semibold
+          underline
+        "
+      >
+        politique de confidentialité
+      </Link>
+
+    </span>
+
+  </label>
+
+</div>
+
                 {/* BOUTON */}
                 <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-2xl bg-[#2f241d] py-5 text-lg font-semibold text-white transition hover:bg-[#43352c]"
-                >
+  type="submit"
+
+  disabled={
+    loading ||
+    !acceptPrivacy
+  }
+
+  className="
+    w-full
+    rounded-2xl
+    bg-[#2f241d]
+    py-5
+    text-lg
+    font-semibold
+    text-white
+    transition
+    hover:bg-[#43352c]
+    disabled:cursor-not-allowed
+    disabled:opacity-50
+  "
+>
                   {loading
                     ? "Envoi en cours..."
                     : "Envoyer le message"}
@@ -304,23 +394,52 @@ export default function ContactPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-[#1f1712] px-6 py-10 text-center text-white/70">
 
-        <p>
-          © 2026 L&apos;Auberge de St Aubin —
-          Tous droits réservés
-        </p>
+      <footer
+  className="
+    bg-[#1f1712]
+    px-6
+    py-10
+    text-center
+    text-white/70
+  "
+>
 
-        <div className="mt-6">
+  <p className="mb-4">
+    © 2026 L&apos;Auberge de St Aubin — Tous droits réservés
+  </p>
 
-          <Link
-            href="/"
-            className="text-[#c89b5f] transition hover:text-white"
-          >
-            Retour à l&apos;accueil
-          </Link>
-        </div>
-      </footer>
+  <Link
+    href="/login"
+    className="
+      text-[11px]
+      text-white/20
+      transition
+      hover:text-white/50
+    "
+  >
+    administration
+  </Link>
+
+  <Link href="/mentions-legales">
+  Mentions légales
+</Link>
+
+<Link href="/confidentialite">
+  Confidentialité
+</Link>
+
+<Link href="/cgv">
+  CGV
+</Link>
+
+
+<Link href="/cookies">
+  Cookies
+</Link>
+
+
+</footer>
     </div>
   )
 }

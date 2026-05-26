@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import Link from "next/link"
 
 import { useSearchParams } from "next/navigation"
 
@@ -160,6 +161,14 @@ export default function CheckoutPage() {
   const [message, setMessage] =
     useState("")
 
+  const [acceptCGV, setAcceptCGV] =
+  useState(false)
+
+  const [
+  acceptPrivacy,
+  setAcceptPrivacy,
+] = useState(false)
+
   const handleReservation =
     async () => {
 
@@ -176,6 +185,18 @@ export default function CheckoutPage() {
 
         return
       }
+
+      if (
+  !acceptCGV ||
+  !acceptPrivacy
+) {
+
+  alert(
+    "Veuillez accepter les CGV et la politique de confidentialité"
+  )
+
+  return
+}
 
       const payload = {
 
@@ -409,44 +430,171 @@ export default function CheckoutPage() {
           </div>
 
           <textarea
-            placeholder="Message complémentaire"
-            value={message}
-            onChange={(e) =>
-              setMessage(
-                e.target.value
-              )
-            }
-            className="
-              mt-6
-              min-h-[180px]
-              w-full
-              rounded-2xl
-              border
-              p-5
-            "
-          />
+  placeholder="Message complémentaire"
+  value={message}
+  onChange={(e) =>
+    setMessage(
+      e.target.value
+    )
+  }
+  className="
+    mt-6
+    min-h-[180px]
+    w-full
+    rounded-2xl
+    border
+    p-5
+  "
+/>
+
+<div
+  className="
+    mt-8
+    space-y-5
+    rounded-3xl
+    border
+    bg-[#faf8f5]
+    p-6
+  "
+>
+
+  <label
+    className="
+      flex
+      items-start
+      gap-3
+      text-sm
+      leading-6
+    "
+  >
+
+    <input
+      type="checkbox"
+      checked={acceptCGV}
+      onChange={(e) =>
+        setAcceptCGV(
+          e.target.checked
+        )
+      }
+      className="
+        mt-1
+        h-4
+        w-4
+      "
+    />
+
+    <span>
+
+      J&apos;accepte les{" "}
+
+      <Link
+        href="/cgv"
+        target="_blank"
+        className="
+          font-semibold
+          underline
+        "
+      >
+        Conditions Générales
+        de Vente
+      </Link>
+
+    </span>
+
+  </label>
+
+  <label
+    className="
+      flex
+      items-start
+      gap-3
+      text-sm
+      leading-6
+    "
+  >
+
+    <input
+      type="checkbox"
+      checked={
+        acceptPrivacy
+      }
+      onChange={(e) =>
+        setAcceptPrivacy(
+          e.target.checked
+        )
+      }
+      className="
+        mt-1
+        h-4
+        w-4
+      "
+    />
+
+    <span>
+
+      J&apos;accepte la{" "}
+
+      <Link
+        href="/confidentialite"
+        target="_blank"
+        className="
+          font-semibold
+          underline
+        "
+      >
+        politique de confidentialité
+      </Link>
+
+    </span>
+
+  </label>
+
+  <p
+    className="
+      text-xs
+      leading-5
+      text-[#6b5b4d]
+    "
+  >
+    En validant votre réservation,
+    vous acceptez nos conditions
+    générales de vente ainsi que
+    notre politique de confidentialité.
+  </p>
+
+</div>
+
+          
 
           <button
-            onClick={
-              handleReservation
-            }
-            className="
-              mt-10
-              w-full
-              rounded-2xl
-              bg-[#2f241d]
-              py-5
-              text-xl
-              font-bold
-              text-white
-              transition-all
-              duration-300
-              hover:scale-[1.02]
-              hover:bg-[#43352c]
-            "
-          >
-            Envoyer la demande
-          </button>
+  onClick={
+    handleReservation
+  }
+
+  disabled={
+    !acceptCGV ||
+    !acceptPrivacy
+  }
+
+  className="
+    mt-10
+    w-full
+    rounded-2xl
+    bg-[#2f241d]
+    py-5
+    text-xl
+    font-bold
+    text-white
+    transition-all
+    duration-300
+    hover:scale-[1.02]
+    hover:bg-[#43352c]
+    disabled:cursor-not-allowed
+    disabled:opacity-50
+  "
+>
+  Envoyer la demande
+</button>
 
         </div>
 
@@ -737,6 +885,54 @@ export default function CheckoutPage() {
         </div>
 
       </div>
+
+      {/* FOOTER */}
+
+      <footer
+  className="
+    bg-[#1f1712]
+    px-6
+    py-10
+    text-center
+    text-white/70
+  "
+>
+
+  <p className="mb-4">
+    © 2026 L&apos;Auberge de St Aubin — Tous droits réservés
+  </p>
+
+  <Link
+    href="/login"
+    className="
+      text-[11px]
+      text-white/20
+      transition
+      hover:text-white/50
+    "
+  >
+    administration
+  </Link>
+
+  <Link href="/mentions-legales">
+  Mentions légales
+</Link>
+
+<Link href="/confidentialite">
+  Confidentialité
+</Link>
+
+<Link href="/cgv">
+  CGV
+</Link>
+
+
+<Link href="/cookies">
+  Cookies
+</Link>
+
+
+</footer>
 
     </main>
   )
