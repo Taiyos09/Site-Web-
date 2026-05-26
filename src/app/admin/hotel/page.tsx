@@ -9,8 +9,8 @@ type Room = {
   description: string
   size: string
 
-  one_person_price: number
-  two_people_price: number
+  priceOnePerson: number
+  priceTwoPeople: number
 
   image_1: string
   image_2: string
@@ -71,7 +71,32 @@ export default function HotelAdminPage() {
     const settingsData =
       await responseSettings.json()
 
-    setRooms(roomsData)
+    const formattedRooms =
+  roomsData.map((room: any) => {
+
+    const images =
+      String(room.images || "")
+        .split(",")
+        .map((img: string) =>
+          img.trim()
+        )
+
+    return {
+
+      ...room,
+
+      image_1:
+        images[0] || "",
+
+      image_2:
+        images[1] || "",
+
+      image_3:
+        images[2] || "",
+    }
+  })
+
+setRooms(formattedRooms)
 
     if (settingsData) {
       setSettings(settingsData)
@@ -133,10 +158,10 @@ export default function HotelAdminPage() {
             size: room.size,
 
             one_person_price:
-              room.one_person_price,
+              room.priceOnePerson,
 
             two_people_price:
-              room.two_people_price,
+              room.priceTwoPeople,
 
             image_1: room.image_1,
             image_2: room.image_2,
@@ -657,12 +682,12 @@ export default function HotelAdminPage() {
                     <input
                       type="number"
                       value={
-                        room.one_person_price || 0
+                        room.priceOnePerson || 0
                       }
                       onChange={(e) =>
                         handleRoomChange(
                           room.id,
-                          "one_person_price",
+                          "priceOnePerson",
                           Number(
                             e.target.value
                           )
@@ -685,12 +710,12 @@ export default function HotelAdminPage() {
                     <input
                       type="number"
                       value={
-                        room.two_people_price || 0
+                        room.priceTwoPeople || 0
                       }
                       onChange={(e) =>
                         handleRoomChange(
                           room.id,
-                          "two_people_price",
+                          "priceTwoPeople",
                           Number(
                             e.target.value
                           )
