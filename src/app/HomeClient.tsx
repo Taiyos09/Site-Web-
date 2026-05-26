@@ -213,7 +213,7 @@ export default function AubergeSaintAubinHomepage() {
 
   {/* OVERLAY */}
 
-  <div className="absolute inset-0 bg-black/55" />
+  <div className="absolute inset-0 bg-black/45" />
 
   {/* CONTENU */}
 
@@ -345,17 +345,19 @@ export default function AubergeSaintAubinHomepage() {
   {/* DEGRADE BAS */}
 
   <div
-    className="
-      absolute
-      bottom-0
-      left-0
-      h-28
-      w-full
-      bg-gradient-to-b
-      from-transparent
-      to-[#f5f1ea]
-    "
-  />
+  className="
+    pointer-events-none
+    absolute
+    bottom-0
+    left-0
+    h-20
+    w-full
+    bg-gradient-to-b
+    from-transparent
+    via-[#f5f1ea]/40
+    to-[#f5f1ea]
+  "
+/>
 
 </section>
 
@@ -488,6 +490,24 @@ export default function AubergeSaintAubinHomepage() {
           </div>
 
         </div>
+
+        {/* DEGRADE BAS */}
+
+  <div
+  className="
+    pointer-events-none
+    absolute
+    bottom-0
+    left-0
+    h-20
+    w-full
+    bg-gradient-to-b
+    from-transparent
+    via-[#f5f1ea]/40
+    to-[#f5f1ea]
+  "
+/>
+
 
       </motion.section>
 
@@ -683,6 +703,23 @@ export default function AubergeSaintAubinHomepage() {
 
         </div>
 
+        {/* DEGRADE BAS */}
+
+  <div
+  className="
+    pointer-events-none
+    absolute
+    bottom-0
+    left-0
+    h-20
+    w-full
+    bg-gradient-to-b
+    from-transparent
+    via-[#f5f1ea]/40
+    to-[#f5f1ea]
+  "
+/>
+
       </motion.section>
 
       <RestaurantSection />
@@ -829,7 +866,7 @@ export default function AubergeSaintAubinHomepage() {
 
         </div>
 
-      </motion.section>
+        </motion.section>
 
       {/* CONTACT */}
 
@@ -1084,6 +1121,23 @@ export default function AubergeSaintAubinHomepage() {
           </form>
 
         </div>
+
+        {/* DEGRADE BAS */}
+
+  <div
+  className="
+    pointer-events-none
+    absolute
+    bottom-0
+    left-0
+    h-20
+    w-full
+    bg-gradient-to-b
+    from-transparent
+    via-[#f5f1ea]/40
+    to-[#f5f1ea]
+  "
+/>
 
       </motion.section>
 

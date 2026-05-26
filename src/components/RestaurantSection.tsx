@@ -323,6 +323,23 @@ export default function RestaurantSection() {
 
       </div>
 
+      {/* DEGRADE BAS */}
+
+  <div
+  className="
+    pointer-events-none
+    absolute
+    bottom-0
+    left-0
+    h-20
+    w-full
+    bg-gradient-to-b
+    from-transparent
+    via-[#f5f1ea]/40
+    to-[#f5f1ea]
+  "
+/>
+
     </section>
   )
 }
