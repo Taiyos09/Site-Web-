@@ -1,9 +1,49 @@
-export const metadata = {
+import { MetadataRoute }
+from "next"
 
-  title:
-    "Événements | Auberge de St Aubin",
+export default function sitemap():
+MetadataRoute.Sitemap {
 
-  description:
-    "Concerts, soirées à thème et animations conviviales à l’Auberge de St Aubin.",
+  return [
 
+    {
+      url:
+        "http://localhost:3000",
+
+      lastModified:
+        new Date(),
+    },
+
+    {
+      url:
+        "http://localhost:3000/hotel",
+
+      lastModified:
+        new Date(),
+    },
+
+    {
+      url:
+        "http://localhost:3000/restaurant",
+
+      lastModified:
+        new Date(),
+    },
+
+    {
+      url:
+        "http://localhost:3000/evenements",
+
+      lastModified:
+        new Date(),
+    },
+
+    {
+      url:
+        "http://localhost:3000/contact",
+
+      lastModified:
+        new Date(),
+    },
+  ]
 }

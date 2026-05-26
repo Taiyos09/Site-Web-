@@ -3,7 +3,6 @@
 import { notFound } from "next/navigation"
 import BookingCalendar from "@/components/hotel/BookingCalendar"
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabase"
 
 type Room = {
   id: number
@@ -15,9 +14,7 @@ type Room = {
   one_person_price: number
   two_people_price: number
 
-  image_1: string
-  image_2: string
-  image_3: string
+  images: string[]
 }
 
 export default function ReservationPage({
@@ -63,21 +60,33 @@ useEffect(() => {
 
     try {
 
-      const { data, error } =
-        await supabase
-          .from("rooms")
-          .select("*")
-          .eq("slug", slug)
-          .single()
+      const response =
+  await fetch(
 
-      if (error || !data) {
+    "http://localhost:3000/api/rooms",
 
-        console.error(error)
+    {
+      cache: "no-store",
+    }
+  )
 
-        setRoom(null)
+const rooms =
+  await response.json()
 
-        return
-      }
+const data =
+  rooms.find(
+    (room: any) =>
+      room.slug === slug
+  )
+
+if (!data) {
+
+  setRoom(null)
+
+  return
+}
+
+setRoom(data)
 
       setRoom(data)
 
@@ -127,7 +136,7 @@ useEffect(() => {
       ">
 
         <img
-          src={room.image_1}
+          src={room.images?.[0]}
           alt={room.name}
           className="
             absolute
@@ -211,7 +220,7 @@ useEffect(() => {
             ">
 
               <img
-                src={room.image_2}
+                src={room.images?.[1] || room.images?.[0]}
                 alt={room.name}
                 className="
                   h-[420px]
@@ -262,13 +271,19 @@ useEffect(() => {
           ">
 
             <BookingCalendar
-  onePersonPrice={
-    Number(room.one_person_price)
+
+  roomId={room.id}
+
+  priceOnePerson={
+    room.priceOnePerson
   }
-  twoPeoplePrice={
-    Number(room.two_people_price)
+
+  priceTwoPeople={
+    room.priceTwoPeople
   }
+
   roomName={room.name}
+
   roomSlug={room.slug}
 />
 

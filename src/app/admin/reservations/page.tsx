@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabase"
 
 type ReservationRoom = {
   id: number
@@ -66,7 +65,7 @@ const [statusFilter, setStatusFilter] =
     arrival: "",
     departure: "",
 
-    people: 2,
+    people: 1,
 
     rooms: [] as string[],
 
@@ -79,244 +78,215 @@ const [statusFilter, setStatusFilter] =
   })
 
   const [hotelSettings, setHotelSettings] =
-    useState<any>(null)
+  useState({
+
+    lunch: 0,
+    dinner: 0,
+    pet: 0,
+    tourist_tax: 0,
+    extra_bed: 0,
+  })
 
   const [roomsData, setRoomsData] =
     useState<any[]>([])
 
   useEffect(() => {
 
-    const loadData =
-      async () => {
+  const loadData =
+    async () => {
 
-        try {
+      try {
 
-          const {
-            data,
-            error,
-          } = await supabase
-            .from("reservations")
-            .select(`
-              *,
-              reservation_rooms (*)
-            `)
-            .order("created_at", {
-              ascending: false,
-            })
+        const reservationsRes =
+          await fetch(
+            "/api/reservations"
+          )
 
-          if (error) {
-            console.error(error)
-            return
-          }
+        const reservationsData =
+          await reservationsRes.json()
 
-          if (data) {
-            setReservations(data)
-          }
+        setReservations(
+          reservationsData
+        )
 
-          const {
-            data: settingsData
-          } = await supabase
-            .from("hotel_settings")
-            .select("*")
-            .single()
+        const settingsRes =
+          await fetch(
+            "/api/hotel-settings"
+          )
 
-          if (settingsData) {
-            setHotelSettings(settingsData)
-          }
+        const settingsData =
+  await settingsRes.json()
 
-          const {
-            data: roomsTable
-          } = await supabase
-            .from("rooms")
-            .select("*")
+console.log(settingsData)
 
-          if (roomsTable) {
-            setRoomsData(roomsTable)
-          }
 
-        } catch (error) {
+        const roomsRes =
+          await fetch("/api/rooms")
 
-          console.error(error)
-        }
+        const roomsData =
+          await roomsRes.json()
+
+          console.log(roomsData)
+
+        setRoomsData(roomsData)
+        setHotelSettings(settingsData)
+
+        console.log("ROOMS API", roomsData)
+
+      } catch (error) {
+
+        console.error(error)
       }
+    }
 
-    loadData()
+  loadData()
 
-  }, [])
+}, [])
 
   /* ---------------- STATUS ---------------- */
 
   const updateReservationStatus =
-    async (
-      reservation: Reservation,
-      status: string
-    ) => {
+  async (
+    reservation: Reservation,
+    status: string
+  ) => {
 
-      try {
+    try {
 
-        await supabase
-          .from("reservations")
-          .update({ status })
-          .eq("id", reservation.id)
+      await fetch(
+        `/api/reservations/${reservation.id}`,
+        {
+          method: "PUT",
 
-        if (status === "rejected") {
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
 
-          await supabase
-            .from("blocked_dates")
-            .delete()
-            .eq(
-              "reservation_id",
-              reservation.id
-            )
+          body: JSON.stringify({
+            status,
+          }),
         }
+      )
+
+      if (status === "rejected") {
 
         await fetch(
-  "/api/send-status-email",
-  {
-    method: "POST",
-
-    headers: {
-      "Content-Type":
-        "application/json",
-    },
-
-    body: JSON.stringify({
-
-      status,
-
-      people:
-  reservation.people,
-
-lunch:
-  reservation.lunch,
-
-dinner:
-  reservation.dinner,
-
-pets:
-  reservation.pets,
-
-baby:
-  reservation.baby,
-
-      email:
-        reservation.email,
-
-      first_name:
-        reservation.first_name,
-
-      last_name:
-        reservation.last_name,
-
-      roomName:
-        reservation
-          .reservation_rooms?.[0]
-          ?.room_name || "",
-
-      arrival:
-        reservation.arrival,
-
-      departure:
-        reservation.departure,
-
-      total:
-        reservation.total,
-    }),
-  }
-)
-
-        setReservations((prev) =>
-          prev.map((r) =>
-            r.id === reservation.id
-              ? {
-                  ...r,
-                  status,
-                }
-              : r
-          )
+          `/api/blocked-dates/${reservation.id}`,
+          {
+            method: "DELETE",
+          }
         )
-
-      } catch (error) {
-
-        console.error(error)
       }
+
+      setReservations((prev) =>
+        prev.map((r) =>
+          r.id === reservation.id
+            ? {
+                ...r,
+                status,
+              }
+            : r
+        )
+      )
+
+    } catch (error) {
+
+      console.error(error)
     }
+  }
 
   /* ---------------- DELETE ---------------- */
 
   const deleteReservation =
-    async (id: number) => {
+  async (id: number) => {
 
-      const confirmDelete =
-        confirm(
-          "Supprimer cette réservation ?"
+    const confirmDelete =
+      confirm(
+        "Supprimer cette réservation ?"
+      )
+
+    if (!confirmDelete) return
+
+    try {
+
+      await fetch(
+        `/api/reservations/${id}`,
+        {
+          method: "DELETE",
+        }
+      )
+
+      setReservations((prev) =>
+        prev.filter(
+          (r) => r.id !== id
         )
+      )
 
-      if (!confirmDelete) return
+    } catch (error) {
 
-      try {
-
-        await supabase
-          .from("reservation_rooms")
-          .delete()
-          .eq("reservation_id", id)
-
-        await supabase
-          .from("blocked_dates")
-          .delete()
-          .eq("reservation_id", id)
-
-        await supabase
-          .from("reservations")
-          .delete()
-          .eq("id", id)
-
-        setReservations((prev) =>
-          prev.filter(
-            (r) => r.id !== id
-          )
-        )
-
-      } catch (error) {
-
-        console.error(error)
-      }
+      console.error(error)
     }
+  }
 
   /* ---------------- CALCUL PRIX CHAMBRE ---------------- */
 
   const getRoomPrice = (
-    roomName: string,
-    people: number
-  ) => {
+  roomName: string,
+  people: number
+) => {
 
-    const roomData =
-      roomsData.find(
-        (r) =>
-          r.name?.trim().toLowerCase() ===
-          roomName.trim().toLowerCase()
-      )
-
-    if (!roomData) {
-      return 0
-    }
-
-    const onePersonPrice =
-      parseFloat(
-        roomData.one_person_price
-      ) || 0
-
-    const twoPeoplePrice =
-      parseFloat(
-        roomData.two_people_price
-      ) || 0
-
-    if (people <= 1) {
-      return onePersonPrice
-    }
-
-    return twoPeoplePrice
+  if (!roomsData.length) {
+    return 0
   }
+
+  const roomData =
+    roomsData.find((r) =>
+
+      r.name
+        ?.replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase()
+
+      ===
+
+      roomName
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase()
+    )
+
+    console.log({
+  roomName,
+  roomsData,
+  found: roomData,
+})
+
+  if (!roomData) {
+
+    console.log(
+      "ROOM NOT FOUND",
+      roomName,
+      roomsData
+    )
+
+    return 0
+  }
+
+  const onePersonPrice =
+    Number(
+      roomData.priceOnePerson
+    ) || 0
+
+  const twoPeoplePrice =
+    Number(
+      roomData.priceTwoPeople
+    ) || 0
+
+  return people <= 1
+    ? onePersonPrice
+    : twoPeoplePrice
+}
 
   /* ---------------- AJOUT MANUEL ---------------- */
 
@@ -328,12 +298,24 @@ for (
   manualReservation.rooms
 ) {
 
-  const roomData =
-    roomsData.find(
-      (r) =>
-        r.name?.trim().toLowerCase() ===
-        room.trim().toLowerCase()
-    )
+  
+    const roomData =
+  roomsData.find((r) => {
+
+    const dbName =
+      String(r.name)
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase()
+
+    const selectedName =
+      String(room)
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase()
+
+    return dbName.includes(selectedName)
+  })
 
   if (!roomData) {
 
@@ -344,29 +326,13 @@ for (
     return
   }
 
-  const {
-    data: existingReservations,
-    error: checkError,
-  } = await supabase
-    .from("blocked_dates")
-    .select("*")
-    .eq(
-      "room_slug",
-      roomData.slug
-    )
+  const response =
+  await fetch(
+    `/api/blocked-dates?room_slug=${roomData.slug}`
+  )
 
-  if (checkError) {
-
-    console.error(checkError)
-
-    alert(
-      "Erreur vérification disponibilités"
-    )
-
-    return
-  }
-
-  
+const existingReservations =
+  await response.json()  
 
   const newArrival =
     new Date(
@@ -414,6 +380,74 @@ for (
 
       try {
 
+        const roomCapacities:
+  Record<string, number> = {
+
+  "Chambre Double Standard": 3,
+
+  "Chambre Confort": 4,
+
+  "Chambre Familiale": 4,
+}
+
+/* VERIFICATION CHAMBRE */
+
+for (
+  const room of
+  manualReservation.rooms
+) {
+
+  const maxCapacity =
+    roomCapacities[room] || 0
+
+  if (
+    manualReservation.people >
+    maxCapacity
+  ) {
+
+    alert(
+
+      `${room}
+
+Capacité maximum :
+${maxCapacity} personnes`
+
+    )
+
+    return
+  }
+}
+
+/* TOTAL CAPACITE */
+
+const totalCapacity =
+  manualReservation.rooms.reduce(
+    (total, room) => {
+
+      return (
+        total +
+        (roomCapacities[room] || 0)
+      )
+    },
+    0
+  )
+
+/* VERIFICATION GLOBALE */
+
+if (
+  manualReservation.people >
+  totalCapacity
+) {
+
+  alert(
+`Capacité maximum dépassée.
+
+Maximum autorisé :
+${totalCapacity} personnes`
+  )
+
+  return
+}
         if (
           manualReservation.rooms.length === 0
         ) {
@@ -482,163 +516,86 @@ for (
         }
 
         if (
-          manualReservation.lunch
-        ) {
+  manualReservation.lunch
+) {
 
-          total +=
-            manualReservation.people *
-            (hotelSettings?.lunch || 0) *
-            nights
-        }
+  total +=
+    manualReservation.people *
+    (hotelSettings.lunch || 0) *
+    nights
+}
 
-        if (
-          manualReservation.dinner
-        ) {
+if (
+  manualReservation.dinner
+) {
 
-          total +=
-            manualReservation.people *
-            (hotelSettings?.dinner || 0) *
-            nights
-        }
+  total +=
+    manualReservation.people *
+    (hotelSettings.dinner || 0) *
+    nights
+}
 
-        if (
-          manualReservation.pets
-        ) {
+if (
+  manualReservation.pets
+) {
 
-          total +=
-            (hotelSettings?.pet || 0) *
-            nights
+  total +=
+    (hotelSettings.pet || 0) *
+    nights
+}
 
-            total +=
-  (hotelSettings?.tourist_tax || 0) *
+/* TAXE DE SÉJOUR */
+
+total +=
+  (hotelSettings.tourist_tax || 0) *
   manualReservation.people *
   nights
-        }
 
-        const {
-          data: reservationData,
-          error,
-        } = await supabase
-          .from("reservations")
-          .insert([
-            {
+        const response =
+  await fetch(
+    "/api/reservations",
+    {
+      method: "POST",
 
-              first_name:
-                manualReservation.first_name,
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
 
-              last_name:
-                manualReservation.last_name,
+      body: JSON.stringify({
 
-              email:
-                manualReservation.email,
+        ...manualReservation,
 
-              phone:
-                manualReservation.phone,
+        total,
 
-              arrival:
-                manualReservation.arrival,
+        roomIds:
+  manualReservation.rooms
+    .map((roomName) => {
 
-              departure:
-                manualReservation.departure,
+      const room =
+        roomsData.find(
+          (r) => r.name === roomName
+        )
 
-              people:
-                manualReservation.people,
-
-              lunch:
-                manualReservation.lunch,
-
-              dinner:
-                manualReservation.dinner,
-
-              pets:
-                manualReservation.pets,
-
-              baby:
-                manualReservation.baby,
-
-              message:
-                manualReservation.message,
-
-              total,
-
-              status:
-                "confirmed",
-            },
-          ])
-          .select()
-          .single()
-
-        if (error) {
-
-  console.error(
-    "RESERVATION INSERT ERROR",
-    error
+      return room?.id
+    })
+    .filter(Boolean),
+      }),
+    }
   )
 
-  alert(error.message)
+if (!response.ok) {
+
+  alert(
+    "Erreur création réservation"
+  )
 
   return
 }
 
-        for (
-          const room of roomDetails
-        ) {
-
-          const roomInsert =
-  await supabase
-    .from("reservation_rooms")
-    .insert({
-
-              reservation_id:
-                reservationData.id,
-
-              room_name:
-                room.room_name,
-
-              people:
-                room.people,
-
-              room_total:
-                room.room_total,
-            })
-            console.log(
-  "ROOM INSERT",
-  roomInsert
-)
-
-          const roomData =
-  roomsData.find(
-    (r) =>
-      r.name?.trim().toLowerCase() ===
-      room.room_name.trim().toLowerCase()
-  )
-
-const blockedInsert =
-  await supabase
-    .from("blocked_dates")
-    .insert({
-
-    reservation_id:
-      reservationData.id,
-
-    room_name:
-      room.room_name,
-
-    room_slug:
-      roomData?.slug,
-
-    from_date:
-      manualReservation.arrival,
-
-    to_date:
-      manualReservation.departure,
-  })
-
-  console.log(
-  "BLOCKED INSERT",
-  blockedInsert
-)
-        }
+const reservationData =
+  await response.json()
+        
 
         await fetch(
   "/api/send-status-email",
@@ -756,33 +713,67 @@ const blockedInsert =
     }
   )
 
+  console.log({
+  nights,
+  people:
+    manualReservation.people,
+  lunch:
+    hotelSettings.lunch,
+  dinner:
+    hotelSettings.dinner,
+  pet:
+    hotelSettings.pet,
+})
+
   const lunchTotal =
-    manualReservation.lunch
-      ? manualReservation.people *
-        (hotelSettings?.lunch || 0) *
-        nights
-      : 0
+  manualReservation.lunch
+    ? manualReservation.people *
+      Number(
+        hotelSettings.lunch || 0
+      ) *
+      nights
+    : 0
 
-  const dinnerTotal =
-    manualReservation.dinner
-      ? manualReservation.people *
-        (hotelSettings?.dinner || 0) *
-        nights
-      : 0
+const dinnerTotal =
+  manualReservation.dinner
+    ? manualReservation.people *
+      Number(
+        hotelSettings.dinner || 0
+      ) *
+      nights
+    : 0
 
-  const petsTotal =
-    manualReservation.pets
-      ? (hotelSettings?.pet || 0) *
-        nights
-      : 0
+const petsTotal =
+  manualReservation.pets
+    ? Number(
+        hotelSettings.pet || 0
+      ) *
+      nights
+    : 0
 
-  const touristTax =
-  (hotelSettings?.tourist_tax || 0) *
+const extraPeople =
+  Math.max(
+    manualReservation.people - 2,
+    0
+  )
+
+const extraBedTotal =
+  extraPeople *
+  Number(
+    hotelSettings.extra_bed || 0
+  ) *
+  nights
+
+const touristTax =
+  Number(
+    hotelSettings.tourist_tax || 0
+  ) *
   manualReservation.people *
   nights
 
   const totalPrice =
     roomsTotal +
+    extraBedTotal +
     lunchTotal +
     dinnerTotal +
     petsTotal +
@@ -1213,7 +1204,7 @@ const filteredReservations =
         font-bold
       "
     >
-      {
+            {
         reservations
           .filter(
             (r) =>
@@ -1230,6 +1221,7 @@ const filteredReservations =
 
             0
           )
+          .toFixed(2)
       }€
     </h2>
 
@@ -1441,10 +1433,7 @@ const filteredReservations =
 
                   {room.room_name}
                   {" "}
-                  —
-                  {" "}
-                  {room.room_total}€
-
+                  
                 </div>
 
               )
@@ -2105,77 +2094,48 @@ const filteredReservations =
         {/* PERSONNES */}
 
         <select
-          value={
-            manualReservation.people
-          }
-          onChange={(e) =>
-            setManualReservation({
-              ...manualReservation,
-              people:
-                Number(e.target.value),
-            })
-          }
-          className="
-            w-full
-            rounded-2xl
-            border
-            p-4
-          "
-        >
+  value={
+    manualReservation.people
+  }
+  onChange={(e) =>
+    setManualReservation({
+      ...manualReservation,
+      people:
+        Number(e.target.value),
+    })
+  }
+  className="
+    w-full
+    rounded-2xl
+    border
+    p-4
+  "
+>
 
-          <option value={1}>
-            1 personne
-          </option>
+  {[...Array(13)].map((_, index) => {
 
-          <option value={2}>
-            2 personnes
-          </option>
+    const people =
+      index + 1
 
-          <option value={3}>
-            3 personnes
-          </option>
+    return (
 
-          <option value={4}>
-            4 personnes
-          </option>
+      <option
+        key={people}
+        value={people}
+      >
 
-          <option value={1}>
-            5 personne
-          </option>
+        {people}
+        {" "}
+        {people > 1
+          ? "personnes"
+          : "personne"}
 
-          <option value={2}>
-            6 personnes
-          </option>
+      </option>
 
-          <option value={3}>
-            7 personnes
-          </option>
+    )
+  })}
 
-          <option value={4}>
-            8 personnes
-          </option>
-
-          <option value={4}>
-            9 personnes
-          </option>
-
-          <option value={1}>
-            10 personne
-          </option>
-
-          <option value={2}>
-           11 personnes
-          </option>
-
-          <option value={3}>
-            12 personnes
-          </option>
-
-          <option value={4}>
-            13 personnes
-          </option>
-
-        </select>
+</select>
 
         {/* CHAMBRES */}
 
@@ -2191,6 +2151,15 @@ const filteredReservations =
               manualReservation.rooms.includes(
                 room
               )
+
+            if (!roomsData.length) {
+
+  return (
+    <div>
+      Chargement...
+    </div>
+  )
+}
 
             return (
 
@@ -2431,6 +2400,25 @@ const filteredReservations =
       }
     )}
 
+    {manualReservation.people >= 3 && (
+
+  <div className="flex justify-between border-b border-black/20 py-3">
+
+    <div>
+      Personne supplémentaire (
+      {hotelSettings.extra_bed}€
+      × {(manualReservation.people - 2)}
+      × {nights} nuits)
+    </div>
+
+    <div>
+      {extraBedTotal}€
+    </div>
+
+  </div>
+)}
+
+
 {/* Petit Déjeuner */}
 
 <div className="
@@ -2464,7 +2452,7 @@ const filteredReservations =
       <span className="text-[#6b5b4f]">
         {" "}
         (
-        {hotelSettings?.lunch || 0}€
+        {Number(hotelSettings.lunch || 0)}€
         {" "}×{" "}
         {manualReservation.people}
         {" "}personnes
@@ -2578,7 +2566,7 @@ const filteredReservations =
   </span>
 
   <span>
-    {touristTax}€
+    {touristTax.toFixed(2)}€
   </span>
 
 </div>
@@ -2617,7 +2605,7 @@ const filteredReservations =
       </span>
 
       <span>
-        {totalPrice}€
+        {totalPrice.toFixed(2)}€
       </span>
 
     </div>

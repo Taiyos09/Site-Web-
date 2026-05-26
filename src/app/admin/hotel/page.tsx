@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabase"
 
 type Room = {
   id: string
@@ -56,42 +55,34 @@ export default function HotelAdminPage() {
   
 
   async function loadData() {
-    try {
-      const { data: roomsData, error: roomsError } =
-        await supabase
-          .from("rooms")
-          .select("*")
-          .order("name")
+  try {
 
-      if (roomsError) {
-        console.error(roomsError)
-      }
-      
+    const response =
+      await fetch("/api/rooms")
 
-      const {
-        data: settingsData,
-        error: settingsError,
-      } = await supabase
-        .from("hotel_settings")
-        .select("*")
-        .single()
+    const roomsData =
+      await response.json()
 
-      if (settingsError) {
-        console.error(settingsError)
-      }
+    const responseSettings =
+      await fetch(
+        "/api/hotel-settings"
+      )
 
-      setRooms(roomsData || [])
+    const settingsData =
+      await responseSettings.json()
 
-      if (settingsData) {
-        setSettings(settingsData)
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
+    setRooms(roomsData)
+
+    if (settingsData) {
+      setSettings(settingsData)
     }
-    
+
+  } catch (error) {
+    console.error(error)
+  } finally {
+    setLoading(false)
   }
+}
   
 
   // =========================
@@ -120,15 +111,25 @@ export default function HotelAdminPage() {
   // =========================
 
   async function saveRoom(room: Room) {
-    try {
-      setSavingRoom(room.id)
+  try {
 
-      const { error } =
-        await supabase
-          .from("rooms")
-          .update({
+    setSavingRoom(room.id)
+
+    const response =
+      await fetch(
+        `/api/rooms/${room.id}`,
+        {
+          method: "PUT",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
             name: room.name,
-            description: room.description,
+            description:
+              room.description,
             size: room.size,
 
             one_person_price:
@@ -140,31 +141,35 @@ export default function HotelAdminPage() {
             image_1: room.image_1,
             image_2: room.image_2,
             image_3: room.image_3,
-          })
-          .eq("id", room.id)
-
-      console.log(error)
-
-if (error) {
-        alert(
-          "Erreur lors de la sauvegarde"
-        )
-        return
-      }
-
-      alert(
-        `Chambre "${room.name}" sauvegardée`
+          }),
+        }
       )
-    } catch (error) {
-      console.error(error)
 
+    if (!response.ok) {
       alert(
         "Erreur lors de la sauvegarde"
       )
-    } finally {
-      setSavingRoom(null)
+      return
     }
+
+    alert(
+      `Chambre "${room.name}" sauvegardée`
+    )
+
+  } catch (error) {
+
+    console.error(error)
+
+    alert(
+      "Erreur lors de la sauvegarde"
+    )
+
+  } finally {
+
+    setSavingRoom(null)
+
   }
+}
 
   // =========================
   // SETTINGS LOCAL STATE
@@ -187,56 +192,63 @@ if (error) {
   // =========================
 
   async function saveSettings() {
-    if (!settings) return
 
-    try {
-      setSavingSettings(true)
+  if (!settings) return
 
-      const { error } =
-        await supabase
-          .from("hotel_settings")
-          .update({
+  try {
 
-            lunch:
-              settings.lunch,
+    setSavingSettings(true)
 
-            dinner:
-              settings.dinner,
+    const response =
+      await fetch(
+        "/api/hotelsettings",
+        {
+          method: "PUT",
 
-            pet:
-              settings.pet,
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            lunch: settings.lunch,
+            dinner: settings.dinner,
+            pet: settings.pet,
 
             tourist_tax:
               settings.tourist_tax,
 
             extra_bed:
               settings.extra_bed,
-          })
-          .eq("id", settings.id)
-
-      if (error) {
-        console.error(error)
-
-        alert(
-          "Erreur sauvegarde paramètres"
-        )
-
-        return
-      }
-
-      alert(
-        "Paramètres sauvegardés"
+          }),
+        }
       )
-    } catch (error) {
-      console.error(error)
+
+    if (!response.ok) {
 
       alert(
         "Erreur sauvegarde paramètres"
       )
-    } finally {
-      setSavingSettings(false)
+
+      return
     }
+
+    alert("Paramètres sauvegardés")
+
+  } catch (error) {
+
+    console.error(error)
+
+    alert(
+      "Erreur sauvegarde paramètres"
+    )
+
+  } finally {
+
+    setSavingSettings(false)
+
   }
+}
 
   if (loading) {
     return (
@@ -419,7 +431,7 @@ if (error) {
 
             <div>
               <label className="mb-2 block font-bold">
-                Lit supplémentaire
+                Personne supplémentaire
               </label>
 
               <input

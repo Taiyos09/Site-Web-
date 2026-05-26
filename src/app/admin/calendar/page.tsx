@@ -2,8 +2,6 @@
 
 import { useEffect, useState, useRef } from "react"
 
-import { supabase } from "@/lib/supabase"
-
 import {
   addMonths,
   startOfMonth,
@@ -70,19 +68,14 @@ export default function CalendarPage() {
 
         try {
 
-          const { data, error } =
-            await supabase
-              .from("reservations")
-              .select(`
-                *,
-                reservation_rooms (*)
-              `)
+          const response =
+  await fetch(
+    "/api/reservations"
+  )
 
-          if (error) {
+const data =
+  await response.json()
 
-            console.error(error)
-            return
-          }
 
           if (data) {
 
@@ -108,11 +101,29 @@ export default function CalendarPage() {
   const monthEnd =
     endOfMonth(currentMonth)
 
+
   const days =
     eachDayOfInterval({
       start: monthStart,
       end: monthEnd,
     })
+
+     // Scroll vers le début du mois quand currentMonth change
+  useEffect(() => {
+    if (calendarRef.current) {
+      const monthStartIndex = days.findIndex(
+        (day) => format(day, "yyyy-MM-dd") === format(monthStart, "yyyy-MM-dd")
+      )
+      if (monthStartIndex !== -1) {
+        const scrollPosition = monthStartIndex * 120
+        calendarRef.current.scrollTo({
+          left: scrollPosition - 400,
+          behavior: "smooth",
+        })
+      }
+    }
+  }, [currentMonth, days, monthStart])
+
 
   const scrollToToday = () => {
 
@@ -151,17 +162,33 @@ const updateReservationStatus =
 
     try {
 
-      const { error } =
-        await supabase
-          .from("reservations")
-          .update({ status })
-          .eq("id", reservationId)
+      const response =
+  await fetch(
 
-      if (error) {
+    `/api/reservations/${reservationId}`,
 
-        console.error(error)
-        return
-      }
+    {
+      method: "PUT",
+
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+
+      body: JSON.stringify({
+        status,
+      }),
+    }
+  )
+
+if (!response.ok) {
+
+  console.error(
+    "Erreur mise à jour"
+  )
+
+  return
+}
 
       setReservations((prev) =>
         prev.map((reservation) =>
@@ -413,10 +440,8 @@ const updateReservationStatus =
 
   onClick={() => {
 
-    setCurrentMonth(
-      new Date()
-    )
-
+    setCurrentMonth(new Date())
+     
     setTimeout(() => {
 
       scrollToToday()
@@ -436,252 +461,215 @@ const updateReservationStatus =
     hover:bg-[#faf7f2]
   "
 >
-  Aujourd’hui
+  Aujourd'hui
 </button>
 
           </div>
 
           {/* CALENDRIER */}
-
-          <div
-            ref={calendarRef}
-            className="
-              overflow-x-auto
-              w-full
-              rounded-[36px]
-              bg-white
-              p-8
-              shadow-2xl
-            "
-          >
-
-            <div
-              className="grid"
-              style={{
-                gridTemplateColumns:
-                  `260px repeat(${days.length}, 120px)`,
-              }}
-            >
-
-              {/* HEADER */}
-
-              <div
-  className="
-    sticky
-    left-0
-    z-40
-
-    flex
-    items-center
-
-    border-b
-    border-r
-
-    bg-white
-
-    p-4
-
-    font-bold
-
-    shadow-[8px_0_12px_-8px_rgba(0,0,0,0.08)]
-  "
-
-  style={{
-    width: "260px",
-    minWidth: "260px",
-  }}
->
-  Chambres
-</div>
-
-              {days.map((day) => (
-
-                <div
-                  key={day.toISOString()}
-                  className="
-                    min-w-[120px]
-                    border-b
-                    border-l
-                    p-4
-                    text-center
-                    font-bold
-                  "
-                >
-
-                  <div>
-                    {format(day, "dd")}
-                  </div>
-
-                  <div className="text-sm text-[#6b5b4f]">
-
-                    {format(day, "MMM", {
-                      locale: fr,
-                    })}
-
-                  </div>
-
+          <div className="rounded-[36px] bg-white shadow-2xl overflow-hidden">
+            <div className="flex">
+              {/* COLONNE FIXE - CHAMBRES */}
+              <div className="w-[260px] flex-shrink-0 bg-white border-r z-10">
+                {/* Header fixe */}
+                <div className="h-[60px] flex items-center p-4 font-bold border-b bg-white">
+                  Chambres
                 </div>
+                {/* Noms des chambres */}
+                {rooms.map((room) => (
+                  <div key={room} className="h-[170px] flex items-center p-4 font-bold border-t bg-white">
+                    {room}
+                  </div>
+                ))}
+              </div>
 
-              ))}
-
-              {/* LIGNES */}
-
-              {rooms.map((room) => {
-
-                const roomReservations =
-                  reservations.filter((reservation) =>
-                    reservation.reservation_rooms?.some(
-                      (r) => r.room_name === room
-                    )
-                  )
-
-                return (
-
-                  <div
-                    key={room}
-                    className="contents"
-                  >
-
-                    {/* NOM CHAMBRE */}
-
+              {/* CONTENU SCROLLABLE - JOURS */}
+              <div 
+                ref={calendarRef}
+                className="flex-1 overflow-x-auto"
+              >
+                <div
+                  className="grid"
+                  style={{
+                    gridTemplateColumns: `repeat(${days.length}, 120px)`,
+                  }}
+                >
+                  {/* Header jours */}
+                  {days.map((day) => (
                     <div
-  className="
-    sticky
-    left-0
-    z-30
-
-    flex
-    items-center
-
-    border-r
-    border-t
-
-    bg-white
-
-    p-4
-
-    font-bold
-
-    shadow-[8px_0_12px_-8px_rgba(0,0,0,0.08)]
-  "
-
-  style={{
-    width: "260px",
-    minWidth: "260px",
-  }}
->
-  {room}
-</div>
-
-                    {/* LIGNE */}
-
-                    <div
-                      className="
-                        relative
-                        border-t
-                      "
-                      style={{
-                        gridColumn:
-                          `span ${days.length}`,
-
-                        height: "170px",
-                      }}
+                      key={day.toISOString()}
+                      className="min-w-[120px] border-b border-l p-4 text-center font-bold h-[60px] flex items-center justify-center"
                     >
-
-                      {/* GRILLE */}
-
-                      <div
-                        className="
-                          absolute
-                          inset-0
-                          grid
-                        "
-                        style={{
-                          gridTemplateColumns:
-                            `repeat(${days.length}, 1fr)`,
-                        }}
-                      >
-
-                        {days.map((_, i) => (
-
-                          <div
-                            key={`grid-${room}-${i}`}
-                            className="border-r"
-                          />
-
-                        ))}
-
+                      <div>
+                        {format(day, "dd")}
                       </div>
+                      <div className="text-sm text-[#6b5b4f]">
+                        {format(day, "MMM", { locale: fr })}
+                      </div>
+                    </div>
+                  ))}
 
-                      {/* RESERVATIONS */}
+                  {/* Lignes chambres avec réservations */}
+                  {rooms.map((room) => {
+                    const roomReservations = reservations.filter((reservation) =>
+                      reservation.reservation_rooms?.some((r) => r.room_name === room)
+                    )
 
-                      {roomReservations.map((reservation) => {
+                    return (
+                      <div
+                        key={room}
+                        className="contents"
+                      >
+                        {/* Ligne de réservations pour cette chambre */}
+                        <div
+                          className="relative border-t"
+                          style={{
+                            gridColumn: `span ${days.length}`,
+                            height: "170px",
+                          }}
+                        >
+                          {/* Grille de fond */}
+                          <div
+                            className="absolute inset-0 grid"
+                            style={{
+                              gridTemplateColumns: `repeat(${days.length}, 1fr)`,
+                            }}
+                          >
+                            {days.map((_, i) => (
+                              <div
+                                key={`grid-${room}-${i}`}
+                                className="border-r"
+                              />
+                            ))}
+                          </div>
 
-                        const currentRoom =
-                          reservation.reservation_rooms?.find(
-                            (r) => r.room_name === room
-                          )
+                          {/* RESERVATIONS */}
+                          {roomReservations.map((reservation) => {
+                            const currentRoom = reservation.reservation_rooms?.find(
+                              (r) => r.room_name === room
+                            )
 
-                        const arrival = new Date(
-                          reservation.arrival + "T12:00:00"
-                        )
+                            if (!reservation.arrival || !reservation.departure) {
+                              return null
+                            }
 
-                        const departure = new Date(
-                          reservation.departure + "T12:00:00"
-                        )
+                            const arrival = new Date(reservation.arrival)
+                            const departure = new Date(reservation.departure)
 
-                        const startIndex =
-                          days.findIndex(
-                            (d) =>
-                              format(d, "yyyy-MM-dd") ===
-                              format(arrival, "yyyy-MM-dd")
-                          )
+                            if (isNaN(arrival.getTime()) || isNaN(departure.getTime())) {
+                              console.error("Date invalide :", reservation)
+                              return null
+                            }
 
-                        const endIndex =
-                          days.findIndex(
-                            (d) =>
-                              format(d, "yyyy-MM-dd") ===
-                              format(departure, "yyyy-MM-dd")
-                          ) - 1
+                            const visibleStart =
+  days[0]
 
-                        if (
-                          startIndex === -1 ||
-                          endIndex === -1
-                        ) {
-                          return null
-                        }
+const visibleEnd =
+  days[days.length - 1]
 
-                        const colorPalette = [
+const reservationStart =
+  new Date(arrival)
 
-  `
-    bg-[#4f6f52]
-    border-[#7da37f]
-  `,
+const reservationEnd =
+  new Date(departure)
 
-  `
-    bg-[#5b6c8f]
-    border-[#8ea1c7]
-  `,
+/* =========================
+   ON LIMITE AU MOIS VISIBLE
+========================= */
 
-  `
-    bg-[#7b5b8a]
-    border-[#aa8dc0]
-  `,
+const displayStart =
 
-  `
-    bg-[#9c6b3f]
-    border-[#c89b5f]
-  `,
+  reservationStart < visibleStart
+    ? visibleStart
+    : reservationStart
 
-  `
-    bg-[#7a4b4b]
-    border-[#b07a7a]
-  `,
+const visibleEndPlusOne =
+  new Date(visibleEnd)
 
-  `
-    bg-[#3f6f73]
-    border-[#6ea4aa]
-  `,
+visibleEndPlusOne.setDate(
+  visibleEndPlusOne.getDate() + 1
+)
+
+const displayEnd =
+
+  reservationEnd > visibleEndPlusOne
+
+    ? visibleEndPlusOne
+
+    : reservationEnd
+
+/* =========================
+   POSITION DE DÉPART
+========================= */
+
+const startIndex =
+  days.findIndex(
+
+    (d) =>
+
+      format(
+        d,
+        "yyyy-MM-dd"
+      )
+
+      ===
+
+      format(
+        displayStart,
+        "yyyy-MM-dd"
+      )
+  )
+
+if (startIndex === -1) {
+  return null
+}
+
+/* =========================
+   NOMBRE DE JOURS VISIBLES
+========================= */
+
+const MS_PER_DAY =
+  1000 * 60 * 60 * 24
+
+const startDate =
+  new Date(
+    displayStart.getFullYear(),
+    displayStart.getMonth(),
+    displayStart.getDate()
+  )
+
+const endDate =
+  new Date(
+    displayEnd.getFullYear(),
+    displayEnd.getMonth(),
+    displayEnd.getDate()
+  )
+
+const visibleNights =
+  Math.max(
+    1,
+
+    Math.round(
+      (
+        endDate.getTime() -
+        startDate.getTime()
+      ) / MS_PER_DAY
+    )
+  )
+
+const colorPalette = [
+
+  `bg-[#4f6f52] border-[#7da37f]`,
+
+  `bg-[#5b6c8f] border-[#8ea1c7]`,
+
+  `bg-[#7b5b8a] border-[#aa8dc0]`,
+
+  `bg-[#9c6b3f] border-[#c89b5f]`,
+
+  `bg-[#7a4b4b] border-[#b07a7a]`,
+
+  `bg-[#3f6f73] border-[#6ea4aa]`,
 ]
 
 const clientKey =
@@ -691,8 +679,12 @@ const clientHash =
   clientKey
     .split("")
     .reduce(
+
       (acc, char) =>
-        acc + char.charCodeAt(0),
+
+        acc +
+        char.charCodeAt(0),
+
       0
     )
 
@@ -707,128 +699,127 @@ const reservationColor =
   reservation.status ===
   "rejected"
 
-    ? `
-      bg-red-600
-      border-red-300
-    `
+    ? `bg-red-600 border-red-300`
 
     : reservation.status ===
       "pending"
 
-    ? `
-      bg-yellow-500
-      border-yellow-300
-    `
+    ? `bg-yellow-500 border-yellow-300`
 
     : clientColor
 
-                        return (
+return (
 
-                          <button
-                            key={`${reservation.id}-${room}`}
+  <button
 
-                            onClick={() =>
-                              setSelectedReservation(
-                                reservation
-                              )
-                            }
+    key={`${reservation.id}-${room}`}
 
-                            className={`
-                              absolute
-                              top-4
-                              h-[130px]
+    onClick={() =>
+      setSelectedReservation(
+        reservation
+      )
+    }
 
-                              rounded-2xl
-                              border-2
+    className={`
+      absolute
+      top-4
+      min-h-[140px]
+      rounded-2xl
+      border-2
+      px-4
+      py-3
+      text-left
+      text-white
+      shadow-xl
+      backdrop-blur-sm
+      transition-all
+      duration-300
+      hover:z-20
+      hover:scale-[1.02]
+      hover:shadow-2xl
 
-                              px-4
-                              py-3
+      ${reservationColor}
+    `}
 
-                              text-left
-                              text-white
+    style={{
 
-                              shadow-xl
-                              backdrop-blur-sm
+  left:
+    `${startIndex * 120}px`,
 
-                              transition-all
-                              duration-300
+  width:
+    `${visibleNights * 120}px`,
 
-                              hover:z-20
-                              hover:scale-[1.02]
-                              hover:shadow-2xl
+  zIndex: 10,
+}}
+  >
 
-                              ${reservationColor}
-                            `}
+    <div className="font-bold text-lg">
+      {reservation.first_name}
+    </div>
 
-                            style={{
-                              left:
-                                `${(startIndex / days.length) * 100}%`,
+    <div className="text-sm">
+      {reservation.last_name}
+    </div>
 
-                              width:
-                                `${((endIndex - startIndex + 1.02) / days.length) * 100}%`,
-                            }}
-                          >
+    <div
+      className="
+        mt-2
+        inline-block
+        rounded-full
+        bg-white/20
+        px-3
+        py-1
+        text-[10px]
+        font-bold
+        uppercase
+        tracking-wide
+      "
+    >
 
-                            <div className="font-bold text-lg">
-                              {reservation.first_name}
-                            </div>
+      {
 
-                            <div className="text-sm">
-                              {reservation.last_name}
-                            </div>
+        reservation.status ===
+        "confirmed"
 
-                            <div
-                              className="
-                                mt-2
-                                inline-block
-                                rounded-full
-                                bg-white/20
-                                px-3
-                                py-1
-                                text-[10px]
-                                font-bold
-                                uppercase
-                                tracking-wide
-                              "
-                            >
+          ? "Confirmée"
 
-                              {reservation.status ===
-                              "confirmed"
+          : reservation.status ===
+            "pending"
 
-                                ? "Confirmée"
+          ? "En attente"
 
-                                : reservation.status ===
-                                  "pending"
+          : reservation.status ===
+            "rejected"
 
-                                ? "En attente"
+          ? "Refusée"
 
-                                : reservation.status ===
-                                  "rejected"
+          : reservation.status
+      }
 
-                                ? "Refusée"
+    </div>
 
-                                : reservation.status}
+    <div
+      className="
+        mt-2
+        whitespace-nowrap
+        text-sm
+        opacity-90
+      "
+    >
+      {reservation.people} pers.
+    </div>
 
-                            </div>
-
-                            <div className="mt-2 text-sm opacity-90">
-                              {currentRoom?.people} pers.
-                            </div>
-
-                          </button>
-
-                        )
-                      })}
-
-                    </div>
-
-                  </div>
-
-                )
-              })}
-
+  </button>
+)
+                            
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
-
           </div>
 
         </div>
@@ -1156,6 +1147,266 @@ const reservationColor =
           </div>
 
         )}
+
+        {/* STATS RESTAURATION */}
+
+<div className="
+  mt-8
+  grid
+  gap-6
+  md:grid-cols-3
+">
+
+  {/* PETIT DEJ */}
+
+  <div className="
+    rounded-3xl
+    bg-white
+    p-6
+    shadow-lg
+  ">
+
+    <p className="
+      text-sm
+      uppercase
+      tracking-wider
+      text-[#8a6330]
+    ">
+      Petit déjeuner demain
+    </p>
+
+    <h2 className="
+      mt-3
+      text-5xl
+      font-bold
+      text-[#2f241d]
+    ">
+      {
+
+        reservations
+
+          .filter((reservation) => {
+
+  const today =
+    new Date()
+
+  const tomorrow =
+    new Date()
+
+  tomorrow.setDate(
+    tomorrow.getDate() + 1
+  )
+
+  const arrival =
+    new Date(
+      reservation.arrival
+    )
+
+  const departure =
+    new Date(
+      reservation.departure
+    )
+
+  return (
+
+    reservation.status ===
+    "confirmed"
+
+    &&
+
+    arrival <= today
+
+    &&
+
+    departure > tomorrow
+  )
+})
+
+          .reduce(
+            (total, reservation) =>
+
+              total +
+              reservation.people,
+
+            0
+          )
+      }
+    </h2>
+
+    <p className="
+      mt-2
+      text-[#7b6d63]
+    ">
+      personnes
+    </p>
+
+  </div>
+
+  {/* MIDI */}
+
+  <div className="
+    rounded-3xl
+    bg-white
+    p-6
+    shadow-lg
+  ">
+
+    <p className="
+      text-sm
+      uppercase
+      tracking-wider
+      text-[#8a6330]
+    ">
+      Repas midi aujourd'hui
+    </p>
+
+    <h2 className="
+      mt-3
+      text-5xl
+      font-bold
+      text-[#2f241d]
+    ">
+      {
+
+        reservations
+
+          .filter((reservation) => {
+
+            const today =
+              new Date()
+
+            const arrival =
+              new Date(
+                reservation.arrival
+              )
+
+            const departure =
+              new Date(
+                reservation.departure
+              )
+
+            return (
+
+              reservation.status ===
+              "confirmed"
+
+              &&
+
+              reservation.lunch
+
+              &&
+
+              arrival <= today
+
+              &&
+
+              departure > today
+            )
+          })
+
+          .reduce(
+            (total, reservation) =>
+
+              total +
+              reservation.people,
+
+            0
+          )
+      }
+    </h2>
+
+    <p className="
+      mt-2
+      text-[#7b6d63]
+    ">
+      repas
+    </p>
+
+  </div>
+
+  {/* SOIR */}
+
+  <div className="
+    rounded-3xl
+    bg-white
+    p-6
+    shadow-lg
+  ">
+
+    <p className="
+      text-sm
+      uppercase
+      tracking-wider
+      text-[#8a6330]
+    ">
+      Repas soir aujourd'hui
+    </p>
+
+    <h2 className="
+      mt-3
+      text-5xl
+      font-bold
+      text-[#2f241d]
+    ">
+      {
+
+        reservations
+
+          .filter((reservation) => {
+
+            const today =
+              new Date()
+
+            const arrival =
+              new Date(
+                reservation.arrival
+              )
+
+            const departure =
+              new Date(
+                reservation.departure
+            )
+
+            return (
+
+              reservation.status ===
+              "confirmed"
+
+              &&
+
+              reservation.dinner
+
+              &&
+
+              arrival <= today
+
+              &&
+
+              departure > today
+            )
+          })
+
+          .reduce(
+            (total, reservation) =>
+
+              total +
+              reservation.people,
+
+            0
+          )
+      }
+    </h2>
+
+    <p className="
+      mt-2
+      text-[#7b6d63]
+    ">
+      repas
+    </p>
+
+  </div>
+
+</div>
 
       </main>
     </>

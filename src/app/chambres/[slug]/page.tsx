@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { supabase } from "@/lib/supabase"
 import Image from "next/image"
 
 type Props = {
@@ -17,24 +16,39 @@ export default async function RoomPage({
   const { slug } =
     await params
 
-  const {
-    data: room,
-    error,
-  } = await supabase
-    .from("rooms")
-    .select("*")
-    .eq("slug", slug)
-    .single()
+  const response =
+  await fetch(
 
-  if (error || !room) {
-    notFound()
-  }
+    `http://localhost:3000/api/rooms`,
 
-  const images = [
-    room.image_1,
-    room.image_2,
-    room.image_3,
-  ].filter(Boolean)
+    {
+      cache: "no-store",
+    }
+  )
+
+const rooms =
+  await response.json()
+
+const room =
+  rooms.find(
+    (room: any) =>
+      room.slug === slug
+  )
+
+if (!room) {
+
+  notFound()
+}
+
+  const images =
+  Array.isArray(room.images)
+    ? room.images.map(
+        (img: string) =>
+          img
+            .trim()
+            .replace(/\\/g, "/")
+      )
+    : []
 
   return (
 
@@ -170,7 +184,7 @@ export default async function RoomPage({
                 <div className="flex items-end gap-3">
 
                   <span className="text-6xl font-bold">
-                    {room.one_person_price}€
+                    {room.priceOnePerson}€
                   </span>
 
                   <span className="pb-2 text-white/70">

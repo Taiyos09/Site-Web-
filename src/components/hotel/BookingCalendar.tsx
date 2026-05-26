@@ -5,23 +5,32 @@ import { DayPicker } from "react-day-picker"
 import type { DateRange } from "react-day-picker"
 import { differenceInDays, format } from "date-fns"
 import { fr } from "date-fns/locale"
-import { supabase } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
 
 import "react-day-picker/dist/style.css"
 
 type Props = {
-  onePersonPrice: number
-  twoPeoplePrice: number
+  priceOnePerson: number
+  priceTwoPeople: number
   roomName: string
   roomSlug: string
+  roomId: number
 }
 
 export default function BookingCalendar({
-  onePersonPrice,
-  twoPeoplePrice,
+
+  priceOnePerson,
+  priceTwoPeople,
   roomName,
   roomSlug,
+  roomId,
+
 }: Props) {
+
+  const maxPeople =
+    roomSlug === "standard"
+      ? 3
+      : 4
 
   const [range, setRange] =
     useState<DateRange | undefined>()
@@ -47,88 +56,118 @@ export default function BookingCalendar({
   const [settings, setSettings] =
     useState<any>(null)
 
-  /* ---------------- DATES BLOQUÉES ---------------- */
+  const router =
+  useRouter()
 
-useEffect(() => {
+  /* =========================
+     DATES BLOQUÉES
+  ========================= */
 
-  const loadBlockedDates =
-    async () => {
+  useEffect(() => {
 
-      const response = await fetch(
-  `/api/blocked-dates?roomSlug=${roomSlug}`
-)
+    const loadBlockedDates =
+      async () => {
 
-const data = await response.json()
+        try {
 
-if (!data) {
-  return
-} 
+          const response =
+            await fetch(
 
-      const dates: Date[] = []
+              `/api/blocked-dates?room_slug=${roomSlug}`
 
-      data.forEach((item: any) => {
+            )
 
-        const reservation =
-          item.reservations
+          const data =
+            await response.json()
 
-        if (!reservation) return
+          console.log(
+            "BLOCKED DATES API:",
+            data
+          )
 
-        // ignorer annulées/refusées
-        if (
-          reservation.status === "refused" ||
-          reservation.status === "cancelled"
-        ) {
-          return
+          if (
+            !Array.isArray(data)
+          ) {
+
+            setBlockedDates([])
+
+            return
+          }
+
+          const dates =
+
+            data
+
+              .map((item: any) => {
+
+                if (!item?.date) {
+
+                  return null
+                }
+
+                const parsed =
+                  new Date(item.date)
+
+                if (
+                  isNaN(
+                    parsed.getTime()
+                  )
+                ) {
+
+                  return null
+                }
+
+                parsed.setHours(
+                  12,
+                  0,
+                  0,
+                  0
+                )
+
+                return parsed
+              })
+
+              .filter(Boolean)
+
+          setBlockedDates(
+            dates as Date[]
+          )
+
+        } catch (error) {
+
+          console.error(
+            "Erreur dates bloquées :",
+            error
+          )
         }
+      }
 
-        const start =
-          new Date(
-            reservation.arrival +
-            "T12:00:00"
-          )
+    if (roomSlug) {
 
-        const end =
-          new Date(
-            reservation.departure +
-            "T12:00:00"
-          )
-
-        const current =
-          new Date(start)
-
-        while (current < end) {
-
-          dates.push(
-            new Date(current)
-          )
-
-          current.setDate(
-            current.getDate() + 1
-          )
-        }
-      })
-
-      setBlockedDates(dates)
+      loadBlockedDates()
     }
 
-  loadBlockedDates()
+  }, [roomSlug])
 
-}, [roomSlug])
-
-  /* ---------------- SETTINGS ---------------- */
+  /* =========================
+     SETTINGS
+  ========================= */
 
   useEffect(() => {
 
     const loadSettings =
       async () => {
 
-        const { data } =
-          await supabase
-            .from("hotel_settings")
-            .select("*")
-            .single()
+        const response =
+          await fetch(
+            "/api/hotel-settings"
+          )
+
+        const data =
+          await response.json()
 
         if (data) {
+
           setSettings(data)
         }
       }
@@ -137,7 +176,9 @@ if (!data) {
 
   }, [])
 
-  /* ---------------- NUITS ---------------- */
+  /* =========================
+     NUITS
+  ========================= */
 
   const nights =
     range?.from && range?.to
@@ -147,12 +188,14 @@ if (!data) {
         )
       : 0
 
-  /* ---------------- TARIFS ---------------- */
+  /* =========================
+     TARIFS
+  ========================= */
 
   const roomPrice =
     people <= 1
-      ? Number(onePersonPrice)
-      : Number(twoPeoplePrice)
+      ? Number(priceOnePerson)
+      : Number(priceTwoPeople)
 
   const roomTotal =
     roomPrice * nights
@@ -169,30 +212,32 @@ if (!data) {
 
   const petTotal =
     pets
-      ? (settings?.pet || 5) *
+      ? (settings?.pet ?? 5) *
         nights
       : 0
 
   const lunchTotal =
     lunch
       ? people *
-        (settings?.lunch || 15) *
+        (settings?.lunch ?? 15) *
         nights
       : 0
 
   const dinnerTotal =
     dinner
       ? people *
-        (settings?.dinner || 20) *
+        (settings?.dinner ?? 20) *
         nights
       : 0
 
   const touristTaxTotal =
     nights *
     people *
-    (settings?.tourist_tax || 1.3)
+    (settings?.tourist_tax ?? 1.3)
 
-  /* ---------------- TOTAL ---------------- */
+  /* =========================
+     TOTAL
+  ========================= */
 
   const total =
     roomTotal +
@@ -247,49 +292,127 @@ if (!data) {
       >
 
         <DayPicker
+
           mode="range"
+
           selected={range}
+
           onSelect={setRange}
+
           numberOfMonths={2}
+
           locale={fr}
+
           disabled={(date) => {
 
-            if (
-              date <
-              new Date(
-                new Date().setHours(
-                  0,
-                  0,
-                  0,
-                  0
-                )
-              )
-            ) {
+            const today =
+              new Date()
+
+            today.setHours(
+              0,
+              0,
+              0,
+              0
+            )
+
+            /* DATES PASSÉES */
+
+            if (date < today) {
+
               return true
             }
 
-            if (!range?.from) {
+            /* SÉCURITÉ */
 
-              return blockedDates.some(
-                (blockedDate) =>
+            if (
+              !Array.isArray(blockedDates)
+            ) {
 
-                  format(
-                    blockedDate,
-                    "yyyy-MM-dd"
-                  ) ===
-                  format(
-                    date,
-                    "yyyy-MM-dd"
-                  )
-              )
+              return false
             }
 
-            return false
+            /* DATES BLOQUÉES */
+
+            return blockedDates.some(
+              (blockedDate) => {
+
+                if (
+                  !(blockedDate instanceof Date)
+                ) {
+
+                  return false
+                }
+
+                if (
+                  isNaN(
+                    blockedDate.getTime()
+                  )
+                ) {
+
+                  return false
+                }
+
+                return (
+
+                  blockedDate
+                    .toDateString()
+
+                  ===
+
+                  date
+                    .toDateString()
+                )
+              }
+            )
           }}
+
           modifiers={{
-            booked: blockedDates,
+
+            booked: (date) => {
+
+              if (
+                !Array.isArray(blockedDates)
+              ) {
+
+                return false
+              }
+
+              return blockedDates.some(
+                (blockedDate) => {
+
+                  if (
+                    !(blockedDate instanceof Date)
+                  ) {
+
+                    return false
+                  }
+
+                  if (
+                    isNaN(
+                      blockedDate.getTime()
+                    )
+                  ) {
+
+                    return false
+                  }
+
+                  return (
+
+                    blockedDate
+                      .toDateString()
+
+                    ===
+
+                    date
+                      .toDateString()
+                  )
+                }
+              )
+            },
           }}
+
           modifiersClassNames={{
+
             booked:
               "bg-red-500 text-white rounded-full",
           }}
@@ -313,20 +436,26 @@ if (!data) {
 
           <label
             className="
-              mb-3 block
-              text-lg font-semibold
+              mb-3
+              block
+              text-lg
+              font-semibold
             "
           >
             Nombre de personnes
           </label>
 
           <select
+
             value={people}
+
             onChange={(e) =>
+
               setPeople(
                 Number(e.target.value)
               )
             }
+
             className="
               w-full
               rounded-2xl
@@ -347,439 +476,273 @@ if (!data) {
               3 personnes
             </option>
 
-            <option value={4}>
-              4 personnes
-            </option>
+            {maxPeople >= 4 && (
+
+              <option value={4}>
+                4 personnes
+              </option>
+
+            )}
 
           </select>
 
-          {people > 2 && (
+          {/* OPTIONS */}
 
-            <p
-              className="
-                mt-3
-                text-sm
-                text-[#6b5b4f]
-              "
-            >
-              Supplément lit :
-              {" "}
-              {settings?.extra_bed || 15}€
-              {" "}
-              / nuit / personne
-            </p>
+<div className="space-y-4">
 
-          )}
+  {/* MIDI */}
+
+  <label
+    className="
+      flex
+      cursor-pointer
+      items-center
+      justify-between
+      rounded-2xl
+      border
+      border-[#e7ded2]
+      bg-[#faf7f2]
+      p-5
+    "
+  >
+
+    <div>
+
+      <p className="font-semibold">
+        🍽️ Repas midi
+      </p>
+
+      <p className="text-sm text-[#7a6a5d]">
+        +{settings?.lunch || 15}€
+        / personne
+      </p>
+
+    </div>
+
+    <input
+      type="checkbox"
+      checked={lunch}
+      onChange={(e) =>
+        setLunch(
+          e.target.checked
+        )
+      }
+      className="h-5 w-5"
+    />
+
+  </label>
+
+  {/* SOIR */}
+
+  <label
+    className="
+      flex
+      cursor-pointer
+      items-center
+      justify-between
+      rounded-2xl
+      border
+      border-[#e7ded2]
+      bg-[#faf7f2]
+      p-5
+    "
+  >
+
+    <div>
+
+      <p className="font-semibold">
+        🌙 Repas soir
+      </p>
+
+      <p className="text-sm text-[#7a6a5d]">
+        +{settings?.dinner || 20}€
+        / personne
+      </p>
+
+    </div>
+
+    <input
+      type="checkbox"
+      checked={dinner}
+      onChange={(e) =>
+        setDinner(
+          e.target.checked
+        )
+      }
+      className="h-5 w-5"
+    />
+
+  </label>
+
+  {/* ANIMAUX */}
+
+  <label
+    className="
+      flex
+      cursor-pointer
+      items-center
+      justify-between
+      rounded-2xl
+      border
+      border-[#e7ded2]
+      bg-[#faf7f2]
+      p-5
+    "
+  >
+
+    <div>
+
+      <p className="font-semibold">
+        🐶 Animal
+      </p>
+
+      <p className="text-sm text-[#7a6a5d]">
+        +{settings?.pet || 5}€
+        / nuit
+      </p>
+
+    </div>
+
+    <input
+      type="checkbox"
+      checked={pets}
+      onChange={(e) =>
+        setPets(
+          e.target.checked
+        )
+      }
+      className="h-5 w-5"
+    />
+
+  </label>
+
+  {/* BÉBÉ */}
+
+  <label
+    className="
+      flex
+      cursor-pointer
+      items-center
+      justify-between
+      rounded-2xl
+      border
+      border-[#e7ded2]
+      bg-[#faf7f2]
+      p-5
+    "
+  >
+
+    <div>
+
+      <p className="font-semibold">
+        👶 Lit bébé
+      </p>
+
+      <p className="text-sm text-[#7a6a5d]">
+        Gratuit
+      </p>
+
+    </div>
+
+    <input
+      type="checkbox"
+      checked={baby}
+      onChange={(e) =>
+        setBaby(
+          e.target.checked
+        )
+      }
+      className="h-5 w-5"
+    />
+
+  </label>
+
+</div>
+
+{/* TOTAL */}
+
+<div
+  className="
+    mt-8
+    rounded-3xl
+    bg-[#2f241d]
+    p-6
+    text-white
+  "
+>
+
+  <div
+    className="
+      mb-4
+      flex
+      items-center
+      justify-between
+    "
+  >
+
+    <span>Total</span>
+
+    <span
+      className="
+        text-3xl
+        font-bold
+      "
+    >
+      {total.toFixed(2)}€
+    </span>
+
+  </div>
+
+  <button
+
+  onClick={() => {
+
+    if (
+      !range?.from ||
+      !range?.to
+    ) {
+
+      alert(
+        "Veuillez sélectionner vos dates"
+      )
+
+      return
+    }
+
+    router.push(
+
+      `/checkout?arrival=${format(
+        range.from,
+        "yyyy-MM-dd"
+      )}&departure=${format(
+        range.to,
+        "yyyy-MM-dd"
+      )}&roomName=${roomName}&roomSlug=${roomSlug}&roomIds=${JSON.stringify(
+        [roomId]
+      )}&people=${people}&pets=${pets}&lunch=${lunch}&dinner=${dinner}&baby=${baby}&total=${total}`
+
+    )
+  }}
+
+  className="
+    w-full
+    rounded-2xl
+    bg-[#c89b5f]
+    px-6
+    py-4
+    text-lg
+    font-bold
+    text-white
+    transition
+    hover:opacity-90
+  "
+>
+  Réserver
+</button>
+
+</div>
 
         </div>
-
-        {/* OPTIONS CHECKBOX */}
-
-        <div
-          className="
-            rounded-3xl
-            bg-[#faf7f2]
-            p-6
-            space-y-4
-          "
-        >
-
-          {[
-            
-            {
-              label: "Repas midi",
-              checked: lunch,
-              set: setLunch,
-              price: `${settings?.lunch || 15}€ / pers / nuit`,
-            },
-            {
-              label: "Repas soir",
-              checked: dinner,
-              set: setDinner,
-              price: `${settings?.dinner || 20}€ / pers / nuit`,
-            },
-            {
-              label: "Animal",
-              checked: pets,
-              set: setPets,
-              price: `${settings?.pet || 5}€ / nuit`,
-            },
-            {
-              label: "Lit bébé",
-              checked: baby,
-              set: setBaby,
-              price: `Gratuit`,
-            },
-          ].map((option) => (
-
-            <label
-              key={option.label}
-              className="
-                flex
-                items-center
-                justify-between
-                gap-3
-              "
-            >
-
-              <div className="flex items-center gap-3">
-
-                <input
-                  type="checkbox"
-                  checked={option.checked}
-                  onChange={() =>
-                    option.set(
-                      !option.checked
-                    )
-                  }
-                />
-
-                <span>
-                  {option.label}
-                </span>
-
-              </div>
-
-              <span
-                className="
-                  text-sm
-                  font-semibold
-                  text-[#8a6330]
-                "
-              >
-                {option.price}
-              </span>
-
-            </label>
-
-          ))}
-
-        </div>
-
-        {/* RÉCAP */}
-
-        {range?.from && range?.to && (
-
-          <div
-            className="
-              rounded-3xl
-              bg-[#faf7f2]
-              p-6
-            "
-          >
-
-            <div className="space-y-4">
-
-              {/* CHAMBRE */}
-
-              <div className="
-                flex
-                items-center
-                justify-between
-              ">
-
-                <div>
-
-                  <p className="font-semibold">
-                    Chambre
-                  </p>
-
-                  <p className="text-sm text-[#6b5b4f]">
-                    {roomPrice}€
-                    {" "}×{" "}
-                    {nights}
-                    {" "}nuits
-                  </p>
-
-                </div>
-
-                <span>
-                  {roomTotal.toFixed(2)}€
-                </span>
-
-              </div>
-
-              {/* LIT SUP */}
-
-              {extraBedTotal > 0 && (
-
-                <div className="
-                  flex
-                  items-center
-                  justify-between
-                ">
-
-                  <div>
-
-                    <p className="font-semibold">
-                      Lit supplémentaire
-                    </p>
-
-                    <p className="text-sm text-[#6b5b4f]">
-                      {settings?.extra_bed || 15}€
-                      {" "}×{" "}
-                      {extraPeople}
-                      {" "}personne(s)
-                      {" "}×{" "}
-                      {nights}
-                      {" "}nuits
-                    </p>
-
-                  </div>
-
-                  <span>
-                    {extraBedTotal.toFixed(2)}€
-                  </span>
-
-                </div>
-
-              )}
-
-
-              {/* MIDI */}
-
-              {lunchTotal > 0 && (
-
-                <div className="
-                  flex
-                  items-center
-                  justify-between
-                ">
-
-                  <div>
-
-                    <p className="font-semibold">
-                      Repas midi
-                    </p>
-
-                    <p className="text-sm text-[#6b5b4f]">
-                      {settings?.lunch || 15}€
-                      {" "}×{" "}
-                      {people}
-                      {" "}personne(s)
-                      {" "}×{" "}
-                      {nights}
-                      {" "}nuits
-                    </p>
-
-                  </div>
-
-                  <span>
-                    {lunchTotal.toFixed(2)}€
-                  </span>
-
-                </div>
-
-              )}
-
-              {/* SOIR */}
-
-              {dinnerTotal > 0 && (
-
-                <div className="
-                  flex
-                  items-center
-                  justify-between
-                ">
-
-                  <div>
-
-                    <p className="font-semibold">
-                      Repas soir
-                    </p>
-
-                    <p className="text-sm text-[#6b5b4f]">
-                      {settings?.dinner || 20}€
-                      {" "}×{" "}
-                      {people}
-                      {" "}personne(s)
-                      {" "}×{" "}
-                      {nights}
-                      {" "}nuits
-                    </p>
-
-                  </div>
-
-                  <span>
-                    {dinnerTotal.toFixed(2)}€
-                  </span>
-
-                </div>
-
-              )}
-
-              {/* ANIMAL */}
-
-              {petTotal > 0 && (
-
-                <div className="
-                  flex
-                  items-center
-                  justify-between
-                ">
-
-                  <div>
-
-                    <p className="font-semibold">
-                      Animal
-                    </p>
-
-                    <p className="text-sm text-[#6b5b4f]">
-                      {settings?.pet || 5}€
-                      {" "}×{" "}
-                      {nights}
-                      {" "}nuits
-                    </p>
-
-                  </div>
-
-                  <span>
-                    {petTotal.toFixed(2)}€
-                  </span>
-
-                </div>
-
-              )}
-
-              {/* TAXE */}
-
-              <div className="
-                flex
-                items-center
-                justify-between
-              ">
-
-                <div>
-
-                  <p className="font-semibold">
-                    Taxe de séjour
-                  </p>
-
-                  <p className="text-sm text-[#6b5b4f]">
-                    {settings?.tourist_tax || 1.3}€
-                    {" "}×{" "}
-                    {people}
-                    {" "}personne(s)
-                    {" "}×{" "}
-                    {nights}
-                    {" "}nuits
-                  </p>
-
-                </div>
-
-                <span>
-                  {touristTaxTotal.toFixed(2)}€
-                </span>
-
-              </div>
-
-              {/* TOTAL */}
-
-              <div
-                className="
-                  mt-6
-                  flex
-                  items-center
-                  justify-between
-                  border-t
-                  border-[#e7ded2]
-                  pt-5
-                "
-              >
-
-                <span
-                  className="
-                    text-3xl
-                    font-bold
-                    text-[#2f241d]
-                  "
-                >
-                  Total
-                </span>
-
-                <span
-                  className="
-                    text-4xl
-                    font-bold
-                    text-[#2f241d]
-                  "
-                >
-                  {total.toFixed(2)}€
-                </span>
-
-              </div>
-
-            </div>
-
-            <button
-              onClick={() => {
-
-                if (
-                  !range?.from ||
-                  !range?.to
-                ) {
-                  alert(
-                    "Sélectionnez vos dates"
-                  )
-                  return
-                }
-
-                const reservation = {
-
-                  from: format(
-                    range.from,
-                    "yyyy-MM-dd"
-                  ),
-
-                  to: format(
-                    range.to,
-                    "yyyy-MM-dd"
-                  ),
-
-                  roomName,
-                  roomSlug,
-
-                  nights,
-                  people,
-                  pets,
-                  lunch,
-                  dinner,
-                  baby,
-
-                  touristTaxTotal,
-
-                  total,
-                }
-
-                localStorage.setItem(
-                  "reservationData",
-                  JSON.stringify(
-                    reservation
-                  )
-                )
-
-                window.location.href =
-                  "/checkout"
-              }}
-              className="
-                mt-8
-                w-full
-                rounded-2xl
-                bg-[#2f241d]
-                px-6 py-5
-                text-lg font-bold
-                text-white
-                transition-all duration-300
-                hover:scale-[1.02]
-                hover:bg-[#43352c]
-              "
-            >
-              Réserver maintenant
-            </button>
-
-          </div>
-
-        )}
 
       </div>
 

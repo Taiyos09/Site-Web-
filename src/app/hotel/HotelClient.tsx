@@ -121,19 +121,61 @@ export default function HotelPage() {
         }
 
         const formattedRooms =
-          (data.rooms || []).map(
-            (room: any) => ({
+  (data.rooms || []).map(
+    (room: any) => {
 
-              ...room,
+      let images: string[] = []
 
-              images: [
-                room.image_1,
-                room.image_2,
-                room.image_3,
-              ].filter(Boolean),
+      // CAS ARRAY
+      if (Array.isArray(room.images)) {
 
-            })
+        images = room.images.map(
+          (img: string) =>
+
+            img
+              .trim()
+              .replace(/\r/g, "")
+              .replace(/\n/g, "")
+              .replace(/\t/g, "")
+              .replace(/\\/g, "/")
+        )
+      }
+
+      // CAS STRING
+      else if (
+        typeof room.images === "string"
+      ) {
+
+        images = room.images
+
+          .replace("[", "")
+          .replace("]", "")
+          .replaceAll('"', "")
+
+          .split(",")
+
+          .map((img: string) =>
+
+            img
+
+              .trim()
+
+              .replace(/\r/g, "")
+              .replace(/\n/g, "")
+              .replace(/\t/g, "")
+
+              .replace(/\\/g, "/")
           )
+
+          .filter(Boolean)
+      }
+
+      return {
+        ...room,
+        images,
+      }
+    }
+  )
 
         setHotelConfig({
 
@@ -734,71 +776,66 @@ export default function HotelPage() {
                     hover:shadow-[0_18px_40px_rgba(0,0,0,0.12)]
                   "
                 >
-
-                  {/* IMAGES */}
+                  {/* diaporama */}
 
                   <div
-                    className="
-                      relative
-                      h-[240px]
-                      overflow-hidden
-                    "
-                  >
+  className="
+    relative
+    w-full
+    h-[240px]
+    overflow-hidden
+  "
+>
 
-                    {(room.images ?? []).map(
-                      (
-                        img: string,
-                        imgIndex: number
-                      ) => (
+  {(room.images ?? []).map(
+    (
+      img: string,
+      imgIndex: number
+    ) => (
 
-                        <Image
-                          key={imgIndex}
-                          src={img}
-                          alt={room.name}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          className={`
-                            absolute
-                            inset-0
-                            h-full
-                            w-full
-                            object-cover
-                            transition-opacity
-                            duration-1000
-                            ${
-                              imgIndex ===
-                              (
-                                currentImages[
-                                  roomIndex
-                                ] ?? 0
-                              )
-                                ? "opacity-100"
-                                : "opacity-0"
-                            }
-                          `}
-                        />
+      <img
+        key={imgIndex}
+        src={img}
+        alt={room.name}
+        className={`
+          absolute
+          inset-0
+          w-full
+          h-full
+          object-cover
+          transition-opacity
+          duration-1000
+          ${
+            imgIndex ===
+            (currentImages[roomIndex] ?? 0)
+              ? "opacity-100"
+              : "opacity-0"
+          }
+        `}
+      />
 
-                      )
-                    )}
+    )
+  )}
 
-                    <div
-                      className="
-                        absolute
-                        right-4
-                        top-4
-                        rounded-full
-                        bg-[#f3ede3]/90
-                        px-4
-                        py-2
-                        text-sm
-                        font-bold
-                        text-[#8a6330]
-                      "
-                    >
-                      {room.size}
-                    </div>
+  <div
+    className="
+      absolute
+      right-4
+      top-4
+      z-20
+      rounded-full
+      bg-[#f3ede3]/90
+      px-4
+      py-2
+      text-sm
+      font-bold
+      text-[#8a6330]
+    "
+  >
+    {room.size}
+  </div>
 
-                  </div>
+</div>
 
                   {/* CONTENU */}
 
@@ -844,7 +881,7 @@ export default function HotelPage() {
                           font-bold
                         "
                       >
-                        {room.one_person_price}€
+                        {room.priceOnePerson}€
                       </span>
 
                       <span

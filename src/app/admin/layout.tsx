@@ -6,9 +6,6 @@ import {
 } from "react"
 
 import { useRouter } from "next/navigation"
-
-import { supabase } from "@/lib/supabase"
-
 import AdminNavbar from "@/components/AdminNavbar"
 
 export default function AdminLayout({
@@ -28,24 +25,34 @@ export default function AdminLayout({
 
   useEffect(() => {
 
-    const checkAuth = async () => {
+  const checkAuth =
+    async () => {
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+      try {
 
-      if (!session) {
+        const response =
+          await fetch(
+            "/api/check-auth"
+          )
+
+        if (!response.ok) {
+
+          router.push("/login")
+          return
+        }
+
+        setLoading(false)
+
+      } catch (error) {
 
         router.push("/login")
-        return
-      }
 
-      setLoading(false)
+      }
     }
 
-    checkAuth()
+  checkAuth()
 
-  }, [router])
+}, [router])
 
   /* ====================================== */
   /* LOADING */

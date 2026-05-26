@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url = "mysql://root:@localhost:3306/auberge_saint_aubin"
+}
+
+model admins {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model blocked_dates {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  reason    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  room_slug String?
+  from_date DateTime?
+  to_date   DateTime?
+}
+
+model events {
+  id          Int      @id @default(autoincrement())
+  title       String
+  date        String
+  description String
+  image       String
+  gallery     String   // JSON array of image paths
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model hotel_settings {
+  id               Int      @id @default(autoincrement())
+  key              String   @unique
+  value            String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model reservation_rooms {
+  id            Int      @id @default(autoincrement())
+  reservationId Int
+  roomId        Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  reservation   reservations @relation(fields: [reservationId], references: [id])
+  room          rooms       @relation(fields: [roomId], references: [id])
+}
+
+model reservations {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String
+  phone       String
+  arrival     DateTime
+  departure    DateTime
+  people      Int
+  options     String?  // JSON array of selected options
+  total  Float
+  status      String   @default("pending") // pending, confirmed, cancelled
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rooms       reservation_rooms[]
+}
+
+model rooms {
+  id              Int      @id @default(autoincrement())
+  name            String
+  slug            String   @unique
+  size            String
+  description     String
+  images          String   // JSON array of image paths
+  priceOnePerson  Int
+  priceTwoPeople  Int
+  priceDoubleRoom Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  reservations    reservation_rooms[]
+}

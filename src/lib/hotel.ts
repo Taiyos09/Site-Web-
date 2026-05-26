@@ -1,34 +1,34 @@
-import { supabase } from "@/lib/supabase"
+export async function
+getHotelData() {
 
-export async function getHotelData() {
+  const roomsResponse =
+    await fetch(
 
-  const { data: rooms, error: roomsError } =
-    await supabase
-      .from("rooms")
-      .select("*")
-      .order("id")
+      "http://localhost:3000/api/rooms",
 
-  const {
-    data: settings,
-    error: settingsError,
-  } = await supabase
-    .from("hotel_settings")
-    .select("*")
-    .maybeSingle()
+      {
+        cache: "no-store",
+      }
+    )
 
-  if (roomsError) {
-    console.error(roomsError)
-  }
+  const rooms =
+    await roomsResponse.json()
 
-  if (settingsError) {
-    console.error(settingsError)
-  }
+  const settingsResponse =
+    await fetch(
 
-  console.log("ROOMS", rooms)
-  console.log("SETTINGS", settings)
+      "http://localhost:3000/api/hotel-settings",
+
+      {
+        cache: "no-store",
+      }
+    )
+
+  const settings =
+    await settingsResponse.json()
 
   return {
-    rooms: rooms || [],
-    settings: settings || null,
+    rooms,
+    settings,
   }
 }

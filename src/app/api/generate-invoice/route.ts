@@ -6,7 +6,7 @@ import { Buffer } from "buffer"
 import path from "path"
 import fs from "fs"
 
-import { supabase } from "@/lib/supabase"
+import { prisma } from "@/lib/prisma"
 
 export async function POST(req: Request) {
 
@@ -15,25 +15,15 @@ export async function POST(req: Request) {
     const reservation =
       await req.json()
 
+      console.log("RESERVATION DATA:", JSON.stringify(reservation, null, 2))
+console.log("ROOMS:", reservation.rooms)
+
     /* =========================
-       SETTINGS SUPABASE
-    ========================= */
+   SETTINGS MYSQL
+========================= */
 
-    const {
-      data: settings,
-      error: settingsError,
-    } = await supabase
-      .from("hotel_settings")
-      .select("*")
-      .maybeSingle()
-
-    if (settingsError) {
-
-      console.error(
-        "SETTINGS ERROR:",
-        settingsError
-      )
-    }
+const settings =
+  await prisma.hotel_settings.findFirst()
 
     /* =========================
        DATES
@@ -456,30 +446,16 @@ export async function POST(req: Request) {
     ).forEach(
       (room: any) => {
 
-        const roomTTC =
-          Number(
-            room.room_total
-          )
-
-        const roomHT =
-          Number(
-            (
-              roomTTC / 1.1
-            ).toFixed(2)
-          )
-
-        const roomTVA =
-          Number(
-            (
-              roomTTC -
-              roomHT
-            ).toFixed(2)
-          )
-
-        const unitPrice =
-          roomTTC /
-          reservation.people /
-          nights
+                // Récupérer le prix depuis les settings ou calculer
+        const roomPricePerNight = 85 // Prix par défaut à ajuster selon vos settings
+        
+        const roomTTC = roomPricePerNight * nights
+        
+        const roomHT = Number((roomTTC / 1.1).toFixed(2))
+        
+        const roomTVA = Number((roomTTC - roomHT).toFixed(2))
+        
+        const unitPrice = roomPricePerNight / reservation.people
 
         totalHT += roomHT
         totalTVA += roomTVA

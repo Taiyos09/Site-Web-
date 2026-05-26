@@ -2,13 +2,12 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
 
 export default function LoginPage() {
 
   const router = useRouter()
 
-  const [email, setEmail] =
+  const [username, setUsername] =
     useState("")
 
   const [password, setPassword] =
@@ -29,17 +28,33 @@ export default function LoginPage() {
     setLoading(true)
     setError("")
 
-    const { error } =
-      await supabase.auth.signInWithPassword({
+    const response =
+  await fetch("/api/login", {
 
-        email,
-        password,
+    method: "POST",
 
-      })
+    headers: {
+      "Content-Type":
+        "application/json",
+    },
+
+    body: JSON.stringify({
+      username,
+      password,
+    }),
+  })
+
+if (!response.ok) {
+
+  alert("Nom d'utilisateur ou mot de passe incorrect")
+  return
+}
+
+router.push("/admin")
 
     if (error) {
 
-      setError(error.message)
+      setError("Nom d'utilisateur ou mot de passe incorrect")
       setLoading(false)
 
       return
@@ -91,11 +106,11 @@ export default function LoginPage() {
         <div className="space-y-5">
 
           <input
-            type="email"
-            placeholder="Email"
-            value={email}
+            type="text"
+            placeholder="Nom d'utilisateur"
+            value={username}
             onChange={(e) =>
-              setEmail(e.target.value)
+              setUsername(e.target.value)
             }
             className="
               w-full

@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
 
 const cards = [
   {
@@ -50,6 +49,9 @@ export default function AdminDashboard() {
   const [checkingAuth, setCheckingAuth] =
     useState(true)
 
+
+  const [pendingCount, setPendingCount] = useState(0)
+
   /* ====================================== */
   /* CHECK AUTH */
   /* ====================================== */
@@ -58,15 +60,16 @@ export default function AdminDashboard() {
 
     const checkAuth = async () => {
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+      const response =
+  await fetch(
+    "/api/check-auth"
+  )
 
-      if (!session) {
+if (!response.ok) {
 
-        router.push("/login")
-        return
-      }
+  router.push("/login")
+  return
+}
 
       setCheckingAuth(false)
     }
@@ -74,6 +77,20 @@ export default function AdminDashboard() {
     checkAuth()
 
   }, [router])
+
+    useEffect(() => {
+    const fetchPendingCount = async () => {
+      try {
+        const response = await fetch('/api/reservations')
+        const data = await response.json()
+        const pending = data.filter((r: any) => r.status === 'pending').length
+        setPendingCount(pending)
+      } catch (error) {
+        console.error('Error fetching pending count:', error)
+      }
+    }
+    fetchPendingCount()
+  }, [])
 
   /* ====================================== */
   /* LOADING */
@@ -231,6 +248,12 @@ export default function AdminDashboard() {
                   >
                     {card.title}
                   </h2>
+
+                                                                        {card.title === "Réservations" && pendingCount > 0 && (
+                    <div className="absolute top-4 right-4 bg-red-600 text-white text-sm font-bold rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10 animate-pulse">
+                      {pendingCount}
+                    </div>
+                  )}
 
                   <p
                     className="

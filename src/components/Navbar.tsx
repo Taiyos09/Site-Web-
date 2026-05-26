@@ -6,7 +6,7 @@ import { Menu, X } from "lucide-react"
 
 const navigation = [
   { name: "Accueil", href: "/" },
-  { name: "Hôtel", href: "/hotel" },
+  { name: "Chambre d'hôtes", href: "/hotel" },
   { name: "Restaurant", href: "/restaurant" },
   { name: "Événements", href: "/evenements" },
   { name: "Contact", href: "/contact" },
@@ -199,28 +199,27 @@ export default function Navbar() {
 
       {/* MENU MOBILE */}
 
-      <div
-        className={`
-          fixed
-          inset-0
-          z-40
-          flex
-          flex-col
-          items-center
-          justify-center
-          gap-8
-          bg-[#1a120e]/95
-          backdrop-blur-2xl
-          transition-all
-          duration-300
-
-          ${
-            mobileMenuOpen
-              ? "visible opacity-100"
-              : "invisible opacity-0"
-          }
-        `}
-      >
+     <div
+  className={`
+    fixed
+    inset-0
+    z-40
+    flex
+    flex-col
+    items-center
+    justify-center
+    gap-8
+    bg-[#1a120e]/95
+    backdrop-blur-2xl
+    transition-all
+    duration-300
+    ${
+      mobileMenuOpen
+        ? "visible opacity-100"
+        : "invisible opacity-0"
+    }
+  `}
+>
 
         {navigation.map((item) => (
 

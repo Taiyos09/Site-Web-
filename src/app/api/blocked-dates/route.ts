@@ -1,63 +1,52 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { prisma } from "@/lib/prisma"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+import {
+  NextRequest,
+  NextResponse,
+} from "next/server"
 
 export async function GET(
-  req: Request
+  request: NextRequest
 ) {
 
-  const { searchParams } =
-    new URL(req.url)
+  try {
 
-  const roomSlug =
-    searchParams.get("roomSlug")
+    const room_slug =
+      request.nextUrl.searchParams.get(
+        "room_slug"
+      )
 
-  if (!roomSlug) {
+    if (!room_slug) {
+
+      return NextResponse.json(
+        [],
+        { status: 200 }
+      )
+    }
+
+    const blockedDates =
+      await prisma.blocked_dates.findMany({
+
+        where: {
+          room_slug,
+        },
+
+        orderBy: {
+          date: "asc",
+        },
+      })
 
     return NextResponse.json(
-      {
-        error:
-          "roomSlug manquant",
-      },
-      {
-        status: 400,
-      }
+      blockedDates
     )
-  }
 
-  const {
-    data,
-    error,
-  } = await supabase
-    .from("reservation_rooms")
-    .select(`
-      room_slug,
-      reservations (
-        arrival,
-        departure,
-        status
-      )
-    `)
-    .eq("room_slug", roomSlug)
-
-  if (error) {
+  } catch (error) {
 
     console.error(error)
 
     return NextResponse.json(
-      {
-        error:
-          "Erreur chargement",
-      },
-      {
-        status: 500,
-      }
+      [],
+      { status: 500 }
     )
   }
-
-  return NextResponse.json(data)
 }

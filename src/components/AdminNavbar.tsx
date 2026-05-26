@@ -18,7 +18,7 @@ import {
   Home,
 } from "lucide-react"
 
-import { supabase } from "@/lib/supabase"
+
 
 const links = [
 
@@ -67,12 +67,14 @@ export default function AdminNavbar() {
   const router = useRouter()
 
   const handleLogout =
-    async () => {
+  async () => {
 
-      await supabase.auth.signOut()
+    await fetch("/api/logout", {
+      method: "POST",
+    })
 
-      router.push("/login")
-    }
+    router.push("/login")
+  }
 
   return (
 
