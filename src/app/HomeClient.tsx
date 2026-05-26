@@ -38,6 +38,11 @@ export default function AubergeSaintAubinHomepage() {
   const [loading, setLoading] =
     useState(false)
 
+    const [
+  acceptPrivacy,
+  setAcceptPrivacy,
+] = useState(false)
+
   /* ===================================== */
   /* ANIMATIONS */
   /* ===================================== */
@@ -982,23 +987,97 @@ export default function AubergeSaintAubinHomepage() {
                 "
               />
 
+              <div
+  className="
+    rounded-2xl
+    border
+    border-[#e7ddd2]
+    bg-[#faf8f5]
+    p-5
+  "
+>
+
+  <label
+    className="
+      flex
+      items-start
+      gap-3
+      text-sm
+      leading-6
+      text-[#6b5b4f]
+    "
+  >
+
+    <input
+      type="checkbox"
+      checked={
+        acceptPrivacy
+      }
+      onChange={(e) =>
+        setAcceptPrivacy(
+          e.target.checked
+        )
+      }
+      className="
+        mt-1
+        h-4
+        w-4
+        accent-[#2f241d]
+      "
+    />
+
+    <span>
+
+      J&apos;accepte que mes données
+      soient utilisées afin de répondre
+      à ma demande conformément à la{" "}
+
+      <Link
+        href="/confidentialite"
+        target="_blank"
+        className="
+          font-semibold
+          underline
+          underline-offset-2
+        "
+      >
+        politique de confidentialité
+      </Link>
+
+    </span>
+
+  </label>
+
+</div>
+
               <button
-                type="submit"
-                disabled={loading}
-                className="
-                  w-full
-                  rounded-2xl
-                  bg-[#2f241d]
-                  py-4
-                  text-white
-                  transition
-                  hover:bg-[#43352c]
-                "
-              >
-                {loading
-                  ? "Envoi en cours..."
-                  : "Envoyer"}
-              </button>
+  type="submit"
+
+  disabled={
+    loading ||
+    !acceptPrivacy
+  }
+
+  className="
+    w-full
+    rounded-2xl
+    bg-[#2f241d]
+    py-4
+    text-white
+    transition-all
+    duration-300
+    hover:bg-[#43352c]
+    hover:scale-[1.01]
+    disabled:cursor-not-allowed
+    disabled:opacity-50
+    disabled:hover:scale-100
+    disabled:hover:bg-[#2f241d]
+  "
+>
+  {loading
+    ? "Envoi en cours..."
+    : "Envoyer"}
+</button>
 
             </div>
 
