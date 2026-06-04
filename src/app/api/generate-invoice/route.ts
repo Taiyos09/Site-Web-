@@ -17,13 +17,17 @@ export async function POST(req: Request) {
 
       console.log("RESERVATION DATA:", JSON.stringify(reservation, null, 2))
 console.log("ROOMS:", reservation.rooms)
+console.log(
+  "ROOMS:",
+  reservation.rooms
+)
 
     /* =========================
    SETTINGS MYSQL
 ========================= */
 
 const settings =
-  await prisma.hotel_settings.findFirst()
+  await prisma.hotel_settings.findMany()
 
     /* =========================
        DATES
@@ -48,30 +52,48 @@ const settings =
         )
       )
 
+    const occupancy =
+  (reservation.adults || 0) +
+  (reservation.children || 0)
+
     /* =========================
        SETTINGS
     ========================= */
 
     const lunchPrice =
-      Number(
-        settings?.lunch || 15
-      )
+  Number(
+    settings.find(
+      s => s.key === "option_lunch"
+    )?.value || 15
+  )
 
-    const dinnerPrice =
-      Number(
-        settings?.dinner || 20
-      )
+const dinnerPrice =
+  Number(
+    settings.find(
+      s => s.key === "option_dinner"
+    )?.value || 20
+  )
 
-    const petPrice =
-      Number(
-        settings?.pet || 5
-      )
+const petPrice =
+  Number(
+    settings.find(
+      s => s.key === "option_pet"
+    )?.value || 5
+  )
 
-    const touristTaxPrice =
-      Number(
-        settings?.tourist_tax || 1.30
-      )
+const touristTaxPrice =
+  Number(
+    settings.find(
+      s => s.key === "option_tourist_tax"
+    )?.value || 1.30
+  )
 
+const litParapluiePrice =
+  Number(
+    settings.find(
+      s => s.key === "option_lit_parapluie"
+    )?.value || 5
+  )
     /* =========================
        PDF
     ========================= */
@@ -332,7 +354,7 @@ const settings =
        TABLE
     ========================= */
 
-    const tableTop = 390
+    const tableTop = 330
 
     const columns = {
   description: 55,
@@ -437,6 +459,55 @@ const settings =
     let totalTVA = 0
     let totalTTC = 0
 
+    const optionsTotal =
+  (reservation.lunch
+    ? lunchPrice *
+      occupancy *
+      nights
+    : 0)
+  +
+  (reservation.dinner
+    ? dinnerPrice *
+      occupancy *
+      nights
+    : 0)
+  +
+  (reservation.pets
+    ? petPrice *
+      nights
+    : 0)
+  +
+  (reservation.litParapluie
+    ? litParapluiePrice *
+      reservation.babies *
+      nights
+    : 0)
+  +
+  (
+    touristTaxPrice *
+    reservation.adults *
+    nights
+  )
+
+const roomTTC =
+  reservation.total -
+  optionsTotal
+
+const roomHT =
+  Number(
+    (roomTTC / 1.1).toFixed(2)
+  )
+
+const roomTVA =
+  Number(
+    (roomTTC - roomHT).toFixed(2)
+  )
+
+const unitPrice =
+  roomTTC /
+  occupancy /
+  nights
+
     /* =========================
        CHAMBRES
     ========================= */
@@ -447,15 +518,11 @@ const settings =
       (room: any) => {
 
                 // Récupérer le prix depuis les settings ou calculer
-        const roomPricePerNight = 85 // Prix par défaut à ajuster selon vos settings
         
-        const roomTTC = roomPricePerNight * nights
-        
-        const roomHT = Number((roomTTC / 1.1).toFixed(2))
-        
-        const roomTVA = Number((roomTTC - roomHT).toFixed(2))
-        
-        const unitPrice = roomPricePerNight / reservation.people
+        const unitPrice =
+  roomTTC /
+  occupancy /
+  nights
 
         totalHT += roomHT
         totalTVA += roomTVA
@@ -466,7 +533,7 @@ const settings =
             40,
             currentY,
             520,
-            38
+            32
           )
           .stroke(border)
 
@@ -485,7 +552,7 @@ const settings =
         )
 
         doc.text(
-          `${reservation.people}`,
+          `${occupancy}`,
           columns.persons,
           currentY + 12,
           {
@@ -544,7 +611,7 @@ const settings =
           }
         )
 
-        currentY += 38
+        currentY += 32
       }
     )
 
@@ -554,79 +621,113 @@ const settings =
 
     const invoiceOptions = [
 
-      {
-        label:
-          "Petit déjeuner compris",
+  {
+    label:
+      "Petit déjeuner compris",
 
-        enabled: true,
+    enabled: true,
 
-        included: true,
-      },
+    included: true,
 
-      {
-        label:
-          "Repas midi",
+    persons:
+      occupancy,
+  },
 
-        enabled:
-          reservation.lunch,
+  {
+    label:
+      "Repas midi",
 
-        unitPrice:
-          lunchPrice,
+    enabled:
+      reservation.lunch,
 
-        total:
-          lunchPrice *
-          reservation.people *
-          nights,
-      },
+    persons:
+      occupancy,
 
-      {
-        label:
-          "Repas soir",
+    unitPrice:
+      lunchPrice,
 
-        enabled:
-          reservation.dinner,
+    total:
+      lunchPrice *
+      occupancy *
+      nights,
+  },
 
-        unitPrice:
-          dinnerPrice,
+  {
+    label:
+      "Repas soir",
 
-        total:
-          dinnerPrice *
-          reservation.people *
-          nights,
-      },
+    enabled:
+      reservation.dinner,
 
-      {
-        label:
-          "Animal",
+    persons:
+      occupancy,
 
-        enabled:
-          reservation.pets,
+    unitPrice:
+      dinnerPrice,
 
-        unitPrice:
-          petPrice,
+    total:
+      dinnerPrice *
+      occupancy *
+      nights,
+  },
 
-        total:
-          petPrice *
-          nights,
-      },
+  {
+    label:
+      "Animal",
 
-      {
-        label:
-          "Taxe de séjour",
+    enabled:
+      reservation.pets,
 
-        enabled: true,
+    persons:
+      1,
 
-        unitPrice:
-          touristTaxPrice,
+    unitPrice:
+      petPrice,
 
-        total:
-          touristTaxPrice *
-          reservation.people *
-          nights,
+    total:
+      petPrice *
+      nights,
+  },
 
-        noTVA: true,
-      },
-    ]
+  {
+    label:
+      "Lit parapluie",
+
+    enabled:
+      reservation.litParapluie,
+
+    persons:
+      reservation.babies,
+
+    unitPrice:
+      litParapluiePrice,
+
+    total:
+      litParapluiePrice *
+      reservation.babies *
+      nights,
+  },
+
+  {
+    label:
+      "Taxe de séjour",
+
+    enabled: true,
+
+    persons:
+      reservation.adults,
+
+    unitPrice:
+      touristTaxPrice,
+
+    total:
+      touristTaxPrice *
+      reservation.adults *
+      nights,
+
+    noTVA: true,
+  },
+]
 
     invoiceOptions.forEach(
       (option: any) => {
@@ -670,7 +771,7 @@ const settings =
             40,
             currentY,
             520,
-            38
+            32
           )
           .stroke(border)
 
@@ -684,14 +785,14 @@ const settings =
         )
 
         doc.text(
-          `${reservation.people}`,
-          columns.persons,
-          currentY + 12,
-          {
-            width: 35,
-            align: "center",
-          }
-        )
+  `${option.persons || 1}`,
+  columns.persons,
+  currentY + 12,
+  {
+    width: 35,
+    align: "center",
+  }
+)
 
         doc.text(
           `${nights}`,
@@ -770,7 +871,7 @@ const settings =
           )
         }
 
-        currentY += 38
+        currentY += 32
       }
     )
 

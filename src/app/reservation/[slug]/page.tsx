@@ -214,11 +214,14 @@ setRoom(data)
           <div>
 
             <div className="
-              overflow-hidden
-              rounded-[36px]
-              bg-white
-              shadow-[0_20px_60px_rgba(0,0,0,0.08)]
-            ">
+  overflow-hidden
+  rounded-[36px]
+  bg-white
+  shadow-[0_20px_60px_rgba(0,0,0,0.08)]
+
+  lg:sticky
+  lg:top-24
+">
 
               <img
                 src={room.images?.[1] || room.images?.[0]}

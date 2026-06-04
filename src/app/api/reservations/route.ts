@@ -35,54 +35,56 @@ export async function GET() {
     const formattedReservations =
       reservations.map((reservation) => {
 
-        const options =
-          reservation.options
-            ? JSON.parse(
-                reservation.options
-              )
-            : {}
-
         const names =
           reservation.name?.split(" ") || []
 
         return {
 
-          ...reservation,
+  ...reservation,
 
-          first_name:
-            names[0] || "",
+  first_name:
+    names[0] || "",
 
-          last_name:
-            names
-              .slice(1)
-              .join(" "),
+  last_name:
+    names
+      .slice(1)
+      .join(" "),
 
-          pets:
-            options.pets || false,
+  pets:
+    reservation.pets,
 
-          lunch:
-            options.lunch || false,
+  lunch:
+    reservation.lunch,
 
-          dinner:
-            options.dinner || false,
+  dinner:
+    reservation.dinner,
 
-          baby:
-            options.baby || false,
+  adults:
+    reservation.adults,
 
-          reservation_rooms:
-            reservation.rooms.map(
-              (link) => ({
+  children:
+    reservation.children,
 
-                id: link.id,
+  babies:
+    reservation.babies,
 
-                room_name:
-                  link.room?.name || "",
+  litParapluie:
+    reservation.litParapluie,
 
-                roomId:
-                  link.roomId,
-              })
-            ),
-        }
+  reservation_rooms:
+    reservation.rooms.map(
+      (link) => ({
+
+        id: link.id,
+
+        room_name:
+          link.room?.name || "",
+
+        roomId:
+          link.roomId,
+      })
+    ),
+}
       })
 
     return NextResponse.json(
@@ -150,11 +152,20 @@ export async function POST(
     const phone =
       body.phone
 
+    const adults =
+  body.adults
+
+const children =
+  body.children
+
+const babies =
+  body.babies
+
+const litParapluie =
+  body.litParapluie
+
     const message =
       body.message
-
-    const people =
-      body.people
 
     const pets =
       body.pets
@@ -164,9 +175,6 @@ export async function POST(
 
     const dinner =
       body.dinner
-
-    const baby =
-      body.baby
 
     const total =
       body.total
@@ -196,23 +204,30 @@ export async function POST(
           departure:
             new Date(departure),
 
-          people:
-            Number(people),
+          adults: Number(adults),
+
+children: Number(children),
+
+babies: Number(babies),
+
+litParapluie: Boolean(
+  litParapluie
+),
+
+pets:
+  Boolean(pets),
+
+lunch:
+  Boolean(lunch),
+
+dinner:
+  Boolean(dinner),
 
           total:
             Number(total),
 
           status:
             status || "pending",
-
-          options:
-            JSON.stringify({
-
-              pets,
-              lunch,
-              dinner,
-              baby,
-            }),
         },
       })
 
@@ -346,82 +361,82 @@ export async function POST(
 
       html: `
 
-      <div
-        style="
-          margin:0;
-          padding:40px 0;
-          background:#f5f1ea;
-          font-family:Arial,sans-serif;
-        "
-      >
+      <div style="margin:0;padding:40px 20px;background:#f5f1ea;font-family:Arial,sans-serif;">
 
-        <div
-          style="
-            max-width:700px;
-            margin:auto;
-            background:white;
-            border-radius:32px;
-            overflow:hidden;
-            box-shadow:0 10px 30px rgba(0,0,0,0.08);
-          "
-        >
+  <div style="max-width:700px;margin:auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.08);">
 
-          <div
-            style="
-              background:#2f241d;
-              padding:45px 30px;
-              text-align:center;
-            "
-          >
 
-            <h1
-              style="
-                color:white;
-                margin:0;
-                font-size:40px;
-              "
-            >
-              Réservation reçue
-            </h1>
+<div style="background:#2f241d;padding:40px;text-align:center;">
+  <h1 style="color:white;margin:0;">
+    Réservation reçue
+  </h1>
+  <p style="color:#e8dfd4;margin-top:10px;">
+    Auberge de Saint Aubin
+  </p>
+</div>
 
-          </div>
+<div style="padding:35px;">
 
-          <div style="padding:35px;">
+  <p>
+    Bonjour <strong>${first_name}</strong>,
+  </p>
 
-            <p>
-              Bonjour
-              ${first_name},
-            </p>
+  <p>
+    Nous vous remercions pour votre réservation à l'Auberge de Saint Aubin. Nous avons bien reçu votre demande et la traitons actuellement. Vous recevrez une confirmation par email une fois que nous aurons examiné les détails de votre réservation et la disponibilité de la chambre.
+  </p>
 
-            <p>
-              Votre réservation a bien été reçue.
-            </p>
+  <div style="background:#f8f6f2;padding:20px;border-radius:12px;margin:25px 0;">
 
-            <p>
-              <strong>Arrivée :</strong>
-              ${arrival}
-            </p>
+    <h3 style="margin-top:0;color:#2f241d;">
+      📋 Récapitulatif du séjour
+    </h3>
 
-            <p>
-              <strong>Départ :</strong>
-              ${departure}
-            </p>
+    <p><strong>📅 Arrivée :</strong> ${arrival}</p>
+    <p><strong>📅 Départ :</strong> ${departure}</p>
+    <p><strong>🛏 Chambre :</strong> ${roomName}</p>
 
-            <p>
-              <strong>Chambre :</strong>
-              ${roomName}
-            </p>
+    <hr style="border:none;border-top:1px solid #ddd;margin:15px 0;">
 
-            <p>
-              <strong>Total :</strong>
-              ${total}€
-            </p>
+    <p><strong>👨 Adultes :</strong> ${adults}</p>
+    <p><strong>🧒 Enfants :</strong> ${children}</p>
 
-          </div>
+    ${
+      babies > 0
+        ? `<p><strong>👶 Bébés :</strong> ${babies}</p>`
+        : ""
+    }
 
-        </div>
+    <hr style="border:none;border-top:1px solid #ddd;margin:15px 0;">
 
-      </div>
+    <p><strong>🍽 Petit Déjeuner :</strong> </p>
+    <p><strong>🍽 Repas midi :</strong> ${lunch ? "Oui" : "Non"}</p>
+    <p><strong>🌙 Repas soir :</strong> ${dinner ? "Oui" : "Non"}</p>
+    <p><strong>🐶 Animal :</strong> ${pets ? "Oui" : "Non"}</p>
+    <p><strong>🍼 Lit parapluie :</strong> ${litParapluie ? "Oui" : "Non"}</p>
+
+  </div>
+
+  <div style="background:#2f241d;color:white;padding:20px;border-radius:12px;text-align:center;">
+    <div style="font-size:14px;">
+      Total du séjour
+    </div>
+
+    <div style="font-size:32px;font-weight:bold;">
+      ${Number(total).toFixed(2)} €
+    </div>
+  </div>
+
+  <p style="margin-top:30px;">
+    Nous restons à votre disposition pour toute question.
+  </p>
+
+  <p>
+    Cordialement,<br>
+    <strong>L'équipe de l'Auberge de Saint Aubin</strong><br>
+    📞 04 70 66 50 97
+  </p>
+
+</div>
       `,
     })
 
@@ -440,78 +455,77 @@ export async function POST(
 
       html: `
 
-      <div
-        style="
-          background:#f5f1ea;
-          padding:40px;
-          font-family:Arial;
-        "
-      >
+      <div style="background:#f5f1ea;padding:40px;font-family:Arial,sans-serif;">
 
-        <div
-          style="
-            max-width:700px;
-            margin:auto;
-            background:white;
-            border-radius:30px;
-            overflow:hidden;
-          "
-        >
+  <div style="max-width:700px;margin:auto;background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.08);">
 
-          <div
-            style="
-              background:#2f241d;
-              padding:40px;
-              text-align:center;
-              color:white;
-            "
-          >
+<div style="background:#2f241d;padding:35px;text-align:center;">
+  <h1 style="color:white;margin:0;">
+    🔔 Nouvelle réservation
+  </h1>
+</div>
 
-            <h1>
-              Nouvelle réservation
-            </h1>
+<div style="padding:35px;">
 
-          </div>
+  <h3 style="color:#2f241d;">
+    Informations client
+  </h3>
 
-          <div style="padding:40px;">
+  <p><strong>Nom :</strong> ${first_name} ${last_name}</p>
+  <p><strong>Email :</strong> ${email}</p>
+  <p><strong>Téléphone :</strong> ${phone}</p>
 
-            <p>
-              <strong>Client :</strong>
-              ${first_name}
-              ${last_name}
-            </p>
+  <hr>
 
-            <p>
-              <strong>Email :</strong>
-              ${email}
-            </p>
+  <h3 style="color:#2f241d;">
+    Séjour
+  </h3>
 
-            <p>
-              <strong>Téléphone :</strong>
-              ${phone}
-            </p>
+  <p><strong>📅 Arrivée :</strong> ${arrival}</p>
+  <p><strong>📅 Départ :</strong> ${departure}</p>
+  <p><strong>🛏 Chambre :</strong> ${roomName}</p>
 
-            <p>
-              <strong>Arrivée :</strong>
-              ${arrival}
-            </p>
+  <hr>
 
-            <p>
-              <strong>Départ :</strong>
-              ${departure}
-            </p>
+  <h3 style="color:#2f241d;">
+    Occupants
+  </h3>
 
-            <p>
-              <strong>Total :</strong>
-              ${total}€
-            </p>
+  <p><strong>👨 Adultes :</strong> ${adults}</p>
+  <p><strong>🧒 Enfants :</strong> ${children}</p>
+  <p><strong>👶 Bébés :</strong> ${babies}</p>
 
-          </div>
+  <hr>
 
-        </div>
+  <h3 style="color:#2f241d;">
+    Options
+  </h3>
 
-      </div>
-      `,
+  <p><strong>🍽 Midi :</strong> ${lunch ? "Oui" : "Non"}</p>
+  <p><strong>🌙 Soir :</strong> ${dinner ? "Oui" : "Non"}</p>
+  <p><strong>🐶 Animal :</strong> ${pets ? "Oui" : "Non"}</p>
+  <p><strong>🍼 Lit parapluie :</strong> ${litParapluie ? "Oui" : "Non"}</p>
+
+  <div style="margin-top:25px;background:#f8f6f2;padding:20px;border-radius:12px;text-align:center;">
+
+    <div style="font-size:14px;">
+      Montant de la réservation
+    </div>
+
+    <div style="font-size:32px;font-weight:bold;color:#2f241d;">
+      ${Number(total).toFixed(2)} €
+    </div>
+
+  </div>
+
+</div>
+
+
+  </div>
+
+</div>
+
+    `
     })
 
     return NextResponse.json(

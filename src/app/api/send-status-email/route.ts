@@ -17,6 +17,7 @@ export async function POST(
   try {
 
     const body = await req.json()
+    console.log("EMAIL BODY =", body)
 
     const isConfirmed =
       body.status === "confirmed"
@@ -77,12 +78,22 @@ export async function POST(
               text-align:center;
             ">
 
+            <img
+  src="https://image.noelshack.com/fichiers/2026/19/6/1778339311-logo2.jpg"
+  alt="Auberge Saint Aubin"
+  style="
+    width:180px;
+    margin-bottom:20px;
+    border-radius:12px;
+  "
+/>
+
               <h1 style="
                 color:white;
                 margin:0;
                 font-size:38px;
               ">
-                Auberge Saint Aubin
+                L'Auberge de Saint Aubin
               </h1>
 
               <p style="
@@ -99,12 +110,6 @@ export async function POST(
               padding:40px;
               color:#2f241d;
             ">
-
-              <h2>
-                Bonjour
-                ${body.first_name}
-                ${body.last_name},
-              </h2>
 
               <p style="
                 line-height:1.8;
@@ -130,23 +135,44 @@ export async function POST(
 
   <p>
     <strong>Chambre :</strong>
-    ${body.roomName}
+    ${body.reservation_rooms?.[0]?.room_name || "Non renseignée"}
   </p>
 
   <p>
     <strong>Arrivée :</strong>
-    ${body.arrival}
+    ${new Date(body.arrival).toLocaleDateString("fr-FR")}
   </p>
 
   <p>
     <strong>Départ :</strong>
-    ${body.departure}
+    ${new Date(body.departure).toLocaleDateString("fr-FR")}
   </p>
 
   <p>
-    <strong>Personnes :</strong>
-    ${body.people}
-  </p>
+  <strong>👨 Adultes :</strong>
+  ${body.adults}
+</p>
+
+${
+  body.children > 0
+    ? `<p>
+  <strong>🧒 Enfants :</strong>
+  ${body.children}
+</p>
+`
+    : ""
+}
+
+${
+  body.babies > 0
+    ? `
+      <p>
+        <strong>👶 Bébés :</strong>
+        ${body.babies}
+      </p>
+    `
+    : ""
+}
 
   <hr style="
     margin:20px 0;
@@ -162,11 +188,9 @@ export async function POST(
   </h3>
 
   <p>
-    Petit déjeuner :
-    <strong>
-      ${body.breakfast ? "Oui" : "Non"}
-    </strong>
-  </p>
+  Petit déjeuner :
+  <strong>Inclus</strong>
+</p>
 
   <p>
     Repas midi :
@@ -189,12 +213,18 @@ export async function POST(
     </strong>
   </p>
 
+  ${
+  body.babies > 0
+  ? `
   <p>
-    Lit bébé :
+    Lit parapluie :
     <strong>
-      ${body.baby ? "Oui" : "Non"}
+      ${body.litParapluie ? "Oui" : "Non"}
     </strong>
   </p>
+  `
+    : ""
+}
 
   <div style="
     margin-top:25px;
@@ -224,124 +254,30 @@ export async function POST(
 
 </div>
 
-<div style="
-  margin-top:30px;
+<hr style="
+  margin:40px 0;
+  border:none;
+  border-top:1px solid #ddd;
 ">
 
-  <h2 style="
-    font-size:28px;
-    margin-bottom:20px;
-  ">
-    Informations
-  </h2>
+<p style="
+  line-height:1.8;
+">
+  Nous restons à votre disposition pour toute question.
+</p>
 
-  <div style="
-    background:#faf7f2;
-    border-radius:20px;
-    padding:20px;
-    margin-bottom:15px;
-  ">
+<p style="
+  margin-top:25px;
+  line-height:1.8;
+">
+  Cordialement,<br>
 
-    <h3 style="
-      margin-top:0;
-    ">
-      📍 Adresse
-    </h3>
+  <strong>
+    L'équipe de l'Auberge de Saint Aubin
+  </strong><br>
 
-    <p style="
-      line-height:1.7;
-      margin:0;
-    ">
-      L'Auberge de St Aubin<br />
-      21 Rue Saint-Barnabé<br />
-      03160 Saint Aubin le Monial
-    </p>
-
-  </div>
-
-  <div style="
-    background:#faf7f2;
-    border-radius:20px;
-    padding:20px;
-    margin-bottom:15px;
-  ">
-
-    <h3 style="
-      margin-top:0;
-    ">
-      📞 Téléphone
-    </h3>
-
-    <p style="margin:0;">
-      04 70 66 50 97
-    </p>
-
-  </div>
-
-  <div style="
-    background:#faf7f2;
-    border-radius:20px;
-    padding:20px;
-    margin-bottom:15px;
-  ">
-
-    <h3 style="
-      margin-top:0;
-    ">
-      ✉️ Email
-    </h3>
-
-    <p style="margin:0;">
-      contact@auberge-st-aubin.fr
-    </p>
-
-  </div>
-
-  <div style="
-    background:#faf7f2;
-    border-radius:20px;
-    padding:20px;
-  ">
-
-    <h3 style="
-      margin-top:0;
-    ">
-      🕒 Horaires
-    </h3>
-
-    <p style="
-      line-height:1.8;
-      margin:0;
-    ">
-      Lundi au Vendredi :<br />
-      08h30 – 22h00<br /><br />
-
-      Vendredi & Samedi soir :<br />
-      08h30 – 22h00
-    </p>
-
-  </div>
-
-</div>
-
-
-            </div>
-
-            <div style="
-              background:#faf7f2;
-              padding:25px;
-              text-align:center;
-              font-size:14px;
-              color:#7d6d60;
-            ">
-
-              Auberge Saint Aubin
-
-            </div>
-
-          </div>
-
-        </div>
+  📞 04 70 66 50 97
+</p>
       `,
     })
 

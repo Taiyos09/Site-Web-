@@ -29,6 +29,8 @@ type HotelSettings = {
   tourist_tax: number
 
   extra_bed: number
+
+  lit_parapluie: number
 }
 
 export default function HotelAdminPage() {
@@ -245,6 +247,9 @@ setRooms(formattedRooms)
 
             extra_bed:
               settings.extra_bed,
+
+            lit_parapluie:
+              settings.lit_parapluie,
           }),
         }
       )
@@ -476,6 +481,31 @@ setRooms(formattedRooms)
                 "
               />
             </div>
+
+            <div>
+  <label className="mb-2 block font-bold">
+    Lit parapluie
+  </label>
+
+  <input
+    type="number"
+    value={
+      settings.lit_parapluie || 5
+    }
+    onChange={(e) =>
+      handleSettingChange(
+        "lit_parapluie",
+        Number(e.target.value)
+      )
+    }
+    className="
+      w-full
+      rounded-2xl
+      border
+      p-4
+    "
+  />
+</div>
 
             <div>
               <label className="mb-2 block font-bold">

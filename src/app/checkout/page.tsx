@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import Link from "next/link"
 
 import { useSearchParams } from "next/navigation"
@@ -13,12 +13,14 @@ type ReservationData = {
   roomId: number
   status: string
   nights: number
-  people: number
+  adults: number
+  children: number
+  babies: number
   touristTaxTotal: number
   pets: boolean
   lunch: boolean
   dinner: boolean
-  baby: boolean
+  litParapluie: boolean
   total: number
 }
 
@@ -26,6 +28,29 @@ export default function CheckoutPage() {
 
   const searchParams =
     useSearchParams()
+
+  const [settings, setSettings] =
+  useState<any>(null)
+
+useEffect(() => {
+
+  const loadSettings =
+    async () => {
+
+      const response =
+        await fetch(
+          "/api/hotel-settings"
+        )
+
+      const data =
+        await response.json()
+
+      setSettings(data)
+    }
+
+  loadSettings()
+
+}, [])
 
   const reservation: ReservationData =
     useMemo(() => {
@@ -57,12 +82,26 @@ export default function CheckoutPage() {
           ) || "[]"
         )
 
-      const people =
-        Number(
-          searchParams.get(
-            "people"
-          ) || 1
-        )
+      const adults =
+  Number(
+    searchParams.get(
+      "adults"
+    ) || 1
+  )
+
+const children =
+  Number(
+    searchParams.get(
+      "children"
+    ) || 0
+  )
+
+const babies =
+  Number(
+    searchParams.get(
+      "babies"
+    ) || 0
+  )
 
       const pets =
         searchParams.get(
@@ -79,10 +118,10 @@ export default function CheckoutPage() {
           "dinner"
         ) === "true"
 
-      const baby =
-        searchParams.get(
-          "baby"
-        ) === "true"
+      const litParapluie =
+         searchParams.get(
+            "litParapluie"
+          ) === "true"
 
       const total =
         Number(
@@ -129,17 +168,19 @@ export default function CheckoutPage() {
 
         nights,
 
-        people,
+        adults,
+        children,
+        babies,
 
         touristTaxTotal:
-          people *
-          nights *
-          1.3,
+         adults *
+         nights *
+         1.3,
 
         pets,
         lunch,
         dinner,
-        baby,
+        litParapluie,
 
         total,
       }
@@ -231,20 +272,26 @@ export default function CheckoutPage() {
         nights:
           reservation.nights,
 
-        people:
-          reservation.people,
-
         pets:
           reservation.pets,
+
+        adults:
+           reservation.adults,
+
+        children:
+          reservation.children,
+
+        babies:
+        reservation.babies,
+
+        litParapluie:
+        reservation.litParapluie,
 
         lunch:
           reservation.lunch,
 
         dinner:
           reservation.dinner,
-
-        baby:
-          reservation.baby,
 
         tourist_tax:
           reservation.touristTaxTotal,
@@ -719,25 +766,73 @@ export default function CheckoutPage() {
             </div>
 
             <div
-              className="
-                flex
-                justify-between
-                border-b
-                pb-3
-              "
-            >
+  className="
+    flex
+    justify-between
+    border-b
+    pb-3
+  "
+>
+  <span>Adultes</span>
+  <span>{reservation.adults}</span>
+</div>
 
-              <span>
-                Personnes
-              </span>
+<div
+  className="
+    flex
+    justify-between
+    border-b
+    pb-3
+  "
+>
+  <span>Enfants</span>
+  <span>{reservation.children}</span>
+</div>
 
-              <span>
-                {
-                  reservation.people
-                }
-              </span>
+{reservation.babies > 0 && (
 
-            </div>
+  <div
+    className="
+      flex
+      justify-between
+      border-b
+      pb-3
+    "
+  >
+    <span>
+      Bébés (-2 ans)
+    </span>
+
+    <span>
+      {reservation.babies}
+    </span>
+  </div>
+
+)}
+
+{reservation.litParapluie && (
+
+  <div
+    className="
+      flex
+      justify-between
+      border-b
+      pb-3
+    "
+  >
+
+    <span>
+      👶 Lit parapluie
+    </span>
+
+    <span>
+      {settings?.lit_parapluie || 5}€
+    </span>
+
+  </div>
+
+)}
+
 
             <div
               className="
@@ -833,29 +928,6 @@ export default function CheckoutPage() {
 
             )}
 
-            {reservation.baby && (
-
-              <div
-                className="
-                  flex
-                  justify-between
-                  border-b
-                  pb-3
-                "
-              >
-
-                <span>
-                  Lit bébé
-                </span>
-
-                <span>
-                  Oui
-                </span>
-
-              </div>
-
-            )}
-
             <div
               className="
                 flex
@@ -914,22 +986,23 @@ export default function CheckoutPage() {
     administration
   </Link>
 
+  <div className="mt-4 flex justify-center gap-6 text-sm">
   <Link href="/mentions-legales">
-  Mentions légales
-</Link>
+    Mentions légales
+  </Link>
 
-<Link href="/confidentialite">
-  Confidentialité
-</Link>
+  <Link href="/confidentialite">
+    Confidentialité
+  </Link>
 
-<Link href="/cgv">
-  CGV
-</Link>
+  <Link href="/cgv">
+    CGV
+  </Link>
 
-
-<Link href="/cookies">
-  Cookies
-</Link>
+  <Link href="/cookies">
+    Cookies
+  </Link>
+</div>
 
 
 </footer>

@@ -21,12 +21,15 @@ type Reservation = {
   arrival: string
   departure: string
 
-  people: number
+  adults: number
+  children: number
+  babies: number
 
   pets: boolean
   lunch: boolean
   dinner: boolean
-  baby: boolean
+
+  litParapluie: boolean
 
   message: string
 
@@ -52,30 +55,33 @@ const [statusFilter, setStatusFilter] =
   useState("all")
 
   const [
-    manualReservation,
-    setManualReservation,
-  ] = useState({
+  manualReservation,
+  setManualReservation,
+] = useState({
 
-    first_name: "",
-    last_name: "",
+  first_name: "",
+  last_name: "",
 
-    email: "",
-    phone: "",
+  email: "",
+  phone: "",
 
-    arrival: "",
-    departure: "",
+  arrival: "",
+  departure: "",
 
-    people: 1,
+  adults: 1,
+  children: 0,
+  babies: 0,
 
-    rooms: [] as string[],
+  rooms: [] as string[],
 
-    lunch: false,
-    dinner: false,
-    pets: false,
-    baby: false,
+  lunch: false,
+  dinner: false,
+  pets: false,
 
-    message: "",
-  })
+  litParapluie: false,
+
+  message: "",
+})
 
   const [hotelSettings, setHotelSettings] =
   useState({
@@ -85,6 +91,7 @@ const [statusFilter, setStatusFilter] =
     pet: 0,
     tourist_tax: 0,
     extra_bed: 0,
+    lit_parapluie: 0,
   })
 
   const [roomsData, setRoomsData] =
@@ -153,6 +160,8 @@ console.log(settingsData)
 
     try {
 
+      console.log("RESERVATION EMAIL", reservation)
+
       await fetch(
         `/api/reservations/${reservation.id}`,
         {
@@ -164,6 +173,23 @@ console.log(settingsData)
           },
 
           body: JSON.stringify({
+            status,
+          }),
+        }
+      )
+
+      await fetch(
+        "/api/send-status-email",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            ...reservation,
             status,
           }),
         }
@@ -377,7 +403,6 @@ const existingReservations =
   }
 }
 
-
       try {
 
         const roomCapacities:
@@ -401,7 +426,7 @@ for (
     roomCapacities[room] || 0
 
   if (
-    manualReservation.people >
+    occupancy >
     maxCapacity
   ) {
 
@@ -435,7 +460,7 @@ const totalCapacity =
 /* VERIFICATION GLOBALE */
 
 if (
-  manualReservation.people >
+  occupancy >
   totalCapacity
 ) {
 
@@ -495,7 +520,7 @@ ${totalCapacity} personnes`
           const roomPrice =
             getRoomPrice(
               room,
-              manualReservation.people
+              occupancy
             )
 
           const roomTotal =
@@ -508,7 +533,7 @@ ${totalCapacity} personnes`
             room_name: room,
 
             people:
-              manualReservation.people,
+              occupancy,
 
             room_total:
               roomTotal,
@@ -516,11 +541,23 @@ ${totalCapacity} personnes`
         }
 
         if (
+  manualReservation.litParapluie
+) {
+
+  total +=
+    Number(
+      hotelSettings.lit_parapluie || 5
+    ) *
+    manualReservation.babies *
+    nights
+}
+
+        if (
   manualReservation.lunch
 ) {
 
   total +=
-    manualReservation.people *
+    occupancy *
     (hotelSettings.lunch || 0) *
     nights
 }
@@ -530,7 +567,7 @@ if (
 ) {
 
   total +=
-    manualReservation.people *
+    occupancy *
     (hotelSettings.dinner || 0) *
     nights
 }
@@ -548,7 +585,7 @@ if (
 
 total +=
   (hotelSettings.tourist_tax || 0) *
-  manualReservation.people *
+  manualReservation.adults *
   nights
 
         const response =
@@ -631,8 +668,17 @@ const reservationData =
 
       total,
 
-      people:
-        manualReservation.people,
+      adults:
+  manualReservation.adults,
+
+children:
+  manualReservation.children,
+
+babies:
+  manualReservation.babies,
+
+litParapluie:
+  manualReservation.litParapluie,
 
       lunch:
         manualReservation.lunch,
@@ -642,9 +688,6 @@ const reservationData =
 
       pets:
         manualReservation.pets,
-
-      baby:
-        manualReservation.baby,
     }),
   }
 )
@@ -666,6 +709,9 @@ const reservationData =
     }
 
   /* ---------------- CALCUL TOTAL ---------------- */
+  const occupancy =
+  manualReservation.adults +
+  manualReservation.children
 
   const startDate =
     manualReservation.arrival
@@ -705,7 +751,7 @@ const reservationData =
       const roomPrice =
         getRoomPrice(
           room,
-          manualReservation.people
+          occupancy
         )
 
       roomsTotal +=
@@ -716,7 +762,7 @@ const reservationData =
   console.log({
   nights,
   people:
-    manualReservation.people,
+    occupancy,
   lunch:
     hotelSettings.lunch,
   dinner:
@@ -727,7 +773,7 @@ const reservationData =
 
   const lunchTotal =
   manualReservation.lunch
-    ? manualReservation.people *
+    ? occupancy *
       Number(
         hotelSettings.lunch || 0
       ) *
@@ -736,7 +782,7 @@ const reservationData =
 
 const dinnerTotal =
   manualReservation.dinner
-    ? manualReservation.people *
+    ? occupancy *
       Number(
         hotelSettings.dinner || 0
       ) *
@@ -753,7 +799,7 @@ const petsTotal =
 
 const extraPeople =
   Math.max(
-    manualReservation.people - 2,
+    occupancy - 2,
     0
   )
 
@@ -768,16 +814,26 @@ const touristTax =
   Number(
     hotelSettings.tourist_tax || 0
   ) *
-  manualReservation.people *
+  manualReservation.adults *
   nights
 
-  const totalPrice =
+const litParapluieTotal =
+  manualReservation.litParapluie
+    ? Number(
+        hotelSettings.lit_parapluie || 5
+      ) *
+      manualReservation.babies *
+      nights
+    : 0
+
+const totalPrice =
     roomsTotal +
     extraBedTotal +
     lunchTotal +
     dinnerTotal +
     petsTotal +
-    touristTax
+    touristTax +
+    litParapluieTotal
 
   const getStatusStyle = (
   status: string
@@ -1384,11 +1440,31 @@ const filteredReservations =
               {reservation.phone}
             </p>
 
-            <p>
-              {reservation.people}
-              {" "}
-              personnes
-            </p>
+            <div className="space-y-2">
+
+  <p>
+    👨 Adultes :
+    {" "}
+    {reservation.adults}
+  </p>
+
+  <p>
+    🧒 Enfants :
+    {" "}
+    {reservation.children}
+  </p>
+
+  {reservation.babies > 0 && (
+
+    <p>
+      👶 Bébés :
+      {" "}
+      {reservation.babies}
+    </p>
+
+  )}
+
+</div>
 
           </div>
 
@@ -1522,22 +1598,22 @@ const filteredReservations =
                 : "Non"}
             </div>
 
-            <div
-              className="
-                rounded-full
-                bg-white
-                px-4
-                py-2
-                text-sm
-                font-semibold
-              "
-            >
-              👶 Bébé :
-              {" "}
-              {reservation.baby
-                ? "Oui"
-                : "Non"}
-            </div>
+            {reservation.litParapluie && (
+
+  <div
+    className="
+      rounded-full
+      bg-white
+      px-4
+      py-2
+      text-sm
+      font-semibold
+    "
+  >
+    🛏️ Lit parapluie demandé
+  </div>
+
+)}
 
           </div>
 
@@ -2093,49 +2169,81 @@ const filteredReservations =
 
         {/* PERSONNES */}
 
-        <select
-  value={
-    manualReservation.people
-  }
-  onChange={(e) =>
-    setManualReservation({
-      ...manualReservation,
-      people:
-        Number(e.target.value),
-    })
-  }
-  className="
-    w-full
-    rounded-2xl
-    border
-    p-4
-  "
->
+        <div className="grid gap-4 md:grid-cols-3">
 
-  {[...Array(13)].map((_, index) => {
+  <div>
+    <label className="mb-2 block font-semibold">
+      Adultes
+    </label>
 
-    const people =
-      index + 1
+    <input
+      type="number"
+      min={1}
+      value={manualReservation.adults}
+      onChange={(e) =>
+        setManualReservation({
+          ...manualReservation,
+          adults: Number(e.target.value),
+        })
+      }
+      className="
+        w-full
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+  </div>
 
-    return (
+  <div>
+    <label className="mb-2 block font-semibold">
+      Enfants
+    </label>
 
-      <option
-        key={people}
-        value={people}
-      >
+    <input
+      type="number"
+      min={0}
+      value={manualReservation.children}
+      onChange={(e) =>
+        setManualReservation({
+          ...manualReservation,
+          children: Number(e.target.value),
+        })
+      }
+      className="
+        w-full
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+  </div>
 
-        {people}
-        {" "}
-        {people > 1
-          ? "personnes"
-          : "personne"}
+  <div>
+    <label className="mb-2 block font-semibold">
+      Bébés (-2 ans)
+    </label>
 
-      </option>
+    <input
+      type="number"
+      min={0}
+      value={manualReservation.babies}
+      onChange={(e) =>
+        setManualReservation({
+          ...manualReservation,
+          babies: Number(e.target.value),
+        })
+      }
+      className="
+        w-full
+        rounded-2xl
+        border
+        p-4
+      "
+    />
+  </div>
 
-    )
-  })}
-
-</select>
+</div>
 
         {/* CHAMBRES */}
 
@@ -2294,30 +2402,32 @@ const filteredReservations =
 
   </label>
 
-  <label className="
+  <label
+  className="
     flex items-center gap-3
     rounded-2xl
     bg-[#f5f1ea]
     p-4
-  ">
+  "
+>
 
-    <input
-      type="checkbox"
-      checked={
-        manualReservation.baby
-      }
-      onChange={(e) =>
-        setManualReservation({
-          ...manualReservation,
-          baby:
-            e.target.checked,
-        })
-      }
-    />
+  <input
+    type="checkbox"
+    checked={
+      manualReservation.litParapluie
+    }
+    onChange={(e) =>
+      setManualReservation({
+        ...manualReservation,
+        litParapluie:
+          e.target.checked,
+      })
+    }
+  />
 
-    Enfant en bas âge
+  Demande de lit parapluie
 
-  </label>
+</label>
 
 </div>
 
@@ -2369,7 +2479,7 @@ const filteredReservations =
         const price =
           getRoomPrice(
             room,
-            manualReservation.people
+            occupancy
           )
 
         return (
@@ -2400,14 +2510,14 @@ const filteredReservations =
       }
     )}
 
-    {manualReservation.people >= 3 && (
+    {occupancy >= 3 && (
 
   <div className="flex justify-between border-b border-black/20 py-3">
 
     <div>
       Personne supplémentaire (
       {hotelSettings.extra_bed}€
-      × {(manualReservation.people - 2)}
+      × {(occupancy - 2)}
       × {nights} nuits)
     </div>
 
@@ -2454,7 +2564,7 @@ const filteredReservations =
         (
         {Number(hotelSettings.lunch || 0)}€
         {" "}×{" "}
-        {manualReservation.people}
+        {occupancy}
         {" "}personnes
         {" "}×{" "}
         {nights}
@@ -2489,7 +2599,7 @@ const filteredReservations =
         (
         {hotelSettings?.dinner || 0}€
         {" "}×{" "}
-        {manualReservation.people}
+        {occupancy}
         {" "}personnes
         {" "}×{" "}
         {nights}
@@ -2555,8 +2665,8 @@ const filteredReservations =
       (
       {hotelSettings?.tourist_tax || 0}€
       {" "}×{" "}
-      {manualReservation.people}
-      {" "}personnes
+      {manualReservation.adults}
+      {" "}adultes
       {" "}×{" "}
       {nights}
       {" "}nuits
@@ -2571,25 +2681,44 @@ const filteredReservations =
 
 </div>
 
-{/* BÉBÉ */}
-
-<div className="
-  flex justify-between
-  border-b
-  pb-3
-">
-
-  <span>
-    Enfant en bas âge
-  </span>
-
-  <span>
-    {manualReservation.baby
-      ? "Oui"
-      : "Non"}
-  </span>
-
+<div className="flex justify-between border-b pb-3">
+  <span>👨 Adultes</span>
+  <span>{manualReservation.adults}</span>
 </div>
+
+<div className="flex justify-between border-b pb-3">
+  <span>🧒 Enfants</span>
+  <span>{manualReservation.children}</span>
+</div>
+
+{manualReservation.babies > 0 && (
+  <div className="flex justify-between border-b pb-3">
+    <span>👶 Bébés</span>
+    <span>{manualReservation.babies}</span>
+  </div>
+)}
+
+{manualReservation.litParapluie && (
+  <div className="flex justify-between border-b pb-3">
+    <span>
+      🛏️ Lit parapluie
+
+      <span className="text-[#6b5b4f]">
+      {hotelSettings.lit_parapluie || 5}€
+      {" "}×{" "}
+      {manualReservation.babies}
+      {" "}×{" "}
+      {nights}
+      {" "}nuits 
+    </span>
+    </span>
+
+    <span>
+  {litParapluieTotal.toFixed(2)}€
+</span>
+    
+  </div>
+)}
 
     <div className="
       mt-6

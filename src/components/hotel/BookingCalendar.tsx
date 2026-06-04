@@ -38,8 +38,20 @@ export default function BookingCalendar({
   const [pets, setPets] =
     useState(false)
 
-  const [people, setPeople] =
-    useState(2)
+  const [litParapluie, setLitParapluie] =
+    useState(false)
+
+  const [adults, setAdults] =
+  useState(2)
+
+const [children, setChildren] =
+  useState(0)
+
+const [babies, setBabies] =
+  useState(0)
+
+const occupancy =
+  adults + children
 
   const [lunch, setLunch] =
     useState(false)
@@ -47,8 +59,6 @@ export default function BookingCalendar({
   const [dinner, setDinner] =
     useState(false)
 
-  const [baby, setBaby] =
-    useState(false)
 
   const [blockedDates, setBlockedDates] =
     useState<Date[]>([])
@@ -193,17 +203,17 @@ export default function BookingCalendar({
   ========================= */
 
   const roomPrice =
-    people <= 1
-      ? Number(priceOnePerson)
-      : Number(priceTwoPeople)
+  occupancy <= 1
+    ? Number(priceOnePerson)
+    : Number(priceTwoPeople)
 
   const roomTotal =
     roomPrice * nights
 
   const extraPeople =
-    people > 2
-      ? people - 2
-      : 0
+  occupancy > 2
+    ? occupancy - 2
+    : 0
 
   const extraBedTotal =
     extraPeople *
@@ -216,36 +226,43 @@ export default function BookingCalendar({
         nights
       : 0
 
+  const litParapluieTotal =
+    litParapluie
+      ? (settings?.litParapluie ?? 5) *
+        nights
+     : 0
+
   const lunchTotal =
     lunch
-      ? people *
+      ? occupancy *
         (settings?.lunch ?? 15) *
         nights
       : 0
 
   const dinnerTotal =
     dinner
-      ? people *
+      ? occupancy *
         (settings?.dinner ?? 20) *
         nights
       : 0
 
   const touristTaxTotal =
-    nights *
-    people *
-    (settings?.tourist_tax ?? 1.3)
+  nights *
+  adults *
+  (settings?.tourist_tax ?? 1.3)
 
   /* =========================
      TOTAL
   ========================= */
 
   const total =
-    roomTotal +
-    extraBedTotal +
-    petTotal +
-    lunchTotal +
-    dinnerTotal +
-    touristTaxTotal
+  roomTotal +
+  extraBedTotal +
+  petTotal +
+  lunchTotal +
+  dinnerTotal +
+  touristTaxTotal +
+  litParapluieTotal
 
   return (
 
@@ -445,46 +462,125 @@ export default function BookingCalendar({
             Nombre de personnes
           </label>
 
-          <select
+          <div className="space-y-4">
 
-            value={people}
+  <div>
 
-            onChange={(e) =>
+    <label className="mb-2 block font-medium">
+      Adultes
+    </label>
 
-              setPeople(
-                Number(e.target.value)
-              )
-            }
+    <select
+      value={adults}
+      onChange={(e) =>
+        setAdults(
+          Number(e.target.value)
+        )
+      }
+      className="
+        w-full
+        rounded-2xl
+        border
+        p-4
+      "
+    >
+      {[1,2,3,4].map((n) => (
+        <option
+          key={n}
+          value={n}
+        >
+          {n} adulte{n > 1 ? "s" : ""}
+        </option>
+      ))}
+    </select>
 
-            className="
-              w-full
-              rounded-2xl
-              border
-              p-4
-            "
-          >
+  </div>
 
-            <option value={1}>
-              1 personne
-            </option>
+  <div>
 
-            <option value={2}>
-              2 personnes
-            </option>
+    <label className="mb-2 block font-medium">
+      Enfants (2 ans et +)
+    </label>
 
-            <option value={3}>
-              3 personnes
-            </option>
+    <select
+      value={children}
+      onChange={(e) =>
+        setChildren(
+          Number(e.target.value)
+        )
+      }
+      className="
+        w-full
+        rounded-2xl
+        border
+        p-4
+      "
+    >
+      {[0,1,2,3].map((n) => (
+        <option
+          key={n}
+          value={n}
+        >
+          {n}
+        </option>
+      ))}
+    </select>
 
-            {maxPeople >= 4 && (
+  </div>
 
-              <option value={4}>
-                4 personnes
-              </option>
+  <div>
 
-            )}
+    <label className="mb-2 block font-medium">
+      Bébés (-2 ans)
+    </label>
 
-          </select>
+    <select
+      value={babies}
+      onChange={(e) =>
+        setBabies(
+          Number(e.target.value)
+        )
+      }
+      className="
+        w-full
+        rounded-2xl
+        border
+        p-4
+      "
+    >
+      {[0,1,2].map((n) => (
+        <option
+          key={n}
+          value={n}
+        >
+          {n}
+        </option>
+      ))}
+    </select>
+
+  </div>
+
+</div>
+
+<p
+  className="
+    mt-4
+    text-sm
+    text-[#7a6a5d]
+  "
+>
+  Occupation :
+  {occupancy} / {maxPeople} personnes
+</p>
+
+<p
+  className="
+    text-sm
+    text-[#7a6a5d]
+  "
+>
+  Les bébés de moins de 2 ans sont accueillis gratuitement.
+</p>
 
           {/* OPTIONS */}
 
@@ -616,7 +712,7 @@ export default function BookingCalendar({
 
   </label>
 
-  {/* BÉBÉ */}
+  {babies > 0 && (
 
   <label
     className="
@@ -635,20 +731,20 @@ export default function BookingCalendar({
     <div>
 
       <p className="font-semibold">
-        👶 Lit bébé
+        👶 Lit parapluie
       </p>
 
       <p className="text-sm text-[#7a6a5d]">
-        Gratuit
+        +{settings?.litParapluie || 5}€
       </p>
 
     </div>
 
     <input
       type="checkbox"
-      checked={baby}
+      checked={litParapluie}
       onChange={(e) =>
-        setBaby(
+        setLitParapluie(
           e.target.checked
         )
       }
@@ -657,7 +753,9 @@ export default function BookingCalendar({
 
   </label>
 
-</div>
+)}
+
+  </div>
 
 {/* TOTAL */}
 
@@ -693,6 +791,14 @@ export default function BookingCalendar({
 
   </div>
 
+  {occupancy > maxPeople && (
+
+  <p className="mb-4 text-red-600 font-medium">
+    Cette chambre peut accueillir au maximum {maxPeople} personnes.
+  </p>
+
+)}
+
   <button
 
   onClick={() => {
@@ -709,6 +815,11 @@ export default function BookingCalendar({
       return
     }
 
+    console.log(
+  "LIT PARAPLUIE =",
+  litParapluie
+)
+
     router.push(
 
       `/checkout?arrival=${format(
@@ -719,23 +830,33 @@ export default function BookingCalendar({
         "yyyy-MM-dd"
       )}&roomName=${roomName}&roomSlug=${roomSlug}&roomIds=${JSON.stringify(
         [roomId]
-      )}&people=${people}&pets=${pets}&lunch=${lunch}&dinner=${dinner}&baby=${baby}&total=${total}`
+      )}&adults=${adults}&children=${children}&babies=${babies}&pets=${pets}&lunch=${lunch}&dinner=${dinner}&litParapluie=${litParapluie}&total=${total}`
 
     )
   }}
 
-  className="
-    w-full
-    rounded-2xl
-    bg-[#c89b5f]
-    px-6
-    py-4
-    text-lg
-    font-bold
-    text-white
-    transition
-    hover:opacity-90
-  "
+  className={`
+  w-full
+  rounded-2xl
+  px-6
+  py-4
+  text-lg
+  font-bold
+  text-white
+  transition
+
+  ${
+    occupancy > maxPeople
+      ? `
+        cursor-not-allowed
+        bg-gray-400
+      `
+      : `
+        bg-[#c89b5f]
+        hover:opacity-90
+      `
+  }
+`}
 >
   Réserver
 </button>

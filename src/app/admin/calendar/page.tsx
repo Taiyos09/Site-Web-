@@ -15,7 +15,6 @@ import { fr } from "date-fns/locale"
 type ReservationRoom = {
   id: number
   room_name: string
-  people: number
   room_total: number
 }
 
@@ -25,15 +24,17 @@ type Reservation = {
   last_name: string
   email: string
   phone: string
-  people: number
+  adults: number
+  children: number
+  babies: number
   total: number
   arrival: string
   departure: string
   status: string
   lunch: boolean
   dinner: boolean
-  animals: boolean
-  baby: boolean
+  pets: boolean
+  litParapluie: boolean
   reservation_rooms?: ReservationRoom[]
 }
 
@@ -799,15 +800,25 @@ return (
     </div>
 
     <div
-      className="
-        mt-2
-        whitespace-nowrap
-        text-sm
-        opacity-90
-      "
-    >
-      {reservation.people} pers.
-    </div>
+  className="
+    mt-2
+    text-xs
+    opacity-90
+  "
+>
+  👨 {reservation.adults}
+
+  {" · "}
+
+  🧒 {reservation.children}
+
+  {reservation.babies > 0 && (
+    <>
+      {" · "}
+      👶 {reservation.babies}
+    </>
+  )}
+</div>
 
   </button>
 )
@@ -923,21 +934,43 @@ return (
                 </p>
 
                 <p>
-                  <strong>Chambres :</strong>
-                  {" "}
-                  {selectedReservation
-                    .reservation_rooms
-                    ?.map(
-                      (room) => room.room_name
-                    )
-                    .join(", ")}
-                </p>
+  <strong>Chambres :</strong>
+  {" "}
+  {selectedReservation
+    .reservation_rooms
+    ?.map(
+      (room) => room.room_name
+    )
+    .join(", ")}
+</p>
 
-                <p>
-                  <strong>Personnes :</strong>
-                  {" "}
-                  {selectedReservation.people}
-                </p>
+<div className="flex flex-wrap gap-3">
+
+  <span className="rounded-full bg-[#f5f1ea] px-4 py-2">
+    👨 {selectedReservation.adults} adulte(s)
+  </span>
+
+  <span className="rounded-full bg-[#f5f1ea] px-4 py-2">
+    🧒 {selectedReservation.children} enfant(s)
+  </span>
+
+  {selectedReservation.babies > 0 && (
+    <span className="rounded-full bg-[#f5f1ea] px-4 py-2">
+      👶 {selectedReservation.babies} bébé(s)
+    </span>
+  )}
+
+</div>
+
+<p>
+  <strong>Lit parapluie :</strong>
+  {" "}
+  {
+    selectedReservation.litParapluie
+      ? "Demandé"
+      : "Non"
+  }
+</p>
 
                 <p>
                   <strong>Arrivée :</strong>
@@ -974,18 +1007,11 @@ return (
 <p>
   <strong>Animaux :</strong>
   {" "}
-  {selectedReservation.animals
+  {selectedReservation.pets
     ? "Oui"
     : "Non"}
 </p>
 
-<p>
-  <strong>Enfant bas âge :</strong>
-  {" "}
-  {selectedReservation.baby
-    ? "Oui"
-    : "Non"}
-</p>
 
                 <p>
                   <strong>Total :</strong>
@@ -1226,7 +1252,8 @@ return (
             (total, reservation) =>
 
               total +
-              reservation.people,
+              reservation.adults +
+reservation.children,
 
             0
           )
@@ -1308,7 +1335,8 @@ return (
             (total, reservation) =>
 
               total +
-              reservation.people,
+              reservation.adults +
+              reservation.children,
 
             0
           )
@@ -1390,7 +1418,8 @@ return (
             (total, reservation) =>
 
               total +
-              reservation.people,
+              reservation.adults +
+              reservation.children,
 
             0
           )

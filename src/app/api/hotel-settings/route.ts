@@ -46,6 +46,14 @@ export async function GET() {
       )?.value || 0
     ),
 
+    lit_parapluie: Number(
+  settings.find(
+    (s) =>
+      s.key ===
+      "option_lit_parapluie"
+  )?.value || 5
+),
+
     extra_bed: Number(
       settings.find(
         (s) =>
@@ -99,6 +107,19 @@ export async function PUT(
       value: String(body.pet),
     },
   })
+
+  await prisma.hotel_settings.update({
+
+  where: {
+    id: 9,
+  },
+
+  data: {
+    value: String(
+      body.lit_parapluie
+    ),
+  },
+})
 
   await prisma.hotel_settings.update({
 
