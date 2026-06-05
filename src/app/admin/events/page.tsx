@@ -1,13 +1,27 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import AdminNavbar from "@/components/AdminNavbar"
-import { EVENTS } from "@/data/events"
+import Image from "next/image"
 
 export default function EventsPage() {
 
   const [eventsData, setEventsData] =
-    useState(EVENTS)
+  useState<any[]>([])
+
+  useEffect(() => {
+
+  fetch("/api/events")
+
+    .then((res) =>
+      res.json()
+    )
+
+    .then((data) =>
+      setEventsData(data)
+    )
+
+}, [])
 
   const updateEvent = (
     index: number,
@@ -25,19 +39,6 @@ export default function EventsPage() {
     setEventsData(updated)
   }
 
-  const updateGalleryImage = (
-    eventIndex: number,
-    imageIndex: number,
-    value: string
-  ) => {
-
-    const updated = [...eventsData]
-
-    updated[eventIndex]
-      .gallery[imageIndex] = value
-
-    setEventsData(updated)
-  }
 
   const addGalleryImage = (
     eventIndex: number
@@ -51,20 +52,71 @@ export default function EventsPage() {
     setEventsData(updated)
   }
 
-  const addEvent = () => {
+  const uploadGalleryImage = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+  eventIndex: number,
+  photoIndex: number
+) => {
 
-    setEventsData([
-      ...eventsData,
+  const file =
+    e.target.files?.[0]
 
-      {
-        title: "Nouvel événement",
-        date: "Date",
-        description: "Description",
-        image: "/images/event.jpg",
-        gallery: [],
-      },
-    ])
+  if (!file) return
+
+  try {
+
+    const formData =
+      new FormData()
+
+    formData.append(
+      "file",
+      file
+    )
+
+    const res =
+      await fetch(
+        "/api/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      )
+
+    const data =
+      await res.json()
+
+    const updated =
+      [...eventsData]
+
+    updated[eventIndex]
+      .gallery[photoIndex] =
+        data.url
+
+    setEventsData(updated)
+
+  } catch (error) {
+
+    console.error(error)
+
+    alert(
+      "Erreur lors de l'upload"
+    )
+
   }
+}
+
+  const addEvent = () => {
+  setEventsData([
+    ...eventsData,
+    {
+      title: "",
+      date: "",
+      description: "",
+      image: "",
+      gallery: [],
+    },
+  ])
+}
 
   const removeEvent = (
     index: number
@@ -76,6 +128,41 @@ export default function EventsPage() {
       )
     )
   }
+
+  const saveEvents = async () => {
+
+  try {
+
+    await fetch(
+      "/api/events",
+      {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify(
+          eventsData
+        ),
+      }
+    )
+
+    alert(
+      "Événements sauvegardés"
+    )
+
+  } catch (error) {
+
+    console.error(error)
+
+    alert(
+      "Erreur de sauvegarde"
+    )
+  }
+}
 
   return (
 
@@ -147,6 +234,20 @@ export default function EventsPage() {
                 Ajouter un événement
               </button>
 
+              <button
+  onClick={saveEvents}
+  className="
+    rounded-2xl
+    bg-green-600
+    px-6
+    py-3
+    font-semibold
+    text-white
+  "
+>
+  Sauvegarder
+</button>
+
             </div>
 
             <div className="space-y-10">
@@ -154,13 +255,16 @@ export default function EventsPage() {
               {eventsData.map((event, index) => (
 
                 <div
-                  key={index}
-                  className="
-                    rounded-3xl
-                    bg-[#faf7f2]
-                    p-8
-                  "
-                >
+  key={index}
+  className="
+    mx-auto
+    max-w-4xl
+    rounded-3xl
+    bg-[#faf7f2]
+    p-6
+    shadow-md
+  "
+>
 
                   <div className="
                     mb-8
@@ -197,150 +301,283 @@ export default function EventsPage() {
 
                   <div className="grid gap-6">
 
-                    <input
-                      type="text"
-                      value={event.title}
-                      placeholder="Titre"
-                      onChange={(e) =>
-                        updateEvent(
-                          index,
-                          "title",
-                          e.target.value
-                        )
-                      }
-                      className="
-                        rounded-2xl
-                        border
-                        p-4
-                      "
-                    />
+                    <div className="grid gap-6">
 
-                    <input
-                      type="text"
-                      value={event.date}
-                      placeholder="Date"
-                      onChange={(e) =>
-                        updateEvent(
-                          index,
-                          "date",
-                          e.target.value
-                        )
-                      }
-                      className="
-                        rounded-2xl
-                        border
-                        p-4
-                      "
-                    />
+  <input
+    type="text"
+    value={event.title}
+    placeholder="Titre"
+    onChange={(e) =>
+      updateEvent(
+        index,
+        "title",
+        e.target.value
+      )
+    }
+    className="
+      rounded-2xl
+      border
+      p-3
+    "
+  />
 
-                    <textarea
-                      value={event.description}
-                      placeholder="Description"
-                      onChange={(e) =>
-                        updateEvent(
-                          index,
-                          "description",
-                          e.target.value
-                        )
-                      }
-                      className="
-                        min-h-[140px]
-                        rounded-2xl
-                        border
-                        p-4
-                      "
-                    />
+  <input
+    type="text"
+    value={event.date}
+    placeholder="Date"
+    onChange={(e) =>
+      updateEvent(
+        index,
+        "date",
+        e.target.value
+      )
+    }
+    className="
+      rounded-2xl
+      border
+      p-3
+    "
+  />
 
-                    <input
-                      type="text"
-                      value={event.image}
-                      placeholder="Image principale"
-                      onChange={(e) =>
-                        updateEvent(
-                          index,
-                          "image",
-                          e.target.value
-                        )
-                      }
-                      className="
-                        rounded-2xl
-                        border
-                        p-4
-                      "
-                    />
+  <textarea
+    value={event.description}
+    placeholder="Description"
+    onChange={(e) =>
+      updateEvent(
+        index,
+        "description",
+        e.target.value
+      )
+    }
+    className="
+      min-h-[140px]
+      rounded-2xl
+      border
+      p-3
+    "
+  />
+
+  {/* IMAGE PRINCIPALE */}
+
+  <div
+  className="
+    relative
+    h-48
+    overflow-hidden
+    rounded-3xl
+    border
+  "
+>
+
+  {event.image ? (
+
+    <Image
+      src={event.image}
+      alt={event.title || "Image événement"}
+      fill
+      className="object-cover"
+    />
+
+  ) : (
+
+    <div
+      className="
+        flex
+        h-full
+        items-center
+        justify-center
+        text-gray-500
+      "
+    >
+      Aucune image sélectionnée
+    </div>
+
+  )}
+
+</div>
+
+    <label
+      className="
+        inline-block
+        cursor-pointer
+        rounded-2xl
+        bg-[#2f241d]
+        px-5
+        py-3
+        text-white
+      "
+    >
+      Choisir une image
+
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={async (e) => {
+
+          const file =
+            e.target.files?.[0]
+
+          if (!file) return
+
+          const formData =
+            new FormData()
+
+          formData.append(
+            "file",
+            file
+          )
+
+          const res =
+            await fetch(
+              "/api/upload",
+              {
+                method: "POST",
+                body: formData,
+              }
+            )
+
+          const data =
+            await res.json()
+
+          updateEvent(
+            index,
+            "image",
+            data.url
+          )
+        }}
+      />
+
+    </label>
+
+  </div>
+
+</div>
+
+{/* GALERIE */}
+
+<div className="mt-10">
+
+  <div
+    className="
+      mb-6
+      flex
+      items-center
+      justify-between
+    "
+  >
+
+    <h4
+      className="
+        text-2xl
+        font-bold
+        font-serif
+      "
+    >
+      Galerie photos
+    </h4>
+
+    <button
+      onClick={() =>
+        addGalleryImage(index)
+      }
+      className="
+        rounded-2xl
+        bg-[#2f241d]
+        px-5
+        py-3
+        text-white
+      "
+    >
+      Ajouter une photo
+    </button>
+
+  </div>
+
+  <div
+    className="
+      grid
+      gap-6
+      md:grid-cols-2
+      xl:grid-cols-3
+    "
+  >
+
+    {event.gallery.map(
+      (
+        photo,
+        photoIndex
+      ) => (
+
+        <div
+          key={photoIndex}
+          className="
+            rounded-3xl
+            bg-white
+            p-3
+            shadow
+          "
+        >
+
+          <div
+            className="
+              relative
+              mb-4
+              h-28
+              overflow-hidden
+              rounded-2xl
+            "
+          >
+
+            <Image
+              src={photo}
+              alt=""
+              fill
+              className="object-cover"
+            />
+
+          </div>
+
+          <label
+            className="
+              block
+              cursor-pointer
+              rounded-xl
+              bg-[#c89b5f]
+              px-4
+              py-3
+              text-center
+              text-white
+            "
+          >
+
+            Remplacer la photo
+
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) =>
+                uploadGalleryImage(
+                  e,
+                  index,
+                  photoIndex
+                )
+              }
+            />
+
+          </label>
+
+        </div>
+
+      )
+    )}
+
+  </div>
+
+</div>
 
                   </div>
-
-                  {/* GALERIE */}
-                  <div className="mt-10">
-
-                    <div className="
-                      mb-6
-                      flex
-                      items-center
-                      justify-between
-                    ">
-
-                      <h4 className="
-                        text-2xl
-                        font-bold
-                        font-serif
-                      ">
-                        Galerie photos
-                      </h4>
-
-                      <button
-                        onClick={() =>
-                          addGalleryImage(index)
-                        }
-                        className="
-                          rounded-2xl
-                          bg-[#2f241d]
-                          px-5
-                          py-3
-                          text-white
-                        "
-                      >
-                        Ajouter une photo
-                      </button>
-
-                    </div>
-
-                    <div className="space-y-4">
-
-                      {event.gallery.map(
-                        (
-                          photo,
-                          photoIndex
-                        ) => (
-
-                          <input
-                            key={photoIndex}
-                            type="text"
-                            value={photo}
-                            onChange={(e) =>
-                              updateGalleryImage(
-                                index,
-                                photoIndex,
-                                e.target.value
-                              )
-                            }
-                            className="
-                              w-full
-                              rounded-2xl
-                              border
-                              p-4
-                            "
-                          />
-
-                        )
-                      )}
-
-                    </div>
-
-                  </div>
-
-                </div>
 
               ))}
 

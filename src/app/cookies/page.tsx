@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 export default function CookiesPage() {
   return (
     <main className="max-w-4xl mx-auto px-6 py-16">
@@ -130,6 +131,8 @@ export default function CookiesPage() {
         </div>
 
       </section>
+
+      <Footer />
     </main>
   )
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import Footer from "@/components/Footer"
 
 import {
   motion,
@@ -175,7 +176,7 @@ export default function RestaurantPage() {
     {/* LOGO */}
 
     <Image
-  src="/images/logo2.png"
+  src="/images/logo1.png"
   alt="Logo Auberge St Aubin"
   width={208}
   height={208}
@@ -1124,51 +1125,7 @@ export default function RestaurantPage() {
       </motion.section>
       {/* FOOTER */}
 
-      <footer
-  className="
-    bg-[#1f1712]
-    px-6
-    py-10
-    text-center
-    text-white/70
-  "
->
-
-  <p className="mb-4">
-    © 2026 L&apos;Auberge de St Aubin — Tous droits réservés
-  </p>
-
-  <Link
-    href="/login"
-    className="
-      text-[11px]
-      text-white/20
-      transition
-      hover:text-white/50
-    "
-  >
-    administration
-  </Link>
-
-  <Link href="/mentions-legales">
-  Mentions légales
-</Link>
-
-<Link href="/confidentialite">
-  Confidentialité
-</Link>
-
-<Link href="/cgv">
-  CGV
-</Link>
-
-
-<Link href="/cookies">
-  Cookies
-</Link>
-
-
-</footer>
+      <Footer />
 
     </div>
   )

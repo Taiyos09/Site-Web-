@@ -1,3 +1,5 @@
+import Footer from "@/components/Footer";
+
 export default function MentionsLegalesPage() {
   return (
     <main className="max-w-4xl mx-auto px-6 py-16">
@@ -138,6 +140,9 @@ export default function MentionsLegalesPage() {
         </div>
 
       </section>
+        <Footer />
     </main>
+
+
   )
 }

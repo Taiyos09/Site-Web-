@@ -15,12 +15,7 @@ export async function POST(req: Request) {
     const reservation =
       await req.json()
 
-      console.log("RESERVATION DATA:", JSON.stringify(reservation, null, 2))
-console.log("ROOMS:", reservation.rooms)
-console.log(
-  "ROOMS:",
-  reservation.rooms
-)
+      
 
     /* =========================
    SETTINGS MYSQL
@@ -187,10 +182,7 @@ const litParapluiePrice =
         "logo2.png"
       )
 
-      console.log(logoPath)
-      console.log(
-     fs.existsSync(logoPath)
-    )
+     
 
     if (
       fs.existsSync(logoPath)
@@ -209,9 +201,7 @@ const litParapluiePrice =
 
       } catch (e) {
 
-        console.log(
-          "Logo error"
-        )
+       
       }
     }
 

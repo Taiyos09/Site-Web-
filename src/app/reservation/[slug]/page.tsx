@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import BookingCalendar from "@/components/hotel/BookingCalendar"
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Footer from "@/components/Footer"
 
 type Room = {
   id: number
@@ -299,51 +300,7 @@ setRoom(data)
 
       {/* FOOTER */}
 
-      <footer
-  className="
-    bg-[#1f1712]
-    px-6
-    py-10
-    text-center
-    text-white/70
-  "
->
-
-  <p className="mb-4">
-    © 2026 L&apos;Auberge de St Aubin — Tous droits réservés
-  </p>
-
-  <Link
-    href="/login"
-    className="
-      text-[11px]
-      text-white/20
-      transition
-      hover:text-white/50
-    "
-  >
-    administration
-  </Link>
-
-  <Link href="/mentions-legales">
-  Mentions légales
-</Link>
-
-<Link href="/confidentialite">
-  Confidentialité
-</Link>
-
-<Link href="/cgv">
-  CGV
-</Link>
-
-
-<Link href="/cookies">
-  Cookies
-</Link>
-
-
-</footer>
+      <Footer />
 
     </main>
 

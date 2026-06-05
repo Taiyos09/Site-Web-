@@ -57,6 +57,7 @@ export default function RestaurantSection() {
           src="/images/table.png"
           alt="Restaurant background"
           fill
+          sizes="100vw"
           className="object-cover"
         />
 
@@ -127,6 +128,7 @@ export default function RestaurantSection() {
                 src={image}
                 alt="Restaurant"
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
 

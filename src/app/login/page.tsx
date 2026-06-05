@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
@@ -19,11 +19,27 @@ export default function LoginPage() {
   const [error, setError] =
     useState("")
 
+  const [csrfToken, setCsrfToken] =
+    useState("")
+
+  // Récupérer le token CSRF au chargement
+  useEffect(() => {
+    fetch("/api/csrf")
+      .then(res => res.json())
+      .then(data => setCsrfToken(data.csrf_token))
+      .catch(() => setError("Erreur de chargement"))
+  }, [])
+
   const handleLogin = async (
     e: React.FormEvent
   ) => {
 
     e.preventDefault()
+
+    if (!csrfToken) {
+      setError("Token CSRF non disponible")
+      return
+    }
 
     setLoading(true)
     setError("")
@@ -41,28 +57,21 @@ export default function LoginPage() {
     body: JSON.stringify({
       username,
       password,
+      csrf_token: csrfToken,
     }),
   })
 
 if (!response.ok) {
 
-  alert("Nom d'utilisateur ou mot de passe incorrect")
+  const data = await response.json()
+  setError(data.error || "Nom d'utilisateur ou mot de passe incorrect")
+  setLoading(false)
   return
 }
 
 router.push("/admin")
 
-    if (error) {
-
-      setError("Nom d'utilisateur ou mot de passe incorrect")
-      setLoading(false)
-
-      return
-    }
-
     setLoading(false)
-
-    router.push("/admin")
   }
 
   return (
@@ -153,7 +162,7 @@ router.push("/admin")
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !csrfToken}
             className="
               w-full
               rounded-2xl
@@ -170,6 +179,8 @@ router.push("/admin")
 
             {loading
               ? "Connexion..."
+              : !csrfToken
+              ? "Chargement..."
               : "Se connecter"}
 
           </button>

@@ -17,7 +17,7 @@ export async function POST(
   try {
 
     const body = await req.json()
-    console.log("EMAIL BODY =", body)
+    
 
     const isConfirmed =
       body.status === "confirmed"
@@ -74,19 +74,29 @@ export async function POST(
 
             <div style="
               background:${color};
-              padding:40px;
+              padding:35px;
               text-align:center;
             ">
 
-            <img
-  src="https://image.noelshack.com/fichiers/2026/19/6/1778339311-logo2.jpg"
-  alt="Auberge Saint Aubin"
-  style="
-    width:180px;
-    margin-bottom:20px;
-    border-radius:12px;
-  "
-/>
+           <div style="
+  width:190px;
+  height:150px;
+  margin:0 auto 1px;
+  border-radius:12px;
+  background-image:url('https://image.noelshack.com/fichiers/2026/23/6/1780702412-logo1.jpg');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  position:relative;
+">
+  <div style="
+    position:absolute;
+    inset:0;
+    background:transparent;
+  "></div>
+</div>
+
+
 
               <h1 style="
                 color:white;
@@ -98,7 +108,7 @@ export async function POST(
 
               <p style="
                 color:white;
-                margin-top:15px;
+                margin-top:1px;
                 font-size:20px;
               ">
                 ${title}
@@ -107,7 +117,7 @@ export async function POST(
             </div>
 
             <div style="
-              padding:40px;
+              padding:20px;
               color:#2f241d;
             ">
 
@@ -124,6 +134,7 @@ export async function POST(
   background:#faf7f2;
   border-radius:20px;
   padding:25px;
+  text-align:center;
 ">
 
   <h3 style="
@@ -247,7 +258,7 @@ ${
       font-size:38px;
       color:#d6b17a;
     ">
-      ${body.total}€
+      ${body.total.toFixed(2)}€
     </h2>
 
   </div>
@@ -262,6 +273,7 @@ ${
 
 <p style="
   line-height:1.8;
+  text-align:center;
 ">
   Nous restons à votre disposition pour toute question.
 </p>
@@ -269,10 +281,12 @@ ${
 <p style="
   margin-top:25px;
   line-height:1.8;
+  text-align:center;
 ">
   Cordialement,<br>
 
   <strong>
+
     L'équipe de l'Auberge de Saint Aubin
   </strong><br>
 

@@ -6,10 +6,10 @@ import { useEffect, useState } from "react"
 
 import Navbar from "@/components/Navbar"
 import { RESTAURANT_CONFIG } from "@/data/restaurant"
-import { EVENTS } from "@/data/events"
 import Image from "next/image"
 import RestaurantSection from "@/components/RestaurantSection"
 import RoomsSection from "@/components/RoomsSection"
+import Footer from "@/components/Footer"
 
 const images = [
   "/images/image1.jpg",
@@ -23,7 +23,23 @@ export default function AubergeSaintAubinHomepage() {
     useState(0)
 
   const [eventsData, setEventsData] =
-    useState(EVENTS)
+    useState<any[]>([])
+
+  useEffect(() => {
+
+  fetch("/api/events")
+
+    .then((res) => res.json())
+
+    .then((data) => {
+
+      setEventsData(data)
+
+    })
+
+    .catch(console.error)
+
+}, [])
 
   const [restaurantConfig, setRestaurantConfig] =
     useState(RESTAURANT_CONFIG)
@@ -236,7 +252,7 @@ export default function AubergeSaintAubinHomepage() {
     {/* LOGO */}
 
     <Image
-  src="/images/logo2.png"
+  src="/images/logo1.png"
   alt="Logo Auberge St Aubin"
   width={208}
   height={208}
@@ -790,9 +806,16 @@ export default function AubergeSaintAubinHomepage() {
               xl:grid-cols-3
             "
           >
+            {eventsData.length === 0 && (
 
-            {eventsData.map(
-              (event, index) => (
+  <div className="text-center text-white/70">
+
+    Aucun événement programmé.
+
+  </div>
+
+)}
+            {eventsData.map((event, index) => (
 
                 <div
                   key={index}
@@ -817,12 +840,15 @@ export default function AubergeSaintAubinHomepage() {
 >
 
   <Image
-    src={event.image}
-    alt={event.title}
-    fill
-    className="object-cover"
-    sizes="(max-width: 768px) 100vw, 33vw"
-  />
+  src={
+    event.image ||
+    "/images/event-default.jpg"
+  }
+  alt={event.title}
+  fill
+  className="object-cover"
+  sizes="(max-width: 768px) 100vw, 33vw"
+/>
 
 </div>
 
@@ -1143,51 +1169,7 @@ export default function AubergeSaintAubinHomepage() {
 
       {/* FOOTER */}
 
-      <footer
-  className="
-    bg-[#1f1712]
-    px-6
-    py-10
-    text-center
-    text-white/70
-  "
->
-
-  <p className="mb-4">
-    © 2026 L&apos;Auberge de St Aubin — Tous droits réservés
-  </p>
-
-  <Link
-    href="/login"
-    className="
-      text-[11px]
-      text-white/20
-      transition
-      hover:text-white/50
-    "
-  >
-    administration
-  </Link>
-
-  <Link href="/mentions-legales">
-  Mentions légales
-</Link>
-
-<Link href="/confidentialite">
-  Confidentialité
-</Link>
-
-<Link href="/cgv">
-  CGV
-</Link>
-
-
-<Link href="/cookies">
-  Cookies
-</Link>
-
-
-</footer>
+      <Footer />
 
     </div>
   )

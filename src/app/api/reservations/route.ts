@@ -5,12 +5,44 @@ import {
   NextRequest,
   NextResponse,
 } from "next/server"
+import { z } from "zod"
+import { requireAuth, unauthorizedResponse } from "@/lib/auth"
+
+// Schéma de validation Zod
+const reservationSchema = z.object({
+  arrival: z.string().min(1, "Date d'arrivée requise"),
+  departure: z.string().min(1, "Date de départ requise"),
+  roomSlug: z.string().min(1, "Slug de chambre requis"),
+  roomName: z.string().min(1, "Nom de chambre requis"),
+  roomIds: z.array(z.number()).min(1, "Au moins une chambre requise"),
+  first_name: z.string().min(1, "Prénom requis").max(100),
+  last_name: z.string().min(1, "Nom requis").max(100),
+  email: z.string().email("Email invalide").max(255),
+  phone: z.string().min(1, "Téléphone requis").max(20),
+  adults: z.number().min(1, "Au moins un adulte requis").max(20),
+  children: z.number().min(0).max(20),
+  babies: z.number().min(0).max(10),
+  litParapluie: z.boolean().optional(),
+  message: z.string().optional(),
+  pets: z.boolean().optional(),
+  lunch: z.boolean().optional(),
+  dinner: z.boolean().optional(),
+  total: z.number().min(0, "Total invalide"),
+  status: z.string().optional(),
+})
 
 /* =========================
    GET RESERVATIONS
 ========================= */
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+
+  // Vérifier l'authentification
+  const auth = await requireAuth(request)
+  
+  if (!auth) {
+    return unauthorizedResponse()
+  }
 
   try {
 
@@ -120,67 +152,43 @@ export async function POST(
     const body =
       await request.json()
 
-    console.log(
-      "BODY:",
-      body
-    )
+    // Validation des inputs avec Zod
+    const validationResult = reservationSchema.safeParse(body)
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Données invalides",
+          details: validationResult.error.issues,
+        },
+        {
+          status: 400,
+        }
+      )
+    }
 
-    const arrival =
-      body.arrival
+    const data = validationResult.data
 
-    const departure =
-      body.departure
-
-    const roomSlug =
-      body.roomSlug
-
-    const roomName =
-      body.roomName
-
-    const roomIds =
-      body.roomIds
-
-    const first_name =
-      body.first_name
-
-    const last_name =
-      body.last_name
-
-    const email =
-      body.email
-
-    const phone =
-      body.phone
-
-    const adults =
-  body.adults
-
-const children =
-  body.children
-
-const babies =
-  body.babies
-
-const litParapluie =
-  body.litParapluie
-
-    const message =
-      body.message
-
-    const pets =
-      body.pets
-
-    const lunch =
-      body.lunch
-
-    const dinner =
-      body.dinner
-
-    const total =
-      body.total
-
-    const status =
-      body.status
+    const arrival = data.arrival
+    const departure = data.departure
+    const roomSlug = data.roomSlug
+    const roomName = data.roomName
+    const roomIds = data.roomIds
+    const first_name = data.first_name
+    const last_name = data.last_name
+    const email = data.email
+    const phone = data.phone
+    const adults = data.adults
+    const children = data.children
+    const babies = data.babies
+    const litParapluie = data.litParapluie
+    const message = data.message
+    const pets = data.pets
+    const lunch = data.lunch
+    const dinner = data.dinner
+    const total = data.total
+    const status = data.status
 
     /* =========================
        CRÉATION RÉSERVATION
@@ -231,10 +239,7 @@ dinner:
         },
       })
 
-    console.log(
-      "RESERVATION CREATED:",
-      reservation.id
-    )
+   //Réservation crée avec succès
 
     /* =========================
        BLOQUER LES DATES
@@ -251,23 +256,7 @@ dinner:
 
     while (current < end) {
 
-      console.log({
-
-        room_slug:
-          roomSlug,
-
-        date:
-          new Date(current),
-
-        reason:
-          "reservation",
-
-        from_date:
-          new Date(arrival),
-
-        to_date:
-          new Date(departure),
-      })
+      
 
       await prisma.blocked_dates.create({
 

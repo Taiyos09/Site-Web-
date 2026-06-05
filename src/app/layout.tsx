@@ -3,6 +3,7 @@ import "./globals.css"
 import Script from "next/script"
 
 import Navbar from "@/components/Navbar"
+import CookieBanner from "@/components/CookieBanner"
 
 import {
   Libre_Baskerville,
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-[#f5f1ea] text-[#2f241d] font-sans">
         <Navbar />
         {children}
+        <CookieBanner />
         <Script
   type="application/ld+json"
   dangerouslySetInnerHTML={{

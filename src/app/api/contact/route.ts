@@ -1,5 +1,13 @@
 import { NextResponse } from "next/server"
 import nodemailer from "nodemailer"
+import { z } from "zod"
+
+// Schéma de validation Zod
+const contactSchema = z.object({
+  name: z.string().min(1, "Nom requis").max(100),
+  email: z.string().email("Email invalide").max(255),
+  message: z.string().min(1, "Message requis").max(5000),
+})
 
 export async function POST(req: Request) {
 
@@ -7,7 +15,23 @@ export async function POST(req: Request) {
 
     const body = await req.json()
 
-    const { name, email, message } = body
+    // Validation des inputs avec Zod
+    const validationResult = contactSchema.safeParse(body)
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Données invalides",
+          details: validationResult.error.issues,
+        },
+        {
+          status: 400,
+        }
+      )
+    }
+
+    const { name, email, message } = validationResult.data
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -167,7 +191,7 @@ export async function POST(req: Request) {
         "
       >
         Message envoyé depuis le formulaire de contact
-        du site de l’Auberge de St Aubin.
+        du site de l'Auberge de St Aubin.
       </div>
 
     </div>
@@ -193,4 +217,4 @@ export async function POST(req: Request) {
       }
     )
   }
-} 
+}

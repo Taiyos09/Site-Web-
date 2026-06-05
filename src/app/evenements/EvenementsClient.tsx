@@ -2,15 +2,31 @@
 
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { EVENTS } from "@/data/events"
 import Image from "next/image"
+import Footer from "@/components/Footer"
 
 export default function EvenementsPage() {
 
-  const [eventsData, setEventsData] = useState(EVENTS)
+  const [eventsData, setEventsData] = useState<any[]>([])
 const [currentImage, setCurrentImage] = useState(0)
 
   useEffect(() => {
+
+  fetch("/api/events")
+
+    .then((res) => res.json())
+
+    .then((data) => {
+
+      setEventsData(data)
+
+    })
+
+    .catch(console.error)
+
+}, [])
+
+useEffect(() => {
 
   const interval = setInterval(() => {
 
@@ -26,10 +42,7 @@ const [currentImage, setCurrentImage] = useState(0)
   <div
   className="
     relative
-    h-screen
-    snap-y
-    snap-mandatory
-    overflow-y-scroll
+    min-h-screen
     scroll-smooth
     text-[#2f241d]
   "
@@ -58,7 +71,7 @@ const [currentImage, setCurrentImage] = useState(0)
       <div className="fixed inset-0 -z-10 bg-black/45" />
 
       {/* HERO */}
-      <section className="relative snap-start flex min-h-screen items-center justify-center text-white">
+      <section className="relative flex min-h-[70vh] items-center justify-center text-white">
 
         <div className="relative z-10 px-6 text-center">
 
@@ -98,7 +111,16 @@ const [currentImage, setCurrentImage] = useState(0)
 
           <div
             key={index}
-            className="snap-start min-h-screen overflow-hidden rounded-[40px] bg-white/92 shadow-2xl backdrop-blur-sm flex flex-col justify-start"
+            className="
+  overflow-hidden
+  rounded-[40px]
+  bg-white/92
+  shadow-2xl
+  backdrop-blur-sm
+  flex
+  flex-col
+  justify-start
+"
           >
 
             {/* IMAGE HERO */}
@@ -172,26 +194,18 @@ const [currentImage, setCurrentImage] = useState(0)
 
                   <Image
   src={
-    typeof event.gallery[
+    event.gallery[
       currentImage % event.gallery.length
-    ] === "string"
-
-      ? event.gallery[
-          currentImage % event.gallery.length
-        ]
-
-      : event.gallery[
-          currentImage % event.gallery.length
-        ]
+    ]
   }
   alt={event.title}
   fill
+  sizes="(max-width: 768px) 100vw, 360px"
   className="
     object-cover
     transition-all
     duration-500
   "
-  sizes="(max-width: 768px) 100vw, 360px"
 />
 
                 </div>
@@ -217,51 +231,7 @@ const [currentImage, setCurrentImage] = useState(0)
 
       {/* FOOTER */}
 
-      <footer
-  className="
-    bg-[#1f1712]
-    px-6
-    py-10
-    text-center
-    text-white/70
-  "
->
-
-  <p className="mb-4">
-    © 2026 L&apos;Auberge de St Aubin — Tous droits réservés
-  </p>
-
-  <Link
-    href="/login"
-    className="
-      text-[11px]
-      text-white/20
-      transition
-      hover:text-white/50
-    "
-  >
-    administration
-  </Link>
-
-  <Link href="/mentions-legales">
-  Mentions légales
-</Link>
-
-<Link href="/confidentialite">
-  Confidentialité
-</Link>
-
-<Link href="/cgv">
-  CGV
-</Link>
-
-
-<Link href="/cookies">
-  Cookies
-</Link>
-
-
-</footer>
+      <Footer />
     </div>
     
   )

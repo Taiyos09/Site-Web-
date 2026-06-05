@@ -30,17 +30,6 @@ model blocked_dates {
   to_date   DateTime?
 }
 
-model events {
-  id          Int      @id @default(autoincrement())
-  title       String
-  date        String
-  description String
-  image       String
-  gallery     String   // JSON array of image paths
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
 model hotel_settings {
   id               Int      @id @default(autoincrement())
   key              String   @unique
@@ -87,6 +76,17 @@ model reservations {
   updatedAt     DateTime @updatedAt
 
   rooms         reservation_rooms[]
+}
+
+model events {
+  id          Int      @id @default(autoincrement())
+  title       String
+  date        String
+  description String
+  image       String
+  gallery     String   // JSON array of image paths
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model rooms {

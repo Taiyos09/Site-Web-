@@ -34,6 +34,51 @@ type HotelSettings = {
 }
 
 export default function HotelAdminPage() {
+
+  const uploadRoomImage = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+  roomId: string,
+  imageIndex: number
+) => {
+
+  const file =
+    e.target.files?.[0]
+
+  if (!file) return
+
+  const formData =
+    new FormData()
+
+  formData.append(
+    "file",
+    file
+  )
+
+  const res =
+    await fetch(
+      "/api/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    )
+
+  const data =
+    await res.json()
+
+  const field =
+    imageIndex === 0
+      ? "image_1"
+      : imageIndex === 1
+      ? "image_2"
+      : "image_3"
+
+  handleRoomChange(
+    roomId,
+    field as keyof Room,
+    data.url
+  )
+}
   
   const [rooms, setRooms] =
     useState<Room[]>([])
@@ -82,6 +127,7 @@ export default function HotelAdminPage() {
         .map((img: string) =>
           img.trim()
         )
+
 
     return {
 
@@ -761,64 +807,109 @@ setRooms(formattedRooms)
                   </div>
                 </div>
 
-                <div className="grid gap-4">
-                  <input
-                    type="text"
-                    value={room.image_1 || ""}
-                    onChange={(e) =>
-                      handleRoomChange(
-                        room.id,
-                        "image_1",
-                        e.target.value
-                      )
-                    }
-                    placeholder="Image 1"
-                    className="
-                      w-full
-                      rounded-2xl
-                      border
-                      p-4
-                    "
-                  />
+                <div className="mt-6">
 
-                  <input
-                    type="text"
-                    value={room.image_2 || ""}
-                    onChange={(e) =>
-                      handleRoomChange(
-                        room.id,
-                        "image_2",
-                        e.target.value
-                      )
-                    }
-                    placeholder="Image 2"
-                    className="
-                      w-full
-                      rounded-2xl
-                      border
-                      p-4
-                    "
-                  />
+  <h3 className="mb-6 text-2xl font-bold">
+    Galerie photos
+  </h3>
 
-                  <input
-                    type="text"
-                    value={room.image_3 || ""}
-                    onChange={(e) =>
-                      handleRoomChange(
-                        room.id,
-                        "image_3",
-                        e.target.value
-                      )
-                    }
-                    placeholder="Image 3"
-                    className="
-                      w-full
-                      rounded-2xl
-                      border
-                      p-4
-                    "
-                  />
-                </div>
+  <div className="grid gap-6 md:grid-cols-3">
+
+    {[
+      room.image_1,
+      room.image_2,
+      room.image_3,
+    ].map((image, imageIndex) => (
+
+      <div
+        key={imageIndex}
+        className="
+          rounded-3xl
+          bg-[#faf7f2]
+          p-4
+          shadow-md
+        "
+      >
+
+        <div
+          className="
+            relative
+            h-48
+            overflow-hidden
+            rounded-2xl
+            border
+          "
+        >
+
+          {image ? (
+
+            <img
+              src={image}
+              alt=""
+              className="
+                h-full
+                w-full
+                object-cover
+              "
+            />
+
+          ) : (
+
+            <div
+              className="
+                flex
+                h-full
+                items-center
+                justify-center
+                text-sm
+                text-gray-400
+              "
+            >
+              Aucune image
+            </div>
+
+          )}
+
+        </div>
+
+        <label
+          className="
+            mt-4
+            block
+            cursor-pointer
+            rounded-2xl
+            bg-[#2f241d]
+            px-4
+            py-3
+            text-center
+            font-semibold
+            text-white
+          "
+        >
+          Choisir une image
+
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) =>
+              uploadRoomImage(
+                e,
+                room.id,
+                imageIndex
+              )
+            }
+          />
+
+        </label>
+
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
               </div>
             </div>
           </section>
