@@ -1,13 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
-  url = "mysql://root:@localhost:3306/auberge_saint_aubin"
+  url      = "mysql://root:@localhost:3306/auberge_saint_aubin"
 }
 
 model admins {
@@ -20,62 +17,57 @@ model admins {
 }
 
 model blocked_dates {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   date      DateTime
   reason    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   room_slug String?
   from_date DateTime?
   to_date   DateTime?
 }
 
 model hotel_settings {
-  id               Int      @id @default(autoincrement())
-  key              String   @unique
-  value            String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  lit_parapluie Float @default(5)
+  id            Int      @id @default(autoincrement())
+  key           String   @unique
+  value         String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lit_parapluie Float    @default(5)
 }
 
 model reservation_rooms {
-  id            Int      @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   reservationId Int
   roomId        Int
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
   reservation   reservations @relation(fields: [reservationId], references: [id])
-  room          rooms       @relation(fields: [roomId], references: [id])
+  room          rooms        @relation(fields: [roomId], references: [id])
+
+  @@index([reservationId], map: "reservation_rooms_reservationId_fkey")
+  @@index([roomId], map: "reservation_rooms_roomId_fkey")
 }
 
 model reservations {
-  id            Int      @id @default(autoincrement())
-  name          String
-  email         String
-  phone         String
-
-  arrival       DateTime
-  departure     DateTime
-
-  adults        Int
-  children      Int @default(0)
-  babies        Int @default(0)
-
-  pets          Boolean @default(false)
-  lunch         Boolean @default(false)
-  dinner        Boolean @default(false)
-
-  litParapluie  Boolean @default(false)
-
-  total         Float
-  status        String   @default("pending")
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  rooms         reservation_rooms[]
+  id           Int                 @id @default(autoincrement())
+  name         String
+  email        String
+  phone        String
+  arrival      DateTime
+  departure    DateTime
+  adults       Int
+  children     Int                 @default(0)
+  babies       Int                 @default(0)
+  litParapluie Boolean             @default(false)
+  total        Float
+  status       String              @default("pending")
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  dinner       Boolean             @default(false)
+  lunch        Boolean             @default(false)
+  pets         Boolean             @default(false)
+  rooms        reservation_rooms[]
 }
 
 model events {
@@ -84,23 +76,23 @@ model events {
   date        String
   description String
   image       String
-  gallery     String   // JSON array of image paths
+  gallery     String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model rooms {
-  id              Int      @id @default(autoincrement())
+  id              Int                 @id @default(autoincrement())
   name            String
-  slug            String   @unique
+  slug            String              @unique
   size            String
   description     String
-  images          String   // JSON array of image paths
+  images          String
+  capacity        Int @default(2)
   priceOnePerson  Int
   priceTwoPeople  Int
   priceDoubleRoom Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
   reservations    reservation_rooms[]
 }

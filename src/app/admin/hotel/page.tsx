@@ -9,6 +9,8 @@ type Room = {
   description: string
   size: string
 
+  capacity: number
+
   priceOnePerson: number
   priceTwoPeople: number
 
@@ -88,6 +90,9 @@ export default function HotelAdminPage() {
 
   const [loading, setLoading] =
     useState(true)
+
+  const [savedRoom, setSavedRoom] =
+  useState<string | null>(null)
 
   const [savingRoom, setSavingRoom] =
     useState<string | null>(null)
@@ -205,6 +210,8 @@ setRooms(formattedRooms)
               room.description,
             size: room.size,
 
+            capacity: room.capacity,
+
             one_person_price:
               room.priceOnePerson,
 
@@ -225,9 +232,11 @@ setRooms(formattedRooms)
       return
     }
 
-    alert(
-      `Chambre "${room.name}" sauvegardée`
-    )
+   setSavedRoom(room.id)
+
+setTimeout(() => {
+  setSavedRoom(null)
+}, 3000)
 
   } catch (error) {
 
@@ -620,28 +629,35 @@ setRooms(formattedRooms)
               </div>
 
               <button
-                onClick={() =>
-                  saveRoom(room)
-                }
-                disabled={
-                  savingRoom === room.id
-                }
-                className="
-                  rounded-2xl
-                  bg-[#2f241d]
-                  px-6
-                  py-3
-                  font-bold
-                  text-white
-                  transition
-                  hover:opacity-90
-                  disabled:opacity-50
-                "
-              >
-                {savingRoom === room.id
-                  ? "Sauvegarde..."
-                  : "Sauvegarder"}
-              </button>
+  onClick={() =>
+    saveRoom(room)
+  }
+  disabled={
+    savingRoom === room.id
+  }
+  className={`
+    rounded-2xl
+    px-6
+    py-3
+    font-bold
+    text-white
+    transition-all
+    duration-300
+    disabled:opacity-50
+
+    ${
+      savedRoom === room.id
+        ? "bg-green-600"
+        : "bg-[#2f241d]"
+    }
+  `}
+>
+  {savingRoom === room.id
+    ? "Sauvegarde..."
+    : savedRoom === room.id
+    ? "✅ Sauvegardé"
+    : "💾 Sauvegarder"}
+</button>
             </div>
 
             <div
@@ -706,6 +722,29 @@ setRooms(formattedRooms)
                         room.id,
                         "size",
                         e.target.value
+                      )
+                    }
+                    className="
+                      w-full
+                      rounded-2xl
+                      border
+                      p-4
+                    "
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block font-bold">
+                    Capacité
+                  </label>
+
+                  <input
+                    type="text"
+                    value={room.capacity}
+                    onChange={(e) =>
+                      handleRoomChange(
+                        room.id,
+                        "capacity",
+                        Number(e.target.value)
                       )
                     }
                     className="

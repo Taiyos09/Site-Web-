@@ -5,11 +5,19 @@ import { NextResponse } from "next/server"
 export async function GET() {
 
   const rooms =
-    await prisma.rooms.findMany({
-      orderBy: {
-        name: "asc",
+  await prisma.rooms.findMany({
+    include: {
+      reservations: {
+        include: {
+          reservation: true,
+        },
       },
-    })
+    },
+
+    orderBy: {
+      name: "asc",
+    },
+  })
 
   const formattedRooms =
     rooms.map((room) => {

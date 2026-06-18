@@ -15,6 +15,7 @@ type Props = {
   roomName: string
   roomSlug: string
   roomId: number
+  roomCapacity: number
 }
 
 export default function BookingCalendar({
@@ -24,13 +25,11 @@ export default function BookingCalendar({
   roomName,
   roomSlug,
   roomId,
-
+  roomCapacity
 }: Props) {
 
   const maxPeople =
-    roomSlug === "standard"
-      ? 3
-      : 4
+  roomCapacity
 
   const [range, setRange] =
     useState<DateRange | undefined>()
@@ -316,7 +315,7 @@ const occupancy =
 
           onSelect={setRange}
 
-          numberOfMonths={2}
+          numberOfMonths={1}
 
           locale={fr}
 
@@ -462,11 +461,11 @@ const occupancy =
             Nombre de personnes
           </label>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-3 gap-3">
 
   <div>
 
-    <label className="mb-2 block font-medium">
+    <label className="mb-1 block text-sm font-medium">
       Adultes
     </label>
 
@@ -479,27 +478,32 @@ const occupancy =
       }
       className="
         w-full
-        rounded-2xl
+        rounded-xl
         border
-        p-4
+        p-2
       "
     >
-      {[1,2,3,4].map((n) => (
-        <option
-          key={n}
-          value={n}
-        >
-          {n} adulte{n > 1 ? "s" : ""}
-        </option>
-      ))}
+      {Array.from(
+  { length: maxPeople },
+  (_, i) => i + 1
+).map((n) => (
+
+  <option
+    key={n}
+    value={n}
+  >
+    {n} adulte{n > 1 ? "s" : ""}
+  </option>
+
+))}
     </select>
 
   </div>
 
   <div>
 
-    <label className="mb-2 block font-medium">
-      Enfants (2 ans et +)
+    <label className="mb-1 block text-sm font-medium">
+      Enfants (2 ans +)
     </label>
 
     <select
@@ -511,12 +515,15 @@ const occupancy =
       }
       className="
         w-full
-        rounded-2xl
+        rounded-xl
         border
-        p-4
+        p-2
       "
     >
-      {[0,1,2,3].map((n) => (
+      {Array.from(
+  { length: maxPeople + 1 },
+  (_, i) => i
+).map((n) => (
         <option
           key={n}
           value={n}
@@ -530,8 +537,8 @@ const occupancy =
 
   <div>
 
-    <label className="mb-2 block font-medium">
-      Bébés (-2 ans)
+    <label className="mb-1 block text-sm font-medium">
+      Bébés (- 2 ans)
     </label>
 
     <select
@@ -545,7 +552,7 @@ const occupancy =
         w-full
         rounded-2xl
         border
-        p-4
+        p-2
       "
     >
       {[0,1,2].map((n) => (
@@ -569,8 +576,23 @@ const occupancy =
     text-[#7a6a5d]
   "
 >
-  Occupation :
-  {occupancy} / {maxPeople} personnes
+  {maxPeople > 2 && (
+
+  <p
+    className="
+      mt-2
+      text-sm
+      text-[#7a6a5d]
+    "
+  >
+    - Au-delà de 2 personnes,
+    un supplément de {settings?.extra_bed || 15} €
+    par personne et par nuit
+    est appliqué.
+  </p>
+
+)}
+
 </p>
 
 <p
@@ -579,12 +601,12 @@ const occupancy =
     text-[#7a6a5d]
   "
 >
-  Les bébés de moins de 2 ans sont accueillis gratuitement.
+  - Les bébés de moins de 2 ans sont accueillis gratuitement.
 </p>
 
           {/* OPTIONS */}
 
-<div className="space-y-4">
+<div className="grid gap-3">
 
   {/* MIDI */}
 
@@ -604,11 +626,11 @@ const occupancy =
 
     <div>
 
-      <p className="font-semibold">
+      <p className="text-sm font-semibold">
         🍽️ Repas midi
       </p>
 
-      <p className="text-sm text-[#7a6a5d]">
+      <p className="text-xs text-[#7a6a5d]">
         +{settings?.lunch || 15}€
         / personne
       </p>
@@ -646,11 +668,11 @@ const occupancy =
 
     <div>
 
-      <p className="font-semibold">
+      <p className="text-sm font-semibold">
         🌙 Repas soir
       </p>
 
-      <p className="text-sm text-[#7a6a5d]">
+      <p className="text-xs text-[#7a6a5d]">
         +{settings?.dinner || 20}€
         / personne
       </p>
@@ -688,11 +710,11 @@ const occupancy =
 
     <div>
 
-      <p className="font-semibold">
+      <p className="text-sm font-semibold">
         🐶 Animal
       </p>
 
-      <p className="text-sm text-[#7a6a5d]">
+      <p className="text-xs text-[#7a6a5d]">
         +{settings?.pet || 5}€
         / nuit
       </p>
@@ -730,11 +752,11 @@ const occupancy =
 
     <div>
 
-      <p className="font-semibold">
+      <p className="text-sm font-semibold">
         👶 Lit parapluie
       </p>
 
-      <p className="text-sm text-[#7a6a5d]">
+      <p className="text-xs text-[#7a6a5d]">
         +{settings?.litParapluie || 5}€
       </p>
 
@@ -769,6 +791,50 @@ const occupancy =
   "
 >
 
+{extraPeople > 0 && (
+
+  <div
+    className="
+      mb-4
+      rounded-2xl
+      border
+      border-[#d6b98c]
+      bg-[#f8f2e8]
+      p-4
+      text-sm
+      text-[#6b5b4f]
+    "
+  >
+    <p className="text-sm font-semibold">
+  🛏️ {
+    extraPeople > 1
+      ? "Personnes supplémentaires"
+      : "Personne supplémentaire"
+  }
+</p>
+
+    <p className="mt-1">
+  {extraPeople} {
+    extraPeople > 1
+      ? "personnes supplémentaires"
+      : "personne supplémentaire"
+  } ×
+  {settings?.extra_bed || 15}€
+  × {nights} {
+    nights > 1
+      ? "nuits"
+      : "nuit"
+  }
+</p>
+
+    <p className="mt-2 font-bold">
+      Supplément :
+      {extraBedTotal.toFixed(2)}€
+    </p>
+  </div>
+
+)}
+
   <div
     className="
       mb-4
@@ -800,7 +866,7 @@ const occupancy =
 )}
 
   <button
-
+  disabled={occupancy > maxPeople}
   onClick={() => {
 
     if (

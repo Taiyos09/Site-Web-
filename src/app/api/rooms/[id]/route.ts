@@ -36,6 +36,9 @@ export async function PUT(
         body.description,
 
       size: body.size,
+      
+      capacity: Number(body.capacity),
+
 
       priceOnePerson:
         body.one_person_price,

@@ -12,6 +12,7 @@ type Room = {
   slug: string
   size: string
   description: string
+  capacity: number
 
   one_person_price: number
   two_people_price: number
@@ -85,6 +86,8 @@ if (!data) {
 
   setRoom(null)
 
+  console.log(room)
+
   return
 }
 
@@ -104,6 +107,7 @@ setRoom(data)
 
   if (loading) {
 
+console.log(room)
     return (
       <div className="
         flex
@@ -120,7 +124,7 @@ setRoom(data)
   if (!room) {
     notFound()
   }
-
+console.log(room)
   return (
 
     <main className="
@@ -131,77 +135,84 @@ setRoom(data)
 
       {/* HERO */}
 
-      <section className="
-        relative
-        h-[45vh]
-        overflow-hidden
-      ">
+      <section
+  className="
+    relative
+    h-[260px]
+    overflow-hidden
+  "
+>
+  <img
+    src={room.images?.[0]}
+    alt={room.name}
+    className="
+      absolute
+      inset-0
+      h-full
+      w-full
+      object-cover
+    "
+  />
 
-        <img
-          src={room.images?.[0]}
-          alt={room.name}
-          className="
-            absolute
-            inset-0
-            h-full
-            w-full
-            object-cover
-          "
-        />
+  <div className="absolute inset-0 bg-black/55" />
 
-        <div className="
-          absolute
-          inset-0
-          bg-black/50
-        " />
+  <div
+    className="
+      relative
+      z-10
+      flex
+      h-full
+      items-center
+      justify-center
+      text-center
+      px-6
+    "
+  >
+    <div>
 
-        <div className="
-          relative
-          z-10
-          flex
-          h-full
-          items-end
-        ">
+      <p
+        className="
+          mb-2
+          uppercase
+          tracking-[0.3em]
+          text-[#d6b98c]
+        "
+      >
+        Auberge de St Aubin
+      </p>
 
-          <div className="
-            mx-auto
-            w-full
-            max-w-[1600px]
-            px-8
-            pb-16
-          ">
+      <h1
+        className="
+          font-serif
+          text-4xl
+          md:text-6xl
+          font-bold
+          text-white
+        "
+      >
+        Réserver votre séjour
+      </h1>
 
-            <h1 className="
-              font-serif
-              text-5xl
-              font-bold
-              text-white
-              md:text-7xl
-            ">
-              Réservation
-            </h1>
+      <p
+        className="
+          mt-3
+          text-white/90
+        "
+      >
+        {room.name} • {room.size}
+      </p>
 
-            <p className="
-              mt-4
-              text-xl
-              text-white/90
-            ">
-              {room.name}
-            </p>
-
-          </div>
-
-        </div>
-
-      </section>
+    </div>
+  </div>
+</section>
 
       {/* CONTENU */}
 
       <section className="
         mx-auto
-        max-w-[1600px]
-        px-8
-        py-20
+        max-w-[1300px]
+        px-6
+        py-12
       ">
 
         <div className="
@@ -212,60 +223,118 @@ setRoom(data)
 
           {/* GAUCHE */}
 
-          <div>
+          {/* GAUCHE */}
 
-            <div className="
-  overflow-hidden
-  rounded-[36px]
-  bg-white
-  shadow-[0_20px_60px_rgba(0,0,0,0.08)]
+<div className="space-y-8">
 
-  lg:sticky
-  lg:top-24
-">
+  {/* GALERIE */}
 
-              <img
-                src={room.images?.[1] || room.images?.[0]}
-                alt={room.name}
-                className="
-                  h-[420px]
-                  w-full
-                  object-cover
-                "
-              />
+  <div className="grid gap-4">
 
-              <div className="p-10">
+    <img
+      src={room.images?.[0]}
+      alt={room.name}
+      className="
+        h-[420px]
+        w-full
+        rounded-[32px]
+        object-cover
+        shadow-xl
+      "
+    />
 
-                <h2 className="
-                  mb-6
-                  font-serif
-                  text-4xl
-                  font-bold
-                ">
-                  {room.name}
-                </h2>
+    <div className="grid grid-cols-2 gap-4">
 
-                <p className="
-                  mb-4
-                  text-lg
-                  text-[#8a6330]
-                ">
-                  {room.size}
-                </p>
+      {room.images?.slice(1, 3).map(
+        (img, index) => (
 
-                <p className="
-                  text-lg
-                  leading-relaxed
-                  text-[#5a4c42]
-                ">
-                  {room.description}
-                </p>
+          <img
+            key={index}
+            src={img}
+            alt={room.name}
+            className="
+              h-[180px]
+              w-full
+              rounded-[24px]
+              object-cover
+              shadow-lg
+            "
+          />
 
-              </div>
+        )
+      )}
 
-            </div>
+    </div>
 
-          </div>
+  </div>
+
+  {/* FICHE CHAMBRE */}
+
+  <div
+    className="
+      rounded-[32px]
+      bg-white
+      p-8
+      shadow-xl
+    "
+  >
+
+    <div className="flex items-center gap-4 mb-4">
+
+      <span
+        className="
+          rounded-full
+          bg-[#f2e7d7]
+          px-4
+          py-2
+          text-sm
+          font-semibold
+          text-[#8a6330]
+        "
+      >
+        {room.size}
+      </span>
+
+      <span
+        className="
+          rounded-full
+          bg-[#f2e7d7]
+          px-4
+          py-2
+          text-sm
+          font-semibold
+          text-[#8a6330]
+        "
+      >
+        Jusqu'à {room.capacity} personnes
+      </span>
+
+    </div>
+
+    <h2
+      className="
+        mb-4
+        font-serif
+        text-4xl
+        font-bold
+      "
+    >
+      {room.name}
+    </h2>
+
+    <p
+      className="
+        text-lg
+        leading-relaxed
+        text-[#5a4c42]
+      "
+    >
+      {room.description}
+    </p>
+
+  </div>
+
+</div>
 
           {/* DROITE */}
 
@@ -290,6 +359,8 @@ setRoom(data)
   roomName={room.name}
 
   roomSlug={room.slug}
+  
+  roomCapacity={room.capacity}
 />
 
           </div>

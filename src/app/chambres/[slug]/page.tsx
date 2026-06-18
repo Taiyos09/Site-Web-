@@ -11,6 +11,7 @@ import {
   Briefcase,
   Ruler,
 } from "lucide-react"
+import Footer from "@/components/Footer"
 
 type Props = {
   params: Promise<{
@@ -66,7 +67,14 @@ if (!room) {
 
       {/* HERO */}
 
-      <section className="relative h-[72vh] overflow-hidden">
+      <section
+  className="
+    relative
+    h-[220px]
+    md:h-[80px]
+    overflow-hidden
+  "
+>
 
         <Image
           src={images[0]}
@@ -77,23 +85,17 @@ if (!room) {
 
         <div className="absolute inset-0 bg-black/45" />
 
-        <div className="relative z-10 flex h-full items-end">
-
-          <div className="mx-auto w-full max-w-[1700px] px-8 pb-20">
-
-            <div className="max-w-3xl">
-
-              <p className="mb-4 text-lg uppercase tracking-[0.3em] text-[#d6b98c]">
-                Auberge de St Aubin
-              </p>
-
-              <h1 className="mb-6 font-serif text-6xl font-bold text-white md:text-8xl">
-                {room.name}
-              </h1>
-
-            </div>
-
-          </div>
+        <div
+  className="
+    relative
+    z-10
+    flex
+    h-full
+    items-center
+    justify-center
+    text-center
+  "
+>
 
         </div>
 
@@ -101,7 +103,7 @@ if (!room) {
 
       {/* CONTENU */}
 
-      <section className="mx-auto max-w-[1700px] px-8 py-24">
+      <section className="mx-auto max-w-[1400px] px-6 py-10">
 
         <div className="grid gap-20 xl:grid-cols-[1.4fr_500px]">
 
@@ -144,8 +146,8 @@ if (!room) {
                         hover:scale-105
                         ${
                           index === 0
-                            ? "h-[650px]"
-                            : "h-[320px]"
+                          ? "h-[320px]"
+                          : "h-[160px]"
                         }
                       `}
                     />
@@ -185,29 +187,34 @@ if (!room) {
 
               {/* PRIX */}
 
-              <div className="bg-[#2f241d] p-10 text-white">
+              <div className="bg-[#2f241d] p-6 text-white text-center">
 
-                <p className="mb-3 text-lg text-white/70">
-                  À partir de
-                </p>
+  <p className="mb-3 text-lg text-white/70">
+    À partir de
+  </p>
 
-                <div className="flex items-end gap-3">
+  <div
+    className="
+      flex
+      justify-center
+      items-end
+      gap-3
+    "
+  >
+    <span className="text-6xl font-bold">
+      {room.priceOnePerson}€
+    </span>
 
-                  <span className="text-6xl font-bold">
-                    {room.priceOnePerson}€
-                  </span>
+    <span className="pb-2 text-white/70">
+      / nuit
+    </span>
+  </div>
 
-                  <span className="pb-2 text-white/70">
-                    / nuit
-                  </span>
-
-                </div>
-
-              </div>
+</div>
 
               {/* INFOS */}
 
-              <div className="space-y-8 p-10">
+              <div className="space-y-5 p-6">
 
                 <div>
 
@@ -484,53 +491,8 @@ if (!room) {
       </section>
 
       {/* FOOTER */}
-
-      <footer
-  className="
-    bg-[#1f1712]
-    px-6
-    py-10
-    text-center
-    text-white/70
-  "
->
-
-  <p className="mb-4">
-    © 2026 L&apos;Auberge de St Aubin — Tous droits réservés
-  </p>
-
-  <Link
-    href="/login"
-    className="
-      text-[11px]
-      text-white/20
-      transition
-      hover:text-white/50
-    "
-  >
-    administration
-  </Link>
-
-  <Link href="/mentions-legales">
-  Mentions légales
-</Link>
-
-<Link href="/confidentialite">
-  Confidentialité
-</Link>
-
-<Link href="/cgv">
-  CGV
-</Link>
-
-
-<Link href="/cookies">
-  Cookies
-</Link>
-
-
-</footer>
-
+            
+            <Footer />
     </main>
   )
 }
