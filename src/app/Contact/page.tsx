@@ -100,13 +100,36 @@ export default function ContactPage() {
             className="mb-4 h-50 w-auto drop-shadow-2xl"
           />
 
-          <h1 className="mb-4 text-5xl font-bold md:text-6xl">
+          <h1
+  className="
+    font-serif
+    text-6xl
+    font-bold
+    md:text-7xl
+  "
+>
             Contact
           </h1>
 
           <p className="max-w-3xl text-lg text-white/90 md:text-2xl">
             Une question ? Une réservation ? Contactez-nous.
           </p>
+
+          <div
+  className="
+    mt-8
+    inline-flex
+    rounded-full
+    bg-white/15
+    px-8
+    py-4
+    backdrop-blur
+    text-xl
+    font-semibold
+  "
+>
+  📞 04 70 66 50 97
+</div>
         </div>
       </section>
 
@@ -144,7 +167,21 @@ export default function ContactPage() {
                 </p>
 
                 <p>04 70 66 50 97</p>
+
               </div>
+
+              <div className="rounded-3xl bg-white p-6 shadow-lg">
+
+  <p className="mb-2 text-2xl font-semibold">
+    🍽 Réservation
+  </p>
+
+  <p>
+    Pour réserver une table ou organiser un événement,
+    contactez-nous directement par téléphone.
+  </p>
+
+</div>
 
               <div className="rounded-3xl bg-white p-6 shadow-lg">
                 <p className="mb-2 text-2xl font-semibold">
@@ -160,14 +197,20 @@ export default function ContactPage() {
                 </p>
 
                 <p>
-                  Lundi au Vendredi :
+                  🍽 Restaurant
                   <br />
-                  08h30 - 22h00
+                  Lundi au Jeudi :
+                  12h-14h
+
+                  <br />
+                  Vendredi & Samedi :
+                  12h-14h / 19h-22h
                 </p>
 
                 <p className="mt-3">
-                  Vendredi & Samedi soir :
+                  🍺 Bar
                   <br />
+                  lundi au Samedi : 
                   08h30 - 22h00
                 </p>
               </div>
@@ -383,13 +426,31 @@ export default function ContactPage() {
 
           <div className="overflow-hidden rounded-[40px] shadow-2xl">
 
-            <iframe
-              src="https://www.google.com/maps?q=Auberge+de+St+Aubin&output=embed"
-              width="100%"
-              height="500"
-              loading="lazy"
-              className="border-0"
-            />
+            <div className="overflow-hidden rounded-[40px] shadow-2xl">
+  <a
+    href="https://maps.google.com/?q=21 Rue Saint-Barnabé, 03160 Saint-Aubin-le-Monial"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      flex
+      h-[500px]
+      items-center
+      justify-center
+      bg-[#f5f1ea]
+      text-center
+    "
+  >
+    <div>
+      <div className="mb-4 text-6xl">📍</div>
+      <h3 className="mb-2 text-3xl font-bold">
+        Voir l'itinéraire
+      </h3>
+      <p>
+        Ouvrir Google Maps
+      </p>
+    </div>
+  </a>
+</div>
           </div>
         </div>
       </section>

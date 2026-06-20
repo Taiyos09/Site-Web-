@@ -43,43 +43,66 @@ export async function POST(
     const events =
       await request.json()
 
+    
+
     console.log(
       "EVENTS RECUS :",
       JSON.stringify(events, null, 2)
     )
 
+
+
     await prisma.events.deleteMany()
 
     for (const event of events) {
 
-      console.log(
-        "CREATION EVENT :",
-        event
-      )
+  console.log(
+    "DATE RECUE =",
+    event.date
+  )
 
-      await prisma.events.create({
+  const formattedDate =
+    new Date(event.date)
 
-        data: {
+  console.log(
+    "DATE FORMATTEE =",
+    formattedDate
+  )
 
-          title:
-            event.title,
+  await prisma.events.create({
 
-          date:
-            event.date,
+    data: {
 
-          description:
-            event.description,
+      title:
+        event.title,
 
-          image:
-            event.image,
+      slug:
+        event.title
+          .toLowerCase()
+          .replaceAll(" ", "-")
+          .replaceAll("'", "")
+          .replaceAll("é", "e")
+          .replaceAll("è", "e")
+          .replaceAll("ê", "e")
+          .replaceAll("à", "a")
+          .replaceAll("ç", "c"),
 
-          gallery:
-  JSON.stringify(
-    event.gallery
-  ),
-        },
-      })
-    }
+      date:
+        formattedDate,
+
+      description:
+        event.description,
+
+      image:
+        event.image,
+
+      gallery:
+        JSON.stringify(
+          event.gallery
+        ),
+    },
+  })
+}
 
     return NextResponse.json({
       success: true,

@@ -1090,6 +1090,10 @@ export default function RestaurantPage() {
                 🍷 Bar & restaurant convivial
               </p>
 
+              <p>🍽 Menu du jour</p>
+
+              <p>🎉 Repas de groupe</p>
+
               <p>
                 🚗 Parking disponible
               </p>
@@ -1098,23 +1102,6 @@ export default function RestaurantPage() {
 
             <div className="mt-12">
 
-              <Link
-                href="/"
-                className="
-                  inline-block
-                  rounded-2xl
-                  bg-[#2f241d]
-                  px-8
-                  py-4
-                  text-[20px]
-                  font-semibold
-                  text-white
-                  transition
-                  hover:bg-[#43352c]
-                "
-              >
-                Retour à l’accueil
-              </Link>
 
             </div>
 

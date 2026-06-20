@@ -583,36 +583,52 @@ const filteredRooms =
       "
     >
 
-      <input
-  type="date"
-  value={checkIn}
-  onChange={(e) =>
-    setCheckIn(e.target.value)
-  }
-  className="
-    w-full
-    rounded-2xl
-    border
-    px-4
-    py-4
-  "
-/>
+      <div className="flex flex-col gap-2">
+  <label className="text-sm font-medium text-[#5a4c42] text-center">
+    Date d'arrivée
+  </label>
 
-      <input
-  type="date"
-  value={checkOut}
-  onChange={(e) =>
-    setCheckOut(e.target.value)
-  }
-  className="
-    w-full
-    rounded-2xl
-    border
-    px-4
-    py-4
-  "
-/>
+  <input
+    type="date"
+    value={checkIn}
+    onChange={(e) =>
+      setCheckIn(e.target.value)
+    }
+    className="
+      w-full
+      rounded-2xl
+      border
+      px-4
+      py-4
+    "
+  />
+</div>
 
+<div className="flex flex-col gap-2">
+  <label className="text-sm font-medium text-[#5a4c42] text-center">
+    Date de départ
+  </label>
+
+  <input
+    type="date"
+    value={checkOut}
+    onChange={(e) =>
+      setCheckOut(e.target.value)
+    }
+    className="
+      w-full
+      rounded-2xl
+      border
+      px-4
+      py-4
+    "
+  />
+</div>
+
+<div className="flex flex-col gap-2">
+  <label className="text-sm font-medium text-[#5a4c42] text-center">
+    Nombre de personnes
+  </label>
       <input
   type="number"
   min={1}
@@ -632,8 +648,9 @@ const filteredRooms =
     border
     px-4
     py-4
-  "
+    "
 />
+</div>
 
       <button
   onClick={handleSearch}
@@ -648,6 +665,123 @@ const filteredRooms =
 >
   Découvrir nos chambres
 </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+{/* SERVICES */}
+
+<section
+  className="
+    py-16
+    bg-[#f5f1ea]
+  "
+>
+
+  <div
+    className="
+      mx-auto
+      max-w-7xl
+      px-6
+    "
+  >
+
+    <div
+      className="
+        mb-10
+        text-center
+      "
+    >
+
+      <p
+        className="
+          uppercase
+          tracking-[0.3em]
+          text-[#c89b5f]
+        "
+      >
+        Services inclus
+      </p>
+
+      <h2
+        className="
+          mt-3
+          font-serif
+          text-5xl
+          text-[#2f241d]
+        "
+      >
+        Tout pour votre confort
+      </h2>
+
+    </div>
+
+    <div
+      className="
+        grid
+        gap-6
+        md:grid-cols-3
+        lg:grid-cols-5
+      "
+    >
+
+      {[
+        {
+          icon: "🥐",
+          title: "Petit déjeuner",
+        },
+
+        {
+          icon: "📶",
+          title: "Wifi gratuit",
+        },
+
+        {
+          icon: "🚿",
+          title: "Salle de bain privative",
+        },
+
+        {
+          icon: "📺",
+          title: "Télévision",
+        },
+
+        {
+          icon: "🚗",
+          title: "Parking",
+        },
+      ].map((item) => (
+
+        <div
+          key={item.title}
+          className="
+            rounded-[28px]
+            bg-white
+            p-6
+            text-center
+            shadow-lg
+          "
+        >
+
+          <div className="text-4xl">
+            {item.icon}
+          </div>
+
+          <p
+            className="
+              mt-4
+              font-semibold
+            "
+          >
+            {item.title}
+          </p>
+
+        </div>
+
+      ))}
 
     </div>
 
@@ -675,14 +809,6 @@ const filteredRooms =
   pb-20"
 >
 
-  <Image
-    src="/images/hotel/bois.jpg"
-    alt="Fond chambres"
-    fill
-    className="object-cover"
-    sizes="100vw"
-  />
-
         <div
           className="
             mx-auto
@@ -692,6 +818,36 @@ const filteredRooms =
         >
 
           <div
+  className="
+    py-16
+    text-center
+  "
+>
+
+  <p
+    className="
+      uppercase
+      tracking-[0.3em]
+      text-[#c89b5f]
+    "
+  >
+    Nos chambres
+  </p>
+
+  <h2
+    className="
+      mt-3
+      font-serif
+      text-5xl
+      text-[#2f241d]
+    "
+  >
+    Trouvez votre chambre idéale
+  </h2>
+
+</div>
+
+<div
             className="
   grid
   gap-8
@@ -850,6 +1006,16 @@ const filteredRooms =
                         par nuit
                       </span>
 
+                      {false && (<span
+                        className="
+                          text-sm
+                          text-[#7a6a5d]
+                        "
+                      >
+                        Petit déjeuner inclus
+                      </span>
+                      )}
+
                     </div>
 
                     <Link
@@ -884,6 +1050,88 @@ const filteredRooms =
         </div>
 
       </motion.section>
+
+      <section
+  className="
+    py-20
+    bg-[#f5f1ea]
+  "
+>
+
+  <div
+    className="
+      mx-auto
+      max-w-5xl
+      px-6
+    "
+  >
+
+    <div
+      className="
+        rounded-[36px]
+        bg-white
+        p-10
+        shadow-xl
+      "
+    >
+
+      <p
+        className="
+          uppercase
+          tracking-[0.3em]
+          text-[#c89b5f]
+        "
+      >
+        Informations pratiques
+      </p>
+
+      <h2
+        className="
+          mt-3
+          font-serif
+          text-4xl
+          text-[#2f241d]
+        "
+      >
+        Préparer votre séjour
+      </h2>
+
+      <div
+        className="
+          mt-8
+          grid
+          gap-6
+          md:grid-cols-2
+        "
+      >
+
+        <div>
+          <strong>Arrivée</strong>
+          <p>À partir de 16h</p>
+        </div>
+
+        <div>
+          <strong>Départ</strong>
+          <p>Avant 11h</p>
+        </div>
+
+        <div>
+          <strong>Petit déjeuner</strong>
+          <p>Inclus dans le prix de la chambre</p>
+        </div>
+
+        <div>
+          <strong>Parking</strong>
+          <p>Gratuit pour les clients</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 
       {/* FOOTER */}
       

@@ -322,22 +322,19 @@ export default function EventsPage() {
   />
 
   <input
-    type="text"
-    value={event.date}
-    placeholder="Date"
-    onChange={(e) =>
-      updateEvent(
-        index,
-        "date",
-        e.target.value
-      )
-    }
-    className="
-      rounded-2xl
-      border
-      p-3
-    "
-  />
+  type="date"
+  value={event.date}
+  onChange={(e) =>
+    handleChange(index, "date", e.target.value)
+  }
+  className="
+    rounded-xl
+    border
+    border-gray-300
+    px-4
+    py-2
+  "
+/>
 
   <textarea
     value={event.description}

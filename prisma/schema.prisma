@@ -73,7 +73,8 @@ model reservations {
 model events {
   id          Int      @id @default(autoincrement())
   title       String
-  date        String
+  slug        String   @unique
+  date        DateTime
   description String
   image       String
   gallery     String

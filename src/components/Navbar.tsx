@@ -1,274 +1,368 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
-import { Menu, X } from "lucide-react"
-
-const navigation = [
-  { name: "Accueil", href: "/" },
-  { name: "Chambre d'hôtes", href: "/hotel" },
-  { name: "Restaurant", href: "/restaurant" },
-  { name: "Événements", href: "/evenements" },
-  { name: "Contact", href: "/contact" },
-]
+import { useEffect, useState } from "react"
 
 export default function Navbar() {
 
-  const [mobileMenuOpen, setMobileMenuOpen] =
+  const [scrolled, setScrolled] =
     useState(false)
+
+  const [isOpen, setIsOpen] =
+  useState(false)
+
+  useEffect(() => {
+
+    const handleScroll = () => {
+
+      setScrolled(
+        window.scrollY > 30
+      )
+
+    }
+
+    window.addEventListener(
+      "scroll",
+      handleScroll
+    )
+
+    return () =>
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      )
+
+  }, [])
 
   return (
 
-    <>
+    
 
-      {/* NAVBAR */}
+    <header
+      className={`
+        fixed
+        top-0
+        left-0
+        z-50
+        w-full
+        transition-all
+        duration-300
 
-      <header
+        ${
+          scrolled
+            ? `
+              bg-black/70
+              backdrop-blur-md
+              shadow-lg
+            `
+            : `
+              bg-black/30
+              backdrop-blur-sm
+            `
+        }
+      `}
+    >
+
+      <div
         className="
-          fixed
-          top-0
-          left-0
-          z-50
-          w-full
-          border-b
-          border-white/10
-          bg-[#1a120e]/70
-          backdrop-blur-xl
+          mx-auto
+          flex
+          h-20
+          max-w-7xl
+          items-center
+          justify-between
+          px-6
         "
       >
 
+        {/* LOGO */}
+
         <div
           className="
-            mx-auto
             flex
-            max-w-7xl
+            w-[260px]
             items-center
-            justify-between
-            px-6
-            py-4
-            text-white
+            gap-3
           "
         >
 
-          {/* LOGO */}
+          <Image
+  src="/images/logo2.png"
+  alt="Auberge Saint Aubin"
+  width={52}
+  height={52}
+  className="
+    h-8
+    w-auto
+    object-contain
+    md:h-12
+  "
+/>
 
-          <Link
-            href="/"
-            className="
-              flex
-              items-center
-              gap-4
-              transition-opacity
-              hover:opacity-90
-            "
-          >
+          <div>
 
             <div
-              className="
-                h-3
-                w-3
-                rounded-full
-                bg-[#c89b5f]
-                shadow-[0_0_15px_rgba(200,155,95,0.7)]
-              "
-            />
-
-            <div className="leading-tight">
-
-              <div
-                className="
-                  font-serif
-                  text-[22px]
-                  tracking-wide
-                  md:text-[28px]
-                "
-              >
-                Auberge de St Aubin
-              </div>
-
-              <div
-                className="
-                  mt-1
-                  text-[10px]
-                  uppercase
-                  tracking-[0.35em]
-                  text-[#d6b98c]
-                  md:text-[11px]
-                "
-              >
-                Bourbonnais
-              </div>
-
+  className="
+    font-serif
+    text-lg
+    md:text-2xl
+    leading-none
+    text-white
+  "
+>
+              Auberge
+              <br />
+              de St Aubin
             </div>
-
-          </Link>
-
-          {/* NAVIGATION DESKTOP */}
-
-          <nav
-            className="
-              hidden
-              items-center
-              gap-10
-              md:flex
-            "
-          >
-
-            {navigation.map((item) => (
-
-              <Link
-                key={item.name}
-                href={item.href}
-                className="
-                  relative
-                  text-[15px]
-                  font-medium
-                  text-white/85
-                  transition-all
-                  duration-300
-                  hover:text-[#d6b98c]
-                "
-              >
-                {item.name}
-              </Link>
-
-            ))}
-
-          </nav>
-
-          {/* ACTIONS */}
-
-          <div className="flex items-center gap-4">
-
-            {/* CTA DESKTOP */}
-
-            <Link
-              href="/hotel?scroll=chambres"
-              className="
-                hidden
-                rounded-full
-                border
-                border-[#c89b5f]
-                bg-[#c89b5f]/10
-                px-6
-                py-3
-                text-sm
-                font-semibold
-                text-white
-                backdrop-blur-sm
-                transition-all
-                duration-300
-                hover:scale-105
-                hover:bg-[#c89b5f]
-                hover:text-[#2f241d]
-                md:block
-              "
-            >
-              Réserver
-            </Link>
-
-            {/* BURGER */}
-
-            <button
-              onClick={() =>
-                setMobileMenuOpen(
-                  !mobileMenuOpen
-                )
-              }
-              className="
-                text-white
-                transition
-                hover:text-[#d6b98c]
-                md:hidden
-              "
-            >
-
-              {mobileMenuOpen ? (
-                <X size={30} />
-              ) : (
-                <Menu size={30} />
-              )}
-
-            </button>
 
           </div>
 
         </div>
 
-      </header>
+        {/* MENU */}
 
-      {/* MENU MOBILE */}
-
-     <div
-  className={`
-    fixed
-    inset-0
-    z-40
-    flex
-    flex-col
-    items-center
-    justify-center
-    gap-8
-    bg-[#1a120e]/95
-    backdrop-blur-2xl
-    transition-all
-    duration-300
-    ${
-      mobileMenuOpen
-        ? "visible opacity-100"
-        : "invisible opacity-0"
-    }
-  `}
->
-
-        {navigation.map((item) => (
+        <nav
+          className="
+            hidden
+            flex-1
+            items-center
+            justify-center
+            gap-10
+            lg:flex
+          "
+        >
 
           <Link
-            key={item.name}
-            href={item.href}
-            onClick={() =>
-              setMobileMenuOpen(false)
-            }
+            href="/"
             className="
-              text-3xl
-              font-semibold
+              relative
+              font-medium
               text-white
               transition
               hover:text-[#d6b98c]
             "
           >
-            {item.name}
+            Accueil
+
+            <span
+              className="
+                absolute
+                -bottom-2
+                left-0
+                h-[2px]
+                w-full
+                bg-[#c89b5f]
+              "
+            />
+
           </Link>
 
-        ))}
+          <Link
+            href="/hotel"
+            className="
+              font-medium
+              text-white
+              transition
+              hover:text-[#d6b98c]
+            "
+          >
+            Hôtel
+          </Link>
 
-        {/* CTA MOBILE */}
+          <Link
+            href="/restaurant"
+            className="
+              font-medium
+              text-white
+              transition
+              hover:text-[#d6b98c]
+            "
+          >
+            Restaurant
+          </Link>
 
-        <Link
-          href="/hotel?scroll=chambres"
-          onClick={() =>
-            setMobileMenuOpen(false)
-          }
-          className="
-            mt-4
-            rounded-full
-            bg-[#c89b5f]
-            px-8
-            py-4
-            text-lg
-            font-semibold
-            text-[#2f241d]
-            shadow-2xl
-            transition-all
-            duration-300
-            hover:scale-105
-          "
-        >
-          Réserver
-        </Link>
+          <Link
+            href="/evenements"
+            className="
+              font-medium
+              text-white
+              transition
+              hover:text-[#d6b98c]
+            "
+          >
+            Événements
+          </Link>
+
+          <Link
+            href="/about"
+            className="
+              font-medium
+              text-white
+              transition
+              hover:text-[#d6b98c]
+            "
+          >
+            À propos
+          </Link>
+
+          <Link
+            href="/contact"
+            className="
+              font-medium
+              text-white
+              transition
+              hover:text-[#d6b98c]
+            "
+          >
+            Contact
+          </Link>
+
+        </nav>
+
+        {/* BOUTON MOBILE */}
+
+<button
+  onClick={() =>
+    setIsOpen(!isOpen)
+  }
+  className="
+    flex
+    lg:hidden
+    items-center
+    justify-center
+    text-white
+  "
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-8 w-8"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    {isOpen ? (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M6 18L18 6M6 6l12 12"
+      />
+    ) : (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 6h16M4 12h16M4 18h16"
+      />
+    )}
+  </svg>
+</button>
+
+        {/* CTA DESKTOP */}
+
+<div
+  className="
+    hidden
+    lg:flex
+    w-[260px]
+    justify-end
+  "
+>
+  <Link
+    href="/hotel"
+    className="
+      rounded-full
+      bg-[#c89b5f]
+      px-6
+      py-3
+      text-sm
+      font-semibold
+      text-white
+      transition-all
+      duration-300
+      hover:scale-105
+      hover:bg-[#b98746]
+    "
+  >
+    Réserver une chambre
+  </Link>
+</div>
 
       </div>
 
-    </>
+    {/* MENU MOBILE */}
+
+{isOpen && (
+
+  <div
+    className="
+      lg:hidden
+      bg-black/95
+      backdrop-blur-xl
+      border-t
+      border-white/10
+    "
+  >
+
+    <div
+      className="
+        flex
+        flex-col
+        gap-6
+        px-6
+        py-8
+      "
+    >
+
+      <Link href="/" onClick={() => setIsOpen(false)} className="text-white">
+        Accueil
+      </Link>
+
+      <Link href="/hotel" onClick={() => setIsOpen(false)} className="text-white">
+        Hôtel
+      </Link>
+
+      <Link href="/restaurant" onClick={() => setIsOpen(false)} className="text-white">
+        Restaurant
+      </Link>
+
+      <Link href="/evenements" onClick={() => setIsOpen(false)} className="text-white">
+        Événements
+      </Link>
+
+      <Link href="/about" onClick={() => setIsOpen(false)} className="text-white">
+        À propos
+      </Link>
+
+      <Link href="/contact" onClick={() => setIsOpen(false)} className="text-white">
+        Contact
+      </Link>
+
+      <Link
+        href="/hotel"
+        onClick={() => setIsOpen(false)}
+        className="
+          mt-2
+          rounded-full
+          bg-[#c89b5f]
+          px-6
+          py-4
+          text-center
+          font-semibold
+          text-white
+        "
+      >
+        Réserver une chambre
+      </Link>
+
+    </div>
+
+  </div>
+
+)}
+
+    </header>
+
   )
 }

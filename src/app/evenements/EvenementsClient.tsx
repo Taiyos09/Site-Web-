@@ -71,163 +71,276 @@ useEffect(() => {
       <div className="fixed inset-0 -z-10 bg-black/45" />
 
       {/* HERO */}
-      <section className="relative flex min-h-[70vh] items-center justify-center text-white">
+      <section className="relative h-[75vh] overflow-hidden">
 
-        <div className="relative z-10 px-6 text-center">
+  <Image
+    src="/images/festif.png"
+    alt="Événements"
+    fill
+    priority
+    className="object-cover"
+  />
 
-          <h1
-            className="mb-6 text-5xl font-bold font-serif md:text-6xl"
-            style={{
-              textShadow: `
-                0 0 3px rgba(0,0,0,0.95),
-                2px 2px 4px rgba(0,0,0,0.9),
-                4px 4px 8px rgba(0,0,0,0.85)
-              `,
-            }}
+  <div className="absolute inset-0 bg-black/50" />
+
+  <div className="absolute inset-0 flex items-center justify-center">
+
+    <div className="text-center text-white">
+
+      <p className="mb-4 uppercase tracking-[0.35em] text-[#d6b98c]">
+        ÉVÉNEMENTS
+      </p>
+
+      <h1 className="font-serif text-6xl font-bold">
+        Des moments festifs
+        <br />
+        toute l'année
+      </h1>
+
+      <p className="mx-auto mt-6 max-w-2xl text-xl text-white/90">
+        Karaokés, repas à thème, soirées musicales
+        et événements conviviaux à l'Auberge de St Aubin.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+      <section className="bg-[#f5f1ea] py-24">
+
+  <div className="mx-auto max-w-7xl px-6">
+
+    <div className="mb-12 text-center">
+
+      <p className="uppercase tracking-[0.3em] text-[#c89b5f]">
+        ÉVÉNEMENTS À VENIR
+      </p>
+
+      <h2 className="mt-4 font-serif text-6xl font-bold text-[#2f241d]">
+        Nos prochains rendez-vous
+      </h2>
+
+    </div>
+
+    <div className="grid gap-8 lg:grid-cols-3">
+
+  {eventsData.map((event) => {
+
+    const date = new Date(event.date)
+
+    const day = date.toLocaleDateString(
+      "fr-FR",
+      { day: "2-digit" }
+    )
+
+    const month = date
+      .toLocaleDateString(
+        "fr-FR",
+        { month: "short" }
+      )
+      .replace(".", "")
+      .toUpperCase()
+
+    return (
+
+      <div
+        key={event.id}
+        className="
+          group
+          relative
+          h-[320px]
+          overflow-hidden
+          rounded-[28px]
+        "
+      >
+
+        <Image
+          src={event.image}
+          alt={event.title}
+          fill
+          className="
+            object-cover
+            transition-all
+            duration-700
+            group-hover:scale-105
+          "
+        />
+
+        <div
+          className="
+            absolute
+            inset-0
+            bg-gradient-to-t
+            from-black/85
+            via-black/35
+            to-transparent
+          "
+        />
+
+        {/* DATE */}
+
+        <div
+          className="
+            absolute
+            left-6
+            top-6
+            z-20
+            rounded-2xl
+            bg-white
+            px-5
+            py-3
+            text-center
+          "
+        >
+
+          <div className="text-3xl font-bold text-[#2f241d]">
+            {day}
+          </div>
+
+          <div
+            className="
+              text-sm
+              font-semibold
+              uppercase
+              text-[#c89b5f]
+            "
           >
-            Nos événements
-          </h1>
+            {month}
+          </div>
 
-          <p
-            className="mx-auto max-w-3xl text-lg text-white/90 md:text-xl"
-            style={{
-              textShadow: `
-                0 0 3px rgba(0,0,0,0.95),
-                2px 2px 4px rgba(0,0,0,0.9),
-                4px 4px 8px rgba(0,0,0,0.85)
-              `,
-            }}
+        </div>
+
+        {/* TEXTE */}
+
+        <div
+          className="
+            absolute
+            bottom-6
+            left-6
+            right-6
+            z-20
+          "
+        >
+
+          <h3
+            className="
+              mb-2
+              font-serif
+              text-4xl
+              font-bold
+              text-white
+            "
           >
-            Concerts, soirées à thème, karaokés et moments festifs à l'Auberge de St Aubin.
+            {event.title}
+          </h3>
+
+          <p className="line-clamp-2 text-white/90">
+            {event.description}
           </p>
 
         </div>
-      </section>
-
-      {/* EVENEMENTS */}
-      <section className="mx-auto flex max-w-5xl flex-col gap-16 px-6 pt-0 pb-24">
-
-        {eventsData.map((event, index) => (
-
-          <div
-            key={index}
-            className="
-  overflow-hidden
-  rounded-[40px]
-  bg-white/92
-  shadow-2xl
-  backdrop-blur-sm
-  flex
-  flex-col
-  justify-start
-"
-          >
-
-            {/* IMAGE HERO */}
-            <div className="relative h-[220px] md:h-[320px] overflow-hidden">
-
-              <Image
-  src={event.image}
-  alt={event.title}
-  fill
-  className="object-cover object-center"
-  sizes="(max-width: 768px) 100vw, 1200px"
-/>
-
-              <div className="absolute inset-0 bg-black/35" />
-
-              <div className="absolute bottom-6 left-6 text-white">
-
-                <div className="mb-3 inline-block rounded-2xl bg-[#c89b5f] px-4 py-2 text-sm font-serif shadow-xl">
-                  {event.date}
-                </div>
-
-                <h2
-                  className="text-4xl font-bold font-serif"
-                  style={{
-                    textShadow:
-                      "0 2px 10px rgba(0,0,0,0.65)",
-                  }}
-                >
-                  {event.title}
-                </h2>
-
-              </div>
-            </div>
-
-            {/* CONTENU */}
-            <div className="grid gap-10 p-8 lg:grid-cols-[1fr_360px]">
-
-              {/* TEXTE */}
-              <div>
-
-                <h3 className="mb-6 text-3xl font-bold font-serif">
-                  Présentation
-                </h3>
-
-                <p className="text-lg leading-relaxed text-[#5a4c42] font-sans">
-                  {event.description}
-                </p>
-
-                <p className="mt-6 text-lg leading-relaxed text-[#5a4c42] font-sans">
-                  Profitez d’une ambiance conviviale et chaleureuse dans un cadre authentique au cœur du Bourbonnais.
-                </p>
-
-              </div>
-
-              {/* DIAPORAMA */}
-              <div>
-
-                <h3 className="mb-6 text-center text-3xl font-bold font-serif">
-                  Photos des soirées
-                </h3>
-
-                <div
-  className="
-    relative
-    h-[260px]
-    overflow-hidden
-    rounded-3xl
-    shadow-2xl
-  "
->
-
-                  <Image
-  src={
-    event.gallery[
-      currentImage % event.gallery.length
-    ]
-  }
-  alt={event.title}
-  fill
-  sizes="(max-width: 768px) 100vw, 360px"
-  className="
-    object-cover
-    transition-all
-    duration-500
-  "
-/>
-
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-        ))}
-      </section>
-
-      {/* BOUTON RETOUR */}
-      <div className="pb-24 text-center">
-
-        <Link
-          href="/"
-          className="rounded-2xl bg-[#2f241d] px-8 py-4 text-lg font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:bg-[#43352c]"
-        >
-          Retour à l’accueil
-        </Link>
 
       </div>
+
+    )
+
+  })}
+
+</div>
+
+  </div>
+
+</section>
+
+<section className="bg-[#f5f1ea] pb-24">
+
+  <div className="mx-auto max-w-7xl px-6">
+
+    <div className="mb-12 text-center">
+
+      <p className="uppercase tracking-[0.3em] text-[#c89b5f]">
+        SOUVENIRS
+      </p>
+
+      <h2 className="mt-4 font-serif text-6xl font-bold text-[#2f241d]">
+        Nos soirées en images
+      </h2>
+
+    </div>
+
+    <div className="grid gap-6 md:grid-cols-3">
+
+      <img
+        src="/images/events/karaoke.jpg"
+        className="h-[350px] w-full rounded-[28px] object-cover"
+      />
+
+      <img
+        src="/images/events/repas.jpg"
+        className="h-[350px] w-full rounded-[28px] object-cover"
+      />
+
+      <img
+        src="/images/events/concert.jpg"
+        className="h-[350px] w-full rounded-[28px] object-cover"
+      />
+
+    </div>
+
+  </div>
+
+</section>
+
+<section className="bg-[#f5f1ea] pb-24">
+
+  <div
+    className="
+      mx-auto
+      max-w-5xl
+      rounded-[36px]
+      bg-white
+      p-16
+      shadow-xl
+      text-center
+    "
+  >
+
+    <p className="uppercase tracking-[0.3em] text-[#c89b5f]">
+      ORGANISATION
+    </p>
+
+    <h2 className="mt-4 font-serif text-6xl font-bold text-[#2f241d]">
+      Organisez votre événement
+    </h2>
+
+    <p className="mx-auto mt-8 max-w-3xl text-lg text-[#5a4c42]">
+      Repas de groupe, anniversaires,
+      associations ou événements privés,
+      nous vous accueillons dans une ambiance
+      chaleureuse et conviviale.
+    </p>
+
+    <Link
+      href="/contact"
+      className="
+        mt-10
+        inline-flex
+        rounded-2xl
+        bg-[#2f241d]
+        px-10
+        py-4
+        font-bold
+        text-white
+      "
+    >
+      Nous contacter
+    </Link>
+
+  </div>
+
+</section>
 
       {/* FOOTER */}
 
