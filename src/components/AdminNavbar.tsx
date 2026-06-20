@@ -1,279 +1,180 @@
 "use client"
 
 import Link from "next/link"
-
-import {
-  usePathname,
-  useRouter,
-} from "next/navigation"
-
+import Image from "next/image"
+import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   BedDouble,
   UtensilsCrossed,
-  CalendarDays,
-  CalendarRange,
   PartyPopper,
+  CalendarDays,
+  Settings,
   LogOut,
-  Home,
 } from "lucide-react"
 
 
+const handleLogout = async () => {
 
-const links = [
+  await fetch(
+    "/api/logout",
+    {
+      method: "POST",
+    }
+  )
 
-  {
-    label: "Dashboard",
-    href: "/admin",
-    icon: LayoutDashboard,
-  },
+  window.location.href =
+    "/admin/login"
+}
 
-  {
-    label: "Tarifs hôtel",
-    href: "/admin/hotel",
-    icon: BedDouble,
-  },
-
-  {
-    label: "Restaurant",
-    href: "/admin/restaurant",
-    icon: UtensilsCrossed,
-  },
-
-  {
-    label: "Événements",
-    href: "/admin/events",
-    icon: PartyPopper,
-  },
-
-  {
-    label: "Réservations",
-    href: "/admin/reservations",
-    icon: CalendarDays,
-  },
-
-  {
-    label: "Calendrier",
-    href: "/admin/calendar",
-    icon: CalendarRange,
-  },
-
-]
-
-export default function AdminNavbar() {
+export default function AdminSidebar() {
 
   const pathname = usePathname()
 
-  const router = useRouter()
-
-  const handleLogout =
-  async () => {
-
-    await fetch("/api/logout", {
-      method: "POST",
-    })
-
-    router.push("/login")
-  }
-
   return (
 
-    <header
+    <aside
       className="
-        sticky
+        fixed
+        left-0
         top-0
-        z-50
-        border-b
-        border-[#e7ded2]
-        bg-[#f9f5ef]/90
-        backdrop-blur-xl
+        h-screen
+        w-72
+        bg-[#2f241d]
+        text-white
+        border-r
+        border-[#46362b]
       "
     >
 
-      <div
-        className="
-          mx-auto
-          flex
-          max-w-7xl
-          flex-col
-          gap-6
-          px-3
-          py-2
-          md:px-6
-          lg:flex-row
-          lg:items-center
-          lg:justify-between
-        "
-      >
+      <div className="p-8">
+        
+        <Image
+  src="/images/logo2.png"
+  alt="Auberge"
+  width={48}
+  height={48}
+  className="h-12 w-auto"
+/>
 
-        {/* LOGO */}
-
-        <div
+        <h1
           className="
-            flex
-            items-center
-            justify-between
-            gap-6
+            font-serif
+            text-3xl
+            font-bold
           "
         >
+          Auberge
+        </h1>
 
-          <div>
-
-            <h2
-              className="
-                font-serif
-                text-2xl
-                font-bold
-                text-[#2f241d]
-              "
-            >
-              Administration
-            </h2>
-
-            <p
-              className="
-                mt-1
-                text-[#6b5b4f]
-              "
-            >
-              Gestion Hotel
-            </p>
-
-          </div>
-
-          {/* HOME */}
-
-          <Link
-            href="/"
-            className="
-              hidden
-              items-center
-              gap-2
-              rounded-2xl
-              border
-              border-[#ddd2c3]
-              bg-white
-              px-5
-              py-3
-              font-semibold
-              text-[#2f241d]
-              transition-all
-              duration-300
-              hover:bg-[#f5efe6]
-              md:flex
-            "
-          >
-
-            <Home size={18} />
-
-            Site
-
-          </Link>
-
-        </div>
-
-        {/* NAV */}
-
-        <nav
+        <p
           className="
-            whitespace-nowrap
-            flex
-            flex-nowrap
-            gap-1
-            flex-1
-            justify-end
+            mt-1
+            text-sm
+            text-[#d6b98c]
           "
         >
-
-          {links.map((link) => {
-
-            const Icon =
-              link.icon
-
-            const isActive =
-              pathname === link.href
-
-            return (
-
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`
-                  flex
-                  items-center
-                  gap-2
-
-                  rounded-2xl
-                  px-3
-                  py-2
-
-                  text-sm
-                  font-semibold
-
-                  transition-all
-                  duration-300
-
-                  ${
-                    isActive
-                      ? `
-                        bg-[#2f241d]
-                        text-white
-                        shadow-lg
-                      `
-                      : `
-                        border
-                        border-[#ddd2c3]
-                        bg-white
-                        text-[#2f241d]
-                        hover:bg-[#f5efe6]
-                      `
-                  }
-                `}
-              >
-
-                <Icon size={18} />
-
-                {link.label}
-
-              </Link>
-            )
-          })}
-
-          {/* LOGOUT */}
-
-          <button
-            onClick={handleLogout}
-            className="
-              flex
-              items-center
-              gap-2
-
-              rounded-2xl
-              bg-red-600
-              px-3
-              py-2
-
-              text-sm
-              font-semibold
-              text-white
-
-              transition-all
-              duration-300
-
-              hover:bg-red-700
-            "
-          >
-
-            <LogOut size={18} />
-
-            Déconnexion
-
-          </button>
-
-        </nav>
+          Administration
+        </p>
 
       </div>
 
-    </header>
+      <nav
+        className="
+          flex
+          flex-col
+          gap-2
+          px-4
+        "
+      >
+
+        <Link
+          href="/admin"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
+        >
+          <LayoutDashboard size={20} />
+          Dashboard
+        </Link>
+
+        <Link
+          href="/admin/hotel"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
+        >
+          <BedDouble size={20} />
+          Chambres
+        </Link>
+
+        <Link
+          href="/admin/restaurant"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
+        >
+          <UtensilsCrossed size={20} />
+          Restaurant
+        </Link>
+
+        <Link
+          href="/admin/events"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
+        >
+          <PartyPopper size={20} />
+          Événements
+        </Link>
+
+        <Link
+          href="/admin/reservations"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
+        >
+          <CalendarDays size={20} />
+          Réservations
+        </Link>
+
+        <Link
+          href="/admin/calendar"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
+        >
+          <CalendarDays size={20} />
+          Calendrier
+        </Link>
+
+        <Link
+          href="/"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
+        >
+          <Settings size={20} />
+          retour Site
+        </Link>
+
+      </nav>
+
+      <div
+        className="
+          absolute
+          bottom-6
+          left-4
+          right-4
+        "
+      >
+
+        <button
+          onClick={handleLogout}
+          className="
+            flex
+            w-full
+            items-center
+            gap-3
+            rounded-xl
+            bg-red-600
+            px-4
+            py-3
+            text-white
+          "
+        >
+          <LogOut size={20} />
+          Déconnexion
+        </button>
+
+      </div>
+
+    </aside>
   )
 }

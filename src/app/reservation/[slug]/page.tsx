@@ -5,6 +5,7 @@ import BookingCalendar from "@/components/hotel/BookingCalendar"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Footer from "@/components/Footer"
+import Navbar from "@/components/Navbar"
 
 type Room = {
   id: number
@@ -127,13 +128,17 @@ console.log(room)
 console.log(room)
   return (
 
+
     <main className="
       min-h-screen
       bg-[#f5f1ea]
       text-[#2f241d]
     ">
+      {/* NAVBAR */}
 
-      {/* HERO */}
+      <Navbar />
+
+    {/* HERO */}
 
       <section
   className="

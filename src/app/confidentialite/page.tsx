@@ -246,6 +246,8 @@
         </div>
 
       </section>
+
+      < Footer />
     </main>
   )
 }

@@ -1,6 +1,11 @@
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 export default function CookiesPage() {
   return (
+
+    <Navbar />
+
+          
     <main className="max-w-4xl mx-auto px-6 py-16">
       <h1 className="text-4xl font-bold mb-10">
         Politique de cookies

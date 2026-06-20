@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Footer from "@/components/Footer"
+import Navbar from "@/components/Navbar"
 
 export default function EvenementsPage() {
 
@@ -70,7 +71,11 @@ useEffect(() => {
       {/* OVERLAY */}
       <div className="fixed inset-0 -z-10 bg-black/45" />
 
-      {/* HERO */}
+      {/* NAVBAR */}
+      
+            <Navbar />
+      
+            {/* HERO */}
       <section className="relative h-[75vh] overflow-hidden">
 
   <Image

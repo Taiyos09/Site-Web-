@@ -588,6 +588,14 @@ total +=
   manualReservation.adults *
   nights
 
+console.log(
+  JSON.stringify({
+    ...manualReservation,
+    total,
+    roomSlug: "confort",
+    roomName: "Chambre Confort",
+  }, null, 2)
+)
         const response =
   await fetch(
     "/api/reservations",
@@ -601,30 +609,36 @@ total +=
 
       body: JSON.stringify({
 
-        ...manualReservation,
+  ...manualReservation,
 
-        total,
+  roomSlug: "confort",
 
-        roomIds:
-  manualReservation.rooms
-    .map((roomName) => {
+  roomName: "Chambre Confort",
 
-      const room =
-        roomsData.find(
-          (r) => r.name === roomName
-        )
+  total,
 
-      return room?.id
-    })
-    .filter(Boolean),
-      }),
+  roomIds:
+    manualReservation.rooms
+      .map((roomName) => {
+        const room =
+          roomsData.find(
+            (r) => r.name === roomName
+          )
+
+        return room?.id
+      })
+      .filter(Boolean),
+}),
     }
   )
 
 if (!response.ok) {
+  const error = await response.json()
+
+  console.log(error)
 
   alert(
-    "Erreur création réservation"
+    JSON.stringify(error, null, 2)
   )
 
   return
@@ -1113,13 +1127,17 @@ const filteredReservations =
   {/* TOTAL RESERVATIONS */}
 
   <div
-    className="
-      rounded-[32px]
-      bg-white
-      p-8
-      shadow-xl
-    "
-  >
+  className="
+    rounded-[32px]
+    bg-white
+    p-8
+    shadow-xl
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    hover:shadow-2xl
+  "
+>
 
     <p
       className="
@@ -1133,13 +1151,12 @@ const filteredReservations =
       Réservations
     </p>
 
-    <h2
-      className="
-        mt-4
-        text-5xl
-        font-bold
-      "
-    >
+    <h2 className="
+  mt-4
+  text-6xl
+  font-black
+  tracking-tight
+">
       {reservations.length}
     </h2>
 
@@ -1148,14 +1165,17 @@ const filteredReservations =
   {/* CONFIRMEES */}
 
   <div
-    className="
-      rounded-[32px]
-      bg-green-600
-      p-8
-      text-white
-      shadow-xl
-    "
-  >
+  className="
+    rounded-[32px]
+    bg-white
+    p-8
+    shadow-xl
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    hover:shadow-2xl
+  "
+>
 
     <p
       className="
@@ -1190,14 +1210,17 @@ const filteredReservations =
   {/* EN ATTENTE */}
 
   <div
-    className="
-      rounded-[32px]
-      bg-yellow-500
-      p-8
-      text-white
-      shadow-xl
-    "
-  >
+  className="
+    rounded-[32px]
+    bg-white
+    p-8
+    shadow-xl
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    hover:shadow-2xl
+  "
+>
 
     <p
       className="
@@ -1232,14 +1255,17 @@ const filteredReservations =
   {/* CHIFFRE AFFAIRES */}
 
   <div
-    className="
-      rounded-[32px]
-      bg-[#2f241d]
-      p-8
-      text-white
-      shadow-xl
-    "
-  >
+  className="
+    rounded-[32px]
+    bg-white
+    p-8
+    shadow-xl
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    hover:shadow-2xl
+  "
+>
 
     <p
       className="
@@ -1432,13 +1458,13 @@ const filteredReservations =
 
           <div className="space-y-3">
 
-            <p>
-              {reservation.email}
-            </p>
+          <a href={`mailto:${reservation.email}`}>
+  {reservation.email}
+</a>
 
-            <p>
-              {reservation.phone}
-            </p>
+            <br/><a href={`tel:${reservation.phone}`}>
+  {reservation.phone}
+</a>
 
             <div className="space-y-2">
 
@@ -1684,13 +1710,14 @@ const filteredReservations =
             </span>
 
             <span
-              className="
-                text-4xl
-                font-bold
-              "
-            >
-              {reservation.total}€
-            </span>
+  className="
+    text-5xl
+    font-black
+    text-[#d6b98c]
+  "
+>
+  {reservation.total.toFixed(2)}€
+</span>
 
           </div>
 
@@ -1995,11 +2022,14 @@ const filteredReservations =
         justify-between
       ">
 
-        <h2 className="
-          font-serif
-          text-4xl
-          font-bold
-        ">
+      <h2
+  className="
+    font-serif
+    text-5xl
+    font-bold
+    tracking-tight
+  "
+>
           Nouvelle réservation
         </h2>
 

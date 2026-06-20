@@ -1,6 +1,9 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import Image from "next/image"
+import Navbar from "@/components/Navbar"
+import RoomGallery from "@/components/RoomGallery";
+
 import {
   Wifi,
   Tv,
@@ -23,7 +26,7 @@ export default async function RoomPage({
   params,
 }: Props) {
 
-
+  
   const { slug } =
     await params
 
@@ -65,12 +68,16 @@ if (!room) {
 
     <main className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
 
+      {/* NAVBAR */}
+            
+                  <Navbar />
+            
       {/* HERO */}
 
       <section
   className="
     relative
-    h-[220px]
+    h-[500px]
     md:h-[80px]
     overflow-hidden
   "
@@ -85,19 +92,17 @@ if (!room) {
 
         <div className="absolute inset-0 bg-black/45" />
 
-        <div
-  className="
-    relative
-    z-10
-    flex
-    h-full
-    items-center
-    justify-center
-    text-center
-  "
->
+        <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white">
 
-        </div>
+  <h1 className="font-serif text-6xl font-bold">
+    {room.name}
+  </h1>
+
+  <p className="mt-4 text-xl text-white/90">
+    À partir de {room.priceOnePerson}€ / nuit
+  </p>
+
+</div>
 
       </section>
 
@@ -113,51 +118,10 @@ if (!room) {
 
             {/* GALERIE */}
 
-            <div className="grid gap-6 md:grid-cols-2">
-
-              {images.map(
-                (
-                  img,
-                  index
-                ) => (
-
-                  <div
-                    key={index}
-                    className={`
-                      overflow-hidden
-                      rounded-[32px]
-                      shadow-2xl
-                      ${
-                        index === 0
-                          ? "md:col-span-2"
-                          : ""
-                      }
-                    `}
-                  >
-
-                    <img
-                      src={img}
-                      alt={room.name}
-                      className={`
-                        w-full
-                        object-cover
-                        transition
-                        duration-700
-                        hover:scale-105
-                        ${
-                          index === 0
-                          ? "h-[320px]"
-                          : "h-[160px]"
-                        }
-                      `}
-                    />
-
-                  </div>
-
-                )
-              )}
-
-            </div>
+            <RoomGallery
+  images={images}
+  roomName={room.name}
+/>
 
             {/* DESCRIPTION */}
 
@@ -166,6 +130,22 @@ if (!room) {
               <h2 className="mb-8 font-serif text-5xl font-bold">
                 {room.name}
               </h2>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+
+  <span className="rounded-full bg-[#c89b5f]/20 px-4 py-2">
+    {room.capacity} personnes
+  </span>
+
+  <span className="rounded-full bg-[#2f241d]/10 px-4 py-2">
+    {room.size}
+  </span>
+
+  <span className="rounded-full bg-green-100 px-4 py-2 text-green-700">
+    Petit déjeuner inclus
+  </span>
+
+</div>
 
               <div className="space-y-6 text-lg leading-relaxed text-[#5a4c42]">
 
@@ -187,27 +167,24 @@ if (!room) {
 
               {/* PRIX */}
 
-              <div className="bg-[#2f241d] p-6 text-white text-center">
+              <div className="mt-6 rounded-3xl bg-[#f8f4ee] p-6">
 
-  <p className="mb-3 text-lg text-white/70">
-    À partir de
+  <p className="text-sm text-[#6b5b4f]">
+    Tarifs
   </p>
 
-  <div
-    className="
-      flex
-      justify-center
-      items-end
-      gap-3
-    "
-  >
-    <span className="text-6xl font-bold">
-      {room.priceOnePerson}€
-    </span>
+  <div className="mt-4 space-y-3">
 
-    <span className="pb-2 text-white/70">
-      / nuit
-    </span>
+    <div className="flex justify-between">
+      <span>1 personne</span>
+      <strong>{room.priceOnePerson}€</strong>
+    </div>
+
+    <div className="flex justify-between">
+      <span>2 personnes</span>
+      <strong>{room.priceTwoPeople}€</strong>
+    </div>
+
   </div>
 
 </div>
@@ -486,9 +463,100 @@ if (!room) {
 
           </div>
 
-        </div>
+          </div>
 
       </section>
+
+      {/* AUTRES CHAMBRES */}
+
+<section className="mx-auto mt-24 max-w-[1400px] px-6">
+
+  <h2
+    className="
+      mb-10
+      text-center
+      font-serif
+      text-5xl
+      font-bold
+    "
+  >
+    Autres chambres
+  </h2>
+
+  <div
+    className="
+      grid
+      gap-8
+      md:grid-cols-2
+      xl:grid-cols-3
+    "
+  >
+
+    {rooms
+      .filter(
+        (r: any) =>
+          r.slug !== room.slug
+      )
+      .slice(0, 3)
+      .map((otherRoom: any) => (
+
+        <Link
+          key={otherRoom.id}
+          href={`/hotel/${otherRoom.slug}`}
+          className="
+            overflow-hidden
+            rounded-[32px]
+            bg-white
+            shadow-xl
+            transition-all
+            duration-300
+            hover:-translate-y-2
+            hover:shadow-2xl
+          "
+        >
+
+          <div className="relative h-64">
+
+            <Image
+              src={
+                otherRoom.images?.[0]
+              }
+              alt={otherRoom.name}
+              fill
+              className="object-cover"
+            />
+
+          </div>
+
+          <div className="p-6">
+
+            <h3
+              className="
+                mb-3
+                font-serif
+                text-3xl
+                font-bold
+              "
+            >
+              {otherRoom.name}
+            </h3>
+
+            <p className="text-[#6b5b4f]">
+              À partir de
+              {" "}
+              {otherRoom.priceOnePerson}€
+              / nuit
+            </p>
+
+          </div>
+
+        </Link>
+
+      ))}
+
+  </div>
+
+</section>
 
       {/* FOOTER */}
             

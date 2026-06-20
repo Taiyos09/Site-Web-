@@ -12,6 +12,8 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import Footer from "@/components/Footer"
+import Navbar from "@/components/Navbar"
+
 
 export default function HotelPage() {
 
@@ -406,7 +408,11 @@ const filteredRooms =
       "
     >
 
-      {/* HERO */}
+      {/* NAVBAR */}
+      
+            <Navbar />
+      
+    {/* HERO */}
 
       <section
   className="

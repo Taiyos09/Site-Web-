@@ -57,7 +57,7 @@ export default function Navbar() {
               shadow-lg
             `
             : `
-              bg-black/30
+              bg-black/45
               backdrop-blur-sm
             `
         }
@@ -192,18 +192,6 @@ export default function Navbar() {
             "
           >
             Événements
-          </Link>
-
-          <Link
-            href="/about"
-            className="
-              font-medium
-              text-white
-              transition
-              hover:text-[#d6b98c]
-            "
-          >
-            À propos
           </Link>
 
           <Link

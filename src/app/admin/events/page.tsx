@@ -6,8 +6,10 @@ import Image from "next/image"
 
 export default function EventsPage() {
 
-  const [eventsData, setEventsData] =
+    const [eventsData, setEventsData] =
   useState<any[]>([])
+
+  const [search, setSearch] = useState("")
 
   useEffect(() => {
 
@@ -164,6 +166,15 @@ export default function EventsPage() {
   }
 }
 
+const filteredEvents =
+  eventsData.filter((event) =>
+    event.title
+      ?.toLowerCase()
+      .includes(
+        search.toLowerCase()
+      )
+  )
+
   return (
 
     <>
@@ -220,6 +231,20 @@ export default function EventsPage() {
 
               </div>
 
+              <div className="mt-4 flex gap-4">
+
+  <div className="rounded-2xl bg-[#f5f1ea] px-4 py-3">
+    <p className="text-sm text-[#6b5b4f]">
+      Événements
+    </p>
+
+    <p className="text-3xl font-bold">
+      {eventsData.length}
+    </p>
+  </div>
+
+</div>
+
               <button
                 onClick={addEvent}
                 className="
@@ -248,22 +273,42 @@ export default function EventsPage() {
   Sauvegarder
 </button>
 
+<input
+  type="text"
+  placeholder="Rechercher un événement..."
+  value={search}
+  onChange={(e) =>
+    setSearch(e.target.value)
+  }
+  className="
+    mt-6
+    w-full
+    rounded-2xl
+    border
+    p-4
+  "
+/>
+
             </div>
 
             <div className="space-y-10">
 
-              {eventsData.map((event, index) => (
+              {filteredEvents.map((event, index) => (
 
                 <div
   key={index}
   className="
-    mx-auto
-    max-w-4xl
-    rounded-3xl
-    bg-[#faf7f2]
-    p-6
-    shadow-md
-  "
+  mx-auto
+  max-w-5xl
+  rounded-[32px]
+  bg-white
+  p-8
+  shadow-xl
+  transition-all
+  duration-300
+  hover:-translate-y-1
+  hover:shadow-2xl
+"
 >
 
                   <div className="
@@ -273,13 +318,34 @@ export default function EventsPage() {
                     justify-between
                   ">
 
-                    <h3 className="
-                      text-2xl
-                      font-bold
-                      font-serif
-                    ">
-                      {event.title}
-                    </h3>
+                    <div className="flex items-center gap-4">
+
+  <div
+    className="
+      flex
+      h-12
+      w-12
+      items-center
+      justify-center
+      rounded-2xl
+      bg-[#c89b5f]/20
+      text-2xl
+    "
+  >
+    🎉
+  </div>
+
+  <h3
+    className="
+      text-3xl
+      font-bold
+      font-serif
+    "
+  >
+    {event.title || "Nouvel événement"}
+  </h3>
+
+</div>
 
                     <button
                       onClick={() =>
@@ -325,8 +391,12 @@ export default function EventsPage() {
   type="date"
   value={event.date}
   onChange={(e) =>
-    handleChange(index, "date", e.target.value)
-  }
+  updateEvent(
+    index,
+    "date",
+    e.target.value
+  )
+}
   className="
     rounded-xl
     border
@@ -359,10 +429,11 @@ export default function EventsPage() {
   <div
   className="
     relative
-    h-48
+    h-72
     overflow-hidden
     rounded-3xl
     border
+    shadow-lg
   "
 >
 
@@ -520,9 +591,9 @@ export default function EventsPage() {
             className="
               relative
               mb-4
-              h-28
+              h-40
               overflow-hidden
-              rounded-2xl
+              rounded-3xl
             "
           >
 

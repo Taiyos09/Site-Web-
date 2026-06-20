@@ -261,6 +261,79 @@ if (!response.ok) {
 
           </div>
 
+          <div
+  className="
+    mt-8
+    mb-8
+    grid
+    gap-6
+    md:grid-cols-4
+  "
+>
+
+  <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <p className="text-sm text-[#6b5b4f]">
+      Réservations
+    </p>
+
+    <h2 className="mt-2 text-5xl font-bold">
+      {reservations.length}
+    </h2>
+  </div>
+
+  <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <p className="text-sm text-[#6b5b4f]">
+      Confirmées
+    </p>
+
+    <h2 className="mt-2 text-5xl font-bold text-green-600">
+      {
+        reservations.filter(
+          r => r.status === "confirmed"
+        ).length
+      }
+    </h2>
+  </div>
+
+  <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <p className="text-sm text-[#6b5b4f]">
+      En attente
+    </p>
+
+    <h2 className="mt-2 text-5xl font-bold text-yellow-500">
+      {
+        reservations.filter(
+          r => r.status === "pending"
+        ).length
+      }
+    </h2>
+  </div>
+
+  <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <p className="text-sm text-[#6b5b4f]">
+      Taux occupation
+    </p>
+
+    <h2 className="mt-2 text-5xl font-bold text-[#c89b5f]">
+  {
+    rooms.length > 0
+      ? Math.round(
+          (
+            reservations.filter(
+              (r) =>
+                r.status ===
+                "confirmed"
+            ).length /
+            rooms.length
+          ) * 100
+        )
+      : 0
+  }%
+</h2>
+  </div>
+
+</div>
+
           {/* LEGENDE */}
 
           <div
@@ -496,19 +569,61 @@ if (!response.ok) {
                   }}
                 >
                   {/* Header jours */}
-                  {days.map((day) => (
-                    <div
-                      key={day.toISOString()}
-                      className="min-w-[120px] border-b border-l p-4 text-center font-bold h-[60px] flex items-center justify-center"
-                    >
-                      <div>
-                        {format(day, "dd")}
-                      </div>
-                      <div className="text-sm text-[#6b5b4f]">
-                        {format(day, "MMM", { locale: fr })}
-                      </div>
-                    </div>
-                  ))}
+{days.map((day) => {
+
+  const isToday =
+    format(day, "yyyy-MM-dd") ===
+    format(new Date(), "yyyy-MM-dd")
+
+  return (
+
+    <div
+      key={day.toISOString()}
+      className={`
+        min-w-[120px]
+        border-b
+        border-l
+        p-4
+        text-center
+        font-bold
+        h-[60px]
+        flex
+        flex-col
+        items-center
+        justify-center
+
+        ${
+          isToday
+            ? "bg-[#c89b5f] text-white"
+            : "bg-white"
+        }
+      `}
+    >
+
+      <div>
+        {format(day, "dd")}
+      </div>
+
+      <div
+        className={`
+          text-sm
+          ${
+            isToday
+              ? "text-white/90"
+              : "text-[#6b5b4f]"
+          }
+        `}
+      >
+        {format(day, "MMM", {
+          locale: fr,
+        })}
+      </div>
+
+    </div>
+
+  )
+
+})}
 
                   {/* Lignes chambres avec réservations */}
                   {rooms.map((room) => {

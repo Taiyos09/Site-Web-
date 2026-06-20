@@ -140,7 +140,9 @@ export default function MentionsLegalesPage() {
         </div>
 
       </section>
+
         <Footer />
+        
     </main>
 
 

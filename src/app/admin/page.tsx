@@ -4,43 +4,6 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
-const cards = [
-  {
-    title: "Tarifs hôtel",
-    href: "/admin/hotel",
-    color:
-      "from-[#2f241d] to-[#4b3a2f]",
-  },
-
-  {
-    title: "Restaurant",
-    href: "/admin/restaurant",
-    color:
-      "from-[#c89b5f] to-[#d8ae74]",
-  },
-
-  {
-    title: "Événements",
-    href: "/admin/events",
-    color:
-      "from-[#3558ff] to-[#5a78ff]",
-  },
-
-  {
-    title: "Réservations",
-    href: "/admin/reservations",
-    color:
-      "from-[#ff7300] to-[#ff9b45]",
-  },
-
-  {
-    title: "Calendrier",
-    href: "/admin/calendar",
-    color:
-      "from-[#17a63d] to-[#32c95c]",
-  },
-
-]
 
 export default function AdminDashboard() {
 
@@ -51,10 +14,43 @@ export default function AdminDashboard() {
 
 
   const [pendingCount, setPendingCount] = useState(0)
+  const [stats, setStats] = useState<any>(null)
+
+  useEffect(() => {
+
+  fetch("/api/admin/dashboard")
+    .then((res) => res.json())
+    .then((data) => {
+      setStats(data)
+    })
+    .then((data) => {
+  console.log("DASHBOARD :", data)
+  setStats(data)
+})
+
+}, [])
 
   /* ====================================== */
   /* CHECK AUTH */
   /* ====================================== */
+  useEffect(() => {
+
+  fetch("/api/admin/dashboard")
+    .then((res) => res.json())
+    .then((data) => {
+
+      console.log("DATA :", data)
+
+      setStats(data)
+
+    })
+
+}, [])
+
+useEffect(() => {
+  console.log("STATS =", stats)
+}, [stats])
+
 
   useEffect(() => {
 
@@ -142,154 +138,286 @@ if (!response.ok) {
 
         {/* HEADER */}
 
-        <div
-          className="
-            mb-14
-            flex
-            flex-col
-            gap-6
-            md:flex-row
-            md:items-center
-            md:justify-between
-          "
-        >
+<div
+  className="
+    mb-14
+    flex
+    flex-col
+    gap-6
+  "
+>
 
-          <div>
+  <div>
 
-            <h1
-              className="
-                font-serif
-                text-5xl
-                font-bold
-                md:text-6xl
-              "
-            >
-              Dashboard
-            </h1>
+    <h1
+      className="
+        font-serif
+        text-5xl
+        font-bold
+        md:text-6xl
+      "
+    >
+      Dashboard
+    </h1>
 
-            <p
-              className="
-                mt-3
-                text-lg
-                text-[#6b5b4f]
-              "
-            >
-              Administration de l’auberge.
-            </p>
+    <p
+      className="
+        mt-3
+        text-lg
+        text-[#6b5b4f]
+      "
+    >
+      Administration de l’auberge.
+    </p>
 
-          </div>
-        </div>
+  </div>
 
-        {/* CARDS */}
+</div>
 
-        <div
-          className="
-            grid
-            gap-8
-            md:grid-cols-2
-            xl:grid-cols-3
-          "
-        >
+{/* STATISTIQUES */}
 
-          {cards.map((card) => (
 
-            <Link
-              key={card.href}
-              href={card.href}
-              className={`
-  group
-  relative
-  overflow-hidden
-  rounded-[36px]
+{stats && (
 
-  bg-gradient-to-br
-  ${card.color}
+  <div
+    className="
+      mb-12
+      grid
+      gap-6
+      md:grid-cols-2
+      xl:grid-cols-5
+    "
+  >
 
-  p-10
-  text-white
+    <div className="rounded-3xl bg-white p-6 shadow-lg">
+      <p className="text-sm text-[#6b5b4f]">
+        Réservations
+      </p>
 
-  shadow-[0_12px_35px_rgba(0,0,0,0.12)]
+      <h2 className="mt-2 text-5xl font-bold">
+        {stats.reservations}
+      </h2>
+    </div>
 
-  transition-all
-  duration-300
+    <div className="rounded-3xl bg-white p-6 shadow-lg">
+      <p className="text-sm text-[#6b5b4f]">
+        En attente
+      </p>
 
-  hover:scale-[1.03]
-  hover:shadow-[0_20px_45px_rgba(0,0,0,0.18)]
+      <h2 className="mt-2 text-5xl font-bold text-orange-500">
+        {stats.pendingReservations}
+      </h2>
+    </div>
 
-  before:absolute
-  before:inset-0
-  before:bg-white/10
-  before:opacity-0
-  before:transition
-  before:duration-300
+    <div className="rounded-3xl bg-white p-6 shadow-lg">
+      <p className="text-sm text-[#6b5b4f]">
+        Chambres
+      </p>
 
-  hover:before:opacity-100
-`}
-            >
+      <h2 className="mt-2 text-5xl font-bold">
+        {stats.rooms}
+      </h2>
+    </div>
 
-              <div
-                className="
-                  flex
-                  h-full
-                  flex-col
-                  justify-between
-                "
-              >
+    <div className="rounded-3xl bg-white p-6 shadow-lg">
+      <p className="text-sm text-[#6b5b4f]">
+        Événements
+      </p>
 
-                <div>
+      <h2 className="mt-2 text-5xl font-bold">
+        {stats.events}
+      </h2>
+    </div>
 
-                  <h2
-                    className="
-                      font-serif
-                      text-3xl
-                      font-bold
-                      md:text-4xl
-                    "
-                  >
-                    {card.title}
-                  </h2>
+    <div className="rounded-3xl bg-white p-6 shadow-lg">
+  <p className="text-sm text-[#6b5b4f]">
+    Chiffre d'affaires
+  </p>
 
-                                                                        {card.title === "Réservations" && pendingCount > 0 && (
-                    <div className="absolute top-4 right-4 bg-red-600 text-white text-sm font-bold rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10 animate-pulse">
-                      {pendingCount}
-                    </div>
-                  )}
+  <h2 className="mt-2 text-5xl font-bold text-green-600">
+    {stats.revenue}€
+  </h2>
+</div>
 
-                  <p
-                    className="
-                      mt-4
-                      text-lg
-                      text-white/85
-                    "
-                  >
-                    Accéder au module
-                  </p>
+  </div>
 
-                </div>
+)}
 
-                <div
-                  className="
-                    mt-10
-                    text-sm
-                    font-semibold
-                    uppercase
-                    tracking-[0.2em]
-                    text-white/70
-                    transition-all
-                    duration-300
-                    group-hover:text-white
-                  "
-                >
-                  Ouvrir →
-                </div>
+{/* TABLEAUX */}
 
-              </div>
+{stats && (
 
-            </Link>
+  <div
+    className="
+      mb-12
+      grid
+      gap-8
+      xl:grid-cols-2
+    "
+  >
 
-          ))}
+    <div className="rounded-3xl bg-white p-8 shadow-lg">
 
-        </div>
+      <h2 className="mb-6 text-2xl font-bold">
+        Réservations récentes
+      </h2>
+
+      <div className="space-y-4">
+
+        {stats.latestReservations.map(
+  (reservation: any) => (
+
+    <div
+      key={reservation.id}
+      className="
+        border-b
+        pb-4
+      "
+    >
+
+      <div className="flex justify-between">
+
+        <p className="font-semibold">
+          {reservation.name}
+        </p>
+
+        <p>
+          {reservation.adults} pers.
+        </p>
+
+      </div>
+
+      <p className="text-sm text-[#6b5b4f]">
+
+        {new Date(
+          reservation.arrival
+        ).toLocaleDateString("fr-FR")}
+
+        {" → "}
+
+        {new Date(
+          reservation.departure
+        ).toLocaleDateString("fr-FR")}
+
+      </p>
+
+      <p
+        className={`text-sm font-semibold mt-1 ${
+          reservation.status === "confirmed"
+            ? "text-green-600"
+            : reservation.status === "pending"
+            ? "text-orange-500"
+            : "text-red-500"
+        }`}
+      >
+        {reservation.status}
+      </p>
+
+    </div>
+
+  )
+)}
+
+      </div>
+
+    </div>
+
+    <div className="rounded-3xl bg-white p-8 shadow-lg">
+
+      <h2 className="mb-6 text-2xl font-bold">
+        Prochains événements
+      </h2>
+
+      <div className="space-y-4">
+
+        {stats.upcomingEvents.map(
+          (event: any) => (
+
+            <div
+  key={event.id}
+  className="border-b pb-4"
+>
+
+  <img
+    src={event.image}
+    alt={event.title}
+    className="
+      mb-3
+      h-40
+      w-full
+      rounded-2xl
+      object-cover
+    "
+  />
+
+  <p className="font-semibold text-lg">
+    {event.title}
+  </p>
+
+  <p className="text-sm text-[#6b5b4f]">
+    {new Date(
+      event.date
+    ).toLocaleDateString("fr-FR")}
+  </p>
+
+</div>
+
+          )
+        )}
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
+<div className="rounded-3xl bg-white p-8 shadow-lg">
+
+  <h2 className="mb-6 text-2xl font-bold">
+    Actions rapides
+  </h2>
+
+  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+
+    <Link
+      href="/admin/reservations"
+      className="rounded-2xl border p-4 hover:bg-[#f8f4ee]"
+    >
+      📅 Réservations
+    </Link>
+
+    <Link
+      href="/admin/events"
+      className="rounded-2xl border p-4 hover:bg-[#f8f4ee]"
+    >
+      🎉 Événements
+    </Link>
+
+    <Link
+      href="/admin/restaurant"
+      className="rounded-2xl border p-4 hover:bg-[#f8f4ee]"
+    >
+      🍽 Restaurant
+    </Link>
+
+    <Link
+      href="/admin/hotel"
+      className="rounded-2xl border p-4 hover:bg-[#f8f4ee]"
+    >
+      🛏 Chambres
+    </Link>
+
+    <Link
+      href="/admin/calendar"
+      className="rounded-2xl border p-4 hover:bg-[#f8f4ee]"
+    >
+      📆 Calendrier
+    </Link>
+
+  </div>
+
+</div>
 
       </div>
 

@@ -33,3 +33,36 @@ export async function PUT(
     reservation
   )
 }
+
+export async function DELETE(
+  request: NextRequest,
+  context: any
+) {
+
+  const params =
+    await context.params
+
+  const reservationId =
+    Number(params.id)
+
+  await prisma.reservation_rooms.deleteMany({
+
+    where: {
+      reservationId,
+    },
+
+  })
+
+  await prisma.reservations.delete({
+
+    where: {
+      id: reservationId,
+    },
+
+  })
+
+  return NextResponse.json({
+    success: true,
+  })
+
+}

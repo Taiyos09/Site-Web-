@@ -373,6 +373,63 @@ setTimeout(() => {
           Gestion Hôtel
         </h1>
 
+        <div
+  className="
+    mt-8
+    grid
+    gap-6
+    md:grid-cols-4
+  "
+>
+
+  <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <p className="text-sm text-[#6b5b4f]">
+      Chambres
+    </p>
+
+    <p className="mt-2 text-5xl font-bold font-serif">
+      {rooms.length}
+    </p>
+  </div>
+
+  <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <p className="text-sm text-[#6b5b4f]">
+      Prix moyen
+    </p>
+
+    <p className="mt-2 text-5xl font-bold font-serif">
+      {Math.round(
+        rooms.reduce(
+          (acc, room) =>
+            acc + room.priceTwoPeople,
+          0
+        ) / rooms.length
+      )}€
+    </p>
+  </div>
+
+  <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <p className="text-sm text-[#6b5b4f]">
+      Repas midi
+    </p>
+
+    <p className="mt-2 text-5xl font-bold font-serif">
+      {settings?.lunch}€
+    </p>
+  </div>
+
+  <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <p className="text-sm text-[#6b5b4f]">
+      Repas soir
+    </p>
+
+    <p className="mt-2 text-5xl font-bold font-serif">
+      {settings?.dinner}€
+    </p>
+  </div>
+
+</div>
+
         <p
           className="
             mt-2
@@ -596,14 +653,18 @@ setTimeout(() => {
       <div className="space-y-10">
         {rooms.map((room) => (
           <section
-            key={room.id}
-            className="
-              rounded-[36px]
-              bg-white
-              p-8
-              shadow-xl
-            "
-          >
+  key={room.id}
+  className="
+    rounded-[36px]
+    bg-white
+    p-8
+    shadow-xl
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    hover:shadow-2xl
+  "
+>
             <div
               className="
                 mb-8
@@ -627,6 +688,50 @@ setTimeout(() => {
                   Slug : {room.slug}
                 </p>
               </div>
+
+              <div className="mt-3 flex gap-3">
+
+  <span
+    className="
+      rounded-full
+      bg-[#c89b5f]/20
+      px-3
+      py-1
+      text-sm
+      font-medium
+    "
+  >
+    {room.capacity} pers.
+  </span>
+
+  <span
+    className="
+      rounded-full
+      bg-[#2f241d]/10
+      px-3
+      py-1
+      text-sm
+      font-medium
+    "
+  >
+    {room.size}
+  </span>
+
+  <span
+    className="
+      rounded-full
+      bg-green-100
+      px-3
+      py-1
+      text-sm
+      font-medium
+      text-green-700
+    "
+  >
+    Disponible
+  </span>
+
+</div>
 
               <button
   onClick={() =>

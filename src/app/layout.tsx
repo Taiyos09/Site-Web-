@@ -24,7 +24,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "L'Auberge de St Aubin",
-  description: "Hôtel - Restaurant - Bar",
+  description: "Bar - Restaurant - Chambres d'hôtes",
 }
 
 export default function RootLayout({
@@ -38,7 +38,6 @@ export default function RootLayout({
       className={`${libre.variable} ${poppins.variable}`}
     >
       <body className="min-h-screen bg-[#f5f1ea] text-[#2f241d] font-sans">
-        <Navbar />
         {children}
         <CookieBanner />
         <Script
