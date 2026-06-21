@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
@@ -11,6 +12,8 @@ export default function Navbar() {
 
   const [isOpen, setIsOpen] =
   useState(false)
+
+  const pathname = usePathname()
 
   useEffect(() => {
 
@@ -134,76 +137,162 @@ export default function Navbar() {
         >
 
           <Link
-            href="/"
-            className="
-              relative
-              font-medium
-              text-white
-              transition
-              hover:text-[#d6b98c]
-            "
-          >
-            Accueil
+  href="/"
+  className="
+    relative
+    font-medium
+    text-white
+    transition
+    hover:text-[#d6b98c]
+  "
+>
+  Accueil
 
-            <span
-              className="
-                absolute
-                -bottom-2
-                left-0
-                h-[2px]
-                w-full
-                bg-[#c89b5f]
-              "
-            />
-
-          </Link>
+  {pathname === "/" && (
+    <span
+      className="
+        absolute
+        -bottom-2
+        left-0
+        h-[2px]
+        w-full
+        bg-[#c89b5f]
+      "
+    />
+  )}
+</Link>
 
           <Link
-            href="/hotel"
-            className="
-              font-medium
-              text-white
-              transition
-              hover:text-[#d6b98c]
-            "
-          >
-            Hôtel
-          </Link>
+  href="/hotel"
+  className="
+    relative
+    font-medium
+    text-white
+    transition
+    hover:text-[#d6b98c]
+  "
+>
+  Hôtel
+
+  {(
+  pathname.startsWith("/hotel") ||
+  pathname.startsWith("/chambres")
+) && (
+    <span
+      className="
+        absolute
+        -bottom-2
+        left-0
+        h-[2px]
+        w-full
+        bg-[#c89b5f]
+      "
+    />
+  )}
+</Link>
 
           <Link
             href="/restaurant"
             className="
-              font-medium
-              text-white
-              transition
-              hover:text-[#d6b98c]
-            "
+    relative
+    font-medium
+    text-white
+    transition
+    hover:text-[#d6b98c]
+  "
           >
             Restaurant
+
+            {pathname.startsWith("/restaurant") && (
+    <span
+      className="
+        absolute
+        -bottom-2
+        left-0
+        h-[2px]
+        w-full
+        bg-[#c89b5f]
+      "
+    />
+  )}
           </Link>
 
           <Link
             href="/evenements"
             className="
-              font-medium
-              text-white
-              transition
-              hover:text-[#d6b98c]
-            "
+    relative
+    font-medium
+    text-white
+    transition
+    hover:text-[#d6b98c]
+  "
           >
             Événements
+
+            {pathname.startsWith("/evenements") && (
+    <span
+      className="
+        absolute
+        -bottom-2
+        left-0
+        h-[2px]
+        w-full
+        bg-[#c89b5f]
+      "
+    />
+  )}
           </Link>
 
           <Link
             href="/contact"
             className="
-              font-medium
-              text-white
-              transition
-              hover:text-[#d6b98c]
-            "
+    relative
+    font-medium
+    text-white
+    transition
+    hover:text-[#d6b98c]
+  "
           >
             Contact
+
+            {pathname.startsWith("/contact") && (
+    <span
+      className="
+        absolute
+        -bottom-2
+        left-0
+        h-[2px]
+        w-full
+        bg-[#c89b5f]
+      "
+    />
+  )}
+          </Link>
+
+          <Link
+            href="/notre-region"
+            className="
+    relative
+    font-medium
+    text-white
+    transition
+    hover:text-[#d6b98c]
+  "
+          >
+            Notre Region
+
+            {pathname.startsWith("/notre-region") && (
+    <span
+      className="
+        absolute
+        -bottom-2
+        left-0
+        h-[2px]
+        w-full
+        bg-[#c89b5f]
+      "
+    />
+  )}
           </Link>
 
         </nav>

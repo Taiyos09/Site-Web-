@@ -142,7 +142,7 @@ export default function RestaurantSection() {
               </div>
 
               <Link
-                href="/restaurant"
+                href="/restaurant#carte"
                 className="
                   mt-8
                   inline-flex

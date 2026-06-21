@@ -143,7 +143,7 @@ export default function Footer() {
                 </p>
 
                 <p>
-                  9h - 20h
+                  8h - 20h
                 </p>
 
               </div>

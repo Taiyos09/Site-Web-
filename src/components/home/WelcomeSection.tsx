@@ -91,7 +91,7 @@ export default function WelcomeSection() {
     "
   >
     Depuis plusieurs années,
-    notre établissement accueille
+    l'établissement accueille
     voyageurs, familles et
     professionnels dans une
     ambiance chaleureuse et
@@ -114,7 +114,7 @@ export default function WelcomeSection() {
   </p>
 
   <Link
-    href="/contact"
+    href="/notre-region"
     className="
       mt-10
       inline-flex
@@ -128,7 +128,7 @@ export default function WelcomeSection() {
       hover:bg-[#43352c]
     "
   >
-    En savoir plus
+    Activiter aux Alentour
   </Link>
 
 </div>

@@ -97,3 +97,31 @@ model rooms {
   updatedAt       DateTime            @updatedAt
   reservations    reservation_rooms[]
 }
+
+model tourism_places {
+  id          Int      @id @default(autoincrement())
+
+  name        String
+  slug        String?  @unique
+
+  description String?  @db.Text
+
+  image       String?
+
+  address     String?
+
+  travel_time String?
+
+  maps_url    String?
+  website     String?
+
+  category    String?
+
+  featured    Boolean  @default(false)
+  is_active   Boolean  @default(true)
+
+  sort_order  Int      @default(0)
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}

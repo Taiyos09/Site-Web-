@@ -15,10 +15,32 @@ export default function EventsSection() {
 
       const today = new Date()
 
-      const upcomingEvents = data.filter(
-        (event: any) =>
-          new Date(event.date) >= today
+today.setHours(
+  0,
+  0,
+  0,
+  0
+)
+
+const upcomingEvents =
+  data.filter(
+    (event: any) => {
+
+      const eventDate =
+        new Date(event.date)
+
+      eventDate.setHours(
+        0,
+        0,
+        0,
+        0
       )
+
+      return (
+        eventDate >= today
+      )
+    }
+  )
 
       const sorted = upcomingEvents.sort(
         (a: any, b: any) =>

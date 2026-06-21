@@ -102,39 +102,7 @@ export default function HeroSection() {
               gap-4
             "
           >
-            <Link
-              href="/hotel"
-              className="
-                rounded-2xl
-                bg-[#c89b5f]
-                px-8
-                py-4
-                font-bold
-                text-white
-                transition
-                hover:bg-[#b98746]
-              "
-            >
-              Réserver une chambre
-            </Link>
-
-            <Link
-              href="/restaurant"
-              className="
-                rounded-2xl
-                border
-                border-white
-                px-8
-                py-4
-                font-bold
-                text-white
-                transition
-                hover:bg-white
-                hover:text-[#2f241d]
-              "
-            >
-              Découvrir le restaurant
-            </Link>
+          
           </div>
 
         </div>
