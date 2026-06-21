@@ -140,7 +140,7 @@ export default function RestaurantPage() {
   {/* IMAGE */}
 
   <Image
-  src="/images/restaurant-hero.jpeg"
+  src="/images/restaurant-hero2.jpg"
   alt="Restaurant Auberge de St Aubin"
   fill
   priority
