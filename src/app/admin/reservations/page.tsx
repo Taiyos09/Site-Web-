@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { prisma } from "@/lib/prisma"
 
 type ReservationRoom = {
   id: number
@@ -115,6 +116,7 @@ const [statusFilter, setStatusFilter] =
     tourist_tax: 0,
     extra_bed: 0,
     lit_parapluie: 0,
+    deposit_percent: 20,
   })
 
   const [roomsData, setRoomsData] =
@@ -312,7 +314,9 @@ async (
 
     setReservations(
       reservations.map(
-        (reservation) =>
+  (
+    reservation: Reservation
+  ) =>
 
           
           reservation.id ===
@@ -489,8 +493,8 @@ const existingReservations =
     )
 
   const isOverlapping =
-    existingReservations?.some(
-      (reservation) => {
+  existingReservations?.some(
+    (reservation: any) => {
 
         const existingArrival =
           new Date(
@@ -3142,9 +3146,9 @@ const filteredReservations =
           <p>
             Client :
             <strong>
-              {" "}
-              {reservationToConfirm.name}
-            </strong>
+  {`${reservationToConfirm.first_name}
+    ${reservationToConfirm.last_name}`}
+</strong>
           </p>
 
           <p>

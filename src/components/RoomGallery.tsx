@@ -6,6 +6,7 @@ import Image from "next/image";
 interface RoomGalleryProps {
   images: string[];
   title: string;
+  roomName?: string;
 }
 
 export default function RoomGallery({

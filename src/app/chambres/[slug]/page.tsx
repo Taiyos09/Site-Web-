@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import Image from "next/image"
 import Navbar from "@/components/Navbar"
 import RoomGallery from "@/components/RoomGallery";
+import { prisma } from "@/lib/prisma"
 
 import {
   Wifi,
@@ -269,7 +270,7 @@ if (!room) {
 
   </div>
 
-  <span> {breakfast}€ / personne
+  <span> {breakfast}€ / personnes
   </span>
 
 </div>
