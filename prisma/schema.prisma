@@ -65,6 +65,7 @@ model reservations {
   createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
   dinner       Boolean             @default(false)
+  breakfast    Boolean             @default(false)
   lunch        Boolean             @default(false)
   pets         Boolean             @default(false)
   rooms        reservation_rooms[]

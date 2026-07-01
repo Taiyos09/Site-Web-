@@ -60,7 +60,7 @@ export default function HeroSection() {
               text-[#d6b98c]
             "
           >
-            Bar • Restaurant • Chambre d’hôtes
+            Bar • Restaurant • Hôtel
           </p>
 
           <h1

@@ -25,6 +25,7 @@ const reservationSchema = z.object({
   litParapluie: z.boolean().optional(),
   message: z.string().optional(),
   pets: z.boolean().optional(),
+  breakfast: z.boolean().optional(),
   lunch: z.boolean().optional(),
   dinner: z.boolean().optional(),
   total: z.number().min(0, "Total invalide"),
@@ -84,6 +85,9 @@ export async function GET(request: NextRequest) {
 
   pets:
     reservation.pets,
+
+  breakfast:
+    reservation.breakfast,
 
   lunch:
     reservation.lunch,
@@ -185,6 +189,7 @@ export async function POST(
     const litParapluie = data.litParapluie
     const message = data.message
     const pets = data.pets
+    const breakfast = data.breakfast
     const lunch = data.lunch
     const dinner = data.dinner
     const total = data.total
@@ -224,6 +229,9 @@ litParapluie: Boolean(
 
 pets:
   Boolean(pets),
+
+breakfast:
+  Boolean(breakfast),
 
 lunch:
   Boolean(lunch),
@@ -397,7 +405,7 @@ dinner:
 
     <hr style="border:none;border-top:1px solid #ddd;margin:15px 0;">
 
-    <p><strong>🍽 Petit Déjeuner :</strong> </p>
+    <p><strong>🍽 Petit Déjeuner :</strong> ${breakfast ? "Oui" : "Non"}</p>
     <p><strong>🍽 Repas midi :</strong> ${lunch ? "Oui" : "Non"}</p>
     <p><strong>🌙 Repas soir :</strong> ${dinner ? "Oui" : "Non"}</p>
     <p><strong>🐶 Animal :</strong> ${pets ? "Oui" : "Non"}</p>

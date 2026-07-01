@@ -23,6 +23,7 @@ type HotelSettings = {
   id: number
 
 
+  breakfast: number
   lunch: number
   dinner: number
 
@@ -283,7 +284,7 @@ setTimeout(() => {
 
     const response =
       await fetch(
-        "/api/hotelsettings",
+        "/api/hotel-settings",
         {
           method: "PUT",
 
@@ -293,6 +294,7 @@ setTimeout(() => {
           },
 
           body: JSON.stringify({
+            breakfast: settings.breakfast,
             lunch: settings.lunch,
             dinner: settings.dinner,
             pet: settings.pet,
@@ -644,6 +646,31 @@ setTimeout(() => {
                 "
               />
             </div>
+
+            <div>
+  <label className="mb-2 block font-bold">
+    Petit Déjeuner
+  </label>
+
+  <input
+    type="number"
+    value={
+      settings.breakfast || 12
+    }
+    onChange={(e) =>
+      handleSettingChange(
+        "breakfast",
+        Number(e.target.value)
+      )
+    }
+    className="
+      w-full
+      rounded-2xl
+      border
+      p-4
+    "
+  />
+</div>
           </div>
         </section>
       )}

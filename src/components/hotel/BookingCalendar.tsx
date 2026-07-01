@@ -52,6 +52,9 @@ const [babies, setBabies] =
 const occupancy =
   adults + children
 
+const [breakfast, setBreakfast] =
+  useState(false)
+
   const [lunch, setLunch] =
     useState(false)
 
@@ -238,6 +241,13 @@ const occupancy =
         nights
       : 0
 
+  const breakfastTotal =
+    breakfast
+      ? occupancy *
+        (settings?.breakfast ?? 12) *
+        nights
+      : 0
+
   const dinnerTotal =
     dinner
       ? occupancy *
@@ -258,6 +268,7 @@ const occupancy =
   roomTotal +
   extraBedTotal +
   petTotal +
+  breakfastTotal +
   lunchTotal +
   dinnerTotal +
   touristTaxTotal +
@@ -608,7 +619,7 @@ const occupancy =
 
 <div className="grid gap-3">
 
-  {/* MIDI */}
+  {/* Matin */}
 
   <label
     className="
@@ -623,7 +634,49 @@ const occupancy =
       p-5
     "
   >
+    
+    <div>
 
+      <p className="text-sm font-semibold">
+        🥐 Petit Déjeuner
+      </p>
+
+      <p className="text-xs text-[#7a6a5d]">
+        +{settings?.breakfast || 12}€
+        / personne
+      </p>
+
+    </div>
+
+    <input
+      type="checkbox"
+      checked={breakfast}
+      onChange={(e) =>
+        setBreakfast(
+          e.target.checked
+        )
+      }
+      className="h-5 w-5"
+    />
+
+  </label>
+  
+    {/* MIDI */}
+
+  <label
+    className="
+      flex
+      cursor-pointer
+      items-center
+      justify-between
+      rounded-2xl
+      border
+      border-[#e7ded2]
+      bg-[#faf7f2]
+      p-5
+    "
+  >
+    
     <div>
 
       <p className="text-sm font-semibold">
@@ -896,7 +949,7 @@ const occupancy =
         "yyyy-MM-dd"
       )}&roomName=${roomName}&roomSlug=${roomSlug}&roomIds=${JSON.stringify(
         [roomId]
-      )}&adults=${adults}&children=${children}&babies=${babies}&pets=${pets}&lunch=${lunch}&dinner=${dinner}&litParapluie=${litParapluie}&total=${total}`
+      )}&adults=${adults}&children=${children}&babies=${babies}&pets=${pets}&breakfast=${breakfast}&lunch=${lunch}&dinner=${dinner}&litParapluie=${litParapluie}&total=${total}`
 
     )
   }}

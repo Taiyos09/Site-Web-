@@ -141,10 +141,6 @@ if (!room) {
     {room.size}
   </span>
 
-  <span className="rounded-full bg-green-100 px-4 py-2 text-green-700">
-    Petit déjeuner inclus
-  </span>
-
 </div>
 
               <div className="space-y-6 text-lg leading-relaxed text-[#5a4c42]">
@@ -284,7 +280,7 @@ if (!room) {
 
   </div>
 
-  <span> Inclus
+  <span> 12 €/personne
   </span>
 
 </div>

@@ -365,8 +365,7 @@ export default function Navbar() {
     Réserver une chambre
   </Link>
 </div>
-
-      </div>
+</div>
 
     {/* MENU MOBILE */}
 

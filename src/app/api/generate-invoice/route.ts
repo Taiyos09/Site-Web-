@@ -166,7 +166,7 @@ const litParapluiePrice =
       .font("Helvetica")
 
     doc.text(
-      "Bar • Restaurant • Chambre d'hôte",
+      "Bar • Restaurant • Hôtel",
       350,
       75
     )

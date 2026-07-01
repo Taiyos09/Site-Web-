@@ -24,6 +24,14 @@ export async function GET() {
       )?.value || 0
     ),
 
+    breakfast: Number(
+  settings.find(
+    (s) =>
+      s.key ===
+      "option_breakfast"
+  )?.value || 12
+),
+
     dinner: Number(
       settings.find(
         (s) =>
@@ -75,7 +83,19 @@ export async function PUT(
   const body =
     await request.json()
 
+  
   await prisma.hotel_settings.update({
+
+    where: {
+      id: 10,
+    },
+
+    data: {
+      value: String(body.breakfast),
+    },
+  })
+
+    await prisma.hotel_settings.update({
 
     where: {
       id: 4,

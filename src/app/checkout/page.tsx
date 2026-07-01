@@ -18,6 +18,7 @@ type ReservationData = {
   babies: number
   touristTaxTotal: number
   pets: boolean
+  breakfast: boolean
   lunch: boolean
   dinner: boolean
   litParapluie: boolean
@@ -108,6 +109,11 @@ const babies =
           "pets"
         ) === "true"
 
+      const breakfast =
+        searchParams.get(
+          "breakfast"
+        ) === "true"
+
       const lunch =
         searchParams.get(
           "lunch"
@@ -181,6 +187,7 @@ const babies =
         lunch,
         dinner,
         litParapluie,
+        breakfast,
 
         total,
       }
@@ -286,6 +293,9 @@ const babies =
 
         litParapluie:
         reservation.litParapluie,
+
+        breakfast:
+          reservation.breakfast,
 
         lunch:
           reservation.lunch,
@@ -872,6 +882,29 @@ const babies =
 
                 <span>
                   Repas midi
+                </span>
+
+                <span>
+                  Oui
+                </span>
+
+              </div>
+
+            )}
+
+            {reservation.breakfast && (
+
+              <div
+                className="
+                  flex
+                  justify-between
+                  border-b
+                  pb-3
+                "
+              >
+
+                <span>
+                  Petit Déjeuner
                 </span>
 
                 <span>

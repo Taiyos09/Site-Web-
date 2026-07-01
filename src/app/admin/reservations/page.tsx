@@ -26,6 +26,7 @@ type Reservation = {
   babies: number
 
   pets: boolean
+  breakfast: boolean
   lunch: boolean
   dinner: boolean
 
@@ -76,6 +77,7 @@ const [statusFilter, setStatusFilter] =
 
   lunch: false,
   dinner: false,
+  breakfast: false,
   pets: false,
 
   litParapluie: false,
@@ -88,6 +90,7 @@ const [statusFilter, setStatusFilter] =
 
     lunch: 0,
     dinner: 0,
+    breakfast: 0,
     pet: 0,
     tourist_tax: 0,
     extra_bed: 0,
@@ -552,13 +555,23 @@ ${totalCapacity} personnes`
     nights
 }
 
-        if (
+if (
   manualReservation.lunch
 ) {
 
   total +=
     occupancy *
     (hotelSettings.lunch || 0) *
+    nights
+}
+
+if (
+  manualReservation.breakfast
+) {
+
+  total +=
+    occupancy *
+    (hotelSettings.breakfast || 0) *
     nights
 }
 
@@ -694,6 +707,8 @@ babies:
 litParapluie:
   manualReservation.litParapluie,
 
+      breakfast:
+        manualReservation.breakfast,
       lunch:
         manualReservation.lunch,
 
@@ -777,6 +792,8 @@ litParapluie:
   nights,
   people:
     occupancy,
+  breakfast:
+    hotelSettings.breakfast,
   lunch:
     hotelSettings.lunch,
   dinner:
@@ -785,7 +802,16 @@ litParapluie:
     hotelSettings.pet,
 })
 
-  const lunchTotal =
+const breakfastTotal =
+  manualReservation.breakfast
+    ? occupancy *
+      Number(
+        hotelSettings.breakfast || 0
+      ) *
+      nights
+    : 0
+
+const lunchTotal =
   manualReservation.lunch
     ? occupancy *
       Number(
@@ -843,6 +869,7 @@ const litParapluieTotal =
 const totalPrice =
     roomsTotal +
     extraBedTotal +
+    breakfastTotal +
     lunchTotal +
     dinnerTotal +
     petsTotal +
@@ -1572,6 +1599,23 @@ const filteredReservations =
               gap-3
             "
           >
+
+            <div
+              className="
+                rounded-full
+                bg-white
+                px-4
+                py-2
+                text-sm
+                font-semibold
+              "
+            >
+               Petit Déjeuner :
+              {" "}
+              {reservation.breakfast
+                ? "Oui"
+                : "Non"}
+            </div>
 
             <div
               className="
@@ -2367,6 +2411,31 @@ const filteredReservations =
     <input
       type="checkbox"
       checked={
+        manualReservation.breakfast
+      }
+      onChange={(e) =>
+        setManualReservation({
+          ...manualReservation,
+          breakfast:
+            e.target.checked,
+        })
+      }
+    />
+
+    Petit Déjeuner
+
+  </label>
+  
+  <label className="
+    flex items-center gap-3
+    rounded-2xl
+    bg-[#f5f1ea]
+    p-4
+  ">
+
+    <input
+      type="checkbox"
+      checked={
         manualReservation.lunch
       }
       onChange={(e) =>
@@ -2558,8 +2627,7 @@ const filteredReservations =
   </div>
 )}
 
-
-{/* Petit Déjeuner */}
+{/* Matin */}
 
 <div className="
   flex justify-between
@@ -2568,11 +2636,28 @@ const filteredReservations =
 ">
 
   <span>
-    Petit Déjeuner    
+    Petit Déjeuner
+
+    {manualReservation.breakfast && (
+      <span className="text-[#6b5b4f]">
+        {" "}
+        (
+        {Number(hotelSettings.breakfast || 0)}€
+        {" "}×{" "}
+        {occupancy}
+        {" "}personnes
+        {" "}×{" "}
+        {nights}
+        {" "}nuits
+        )
+      </span>
+    )}
   </span>
 
   <span>
-    Inclus
+    {manualReservation.breakfast
+      ? `${breakfastTotal}€`
+      : "Non"}
   </span>
 
 </div>

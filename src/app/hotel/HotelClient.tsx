@@ -25,7 +25,9 @@ export default function HotelPage() {
   const [currentImages, setCurrentImages] =
     useState<number[]>([])
 
-  const [lunch, setLunch] =
+  const [breakfast, setBreakfast] =
+    useState(false)
+    const [lunch, setLunch] =
     useState(false)
 
   const [dinner, setDinner] =
@@ -225,6 +227,9 @@ export default function HotelPage() {
           rooms: formattedRooms,
 
           options: {
+
+            breakfast:
+              data.settings?.breakfast || 0,
 
             lunch:
               data.settings?.lunch || 0,
@@ -736,11 +741,6 @@ const filteredRooms =
 
       {[
         {
-          icon: "🥐",
-          title: "Petit déjeuner",
-        },
-
-        {
           icon: "📶",
           title: "Wifi gratuit",
         },
@@ -1012,16 +1012,6 @@ const filteredRooms =
                         par nuit
                       </span>
 
-                      {false && (<span
-                        className="
-                          text-sm
-                          text-[#7a6a5d]
-                        "
-                      >
-                        Petit déjeuner inclus
-                      </span>
-                      )}
-
                     </div>
 
                     <Link
@@ -1119,11 +1109,6 @@ const filteredRooms =
         <div>
           <strong>Départ</strong>
           <p>Avant 11h</p>
-        </div>
-
-        <div>
-          <strong>Petit déjeuner</strong>
-          <p>Inclus dans le prix de la chambre</p>
         </div>
 
         <div>

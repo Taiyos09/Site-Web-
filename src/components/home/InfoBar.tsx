@@ -71,7 +71,7 @@ export default function InfoBar() {
 
   <div>
     <h3 className="font-semibold text-[#2f241d]">
-      Chambres d'hôtes
+      Hôtel
     </h3>
 
     <p className="mt-1 text-sm text-[#5a4c42]">

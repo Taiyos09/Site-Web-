@@ -13,7 +13,7 @@ const services = [
   },
 
   {
-    title: "Chambres d'hôtes",
+    title: "Hôtel",
     subtitle: "Séjour confortable",
     description:
       "Des chambres chaleureuses au cœur du Bourbonnais.",

@@ -49,7 +49,7 @@ export default function Footer() {
                 text-white/80
               "
             >
-              Bar • Restaurant • Chambres d'hôtes
+              Bar • Restaurant • Hôtel
             </p>
 
           </div>
@@ -179,7 +179,7 @@ export default function Footer() {
               </Link>
 
               <Link href="/hotel">
-                Chambres d'hôtes
+                Hôtel
               </Link>
 
               <Link href="/restaurant">

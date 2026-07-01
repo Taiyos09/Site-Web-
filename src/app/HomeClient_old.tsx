@@ -269,7 +269,7 @@ export default function AubergeSaintAubinHomepage() {
                 text-white/90
               "
             >
-              Bar • Restaurant • Chambre d'hôtes
+              Bar • Restaurant • Hôtel
             </p>
 
             <p
