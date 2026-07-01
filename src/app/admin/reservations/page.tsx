@@ -38,10 +38,30 @@ type Reservation = {
 
   status: string
 
+  depositRequired: boolean
+
+  depositAmount: number
+
+  depositPaid: boolean
+
+  depositPaidAt?: string
+
   reservation_rooms?: ReservationRoom[]
 }
 
 export default function ReservationsPage() {
+
+  const [
+  showConfirmModal,
+  setShowConfirmModal,
+] = useState(false)
+
+const [
+  reservationToConfirm,
+  setReservationToConfirm,
+] = useState<Reservation | null>(
+  null
+)
 
   const [reservations, setReservations] =
     useState<Reservation[]>([])
@@ -156,10 +176,11 @@ console.log(settingsData)
   /* ---------------- STATUS ---------------- */
 
   const updateReservationStatus =
-  async (
-    reservation: Reservation,
-    status: string
-  ) => {
+async (
+  reservation: Reservation,
+  status: string,
+  askDeposit = false
+) => {
 
     try {
 
@@ -176,27 +197,51 @@ console.log(settingsData)
           },
 
           body: JSON.stringify({
-            status,
-          }),
+  ...reservation,
+  status,
+
+  depositRequired:
+  askDeposit,
+
+depositAmount:
+  askDeposit
+    ? reservation.total *
+      (hotelSettings.deposit_percent / 100)
+    : 0,
+
+depositPaid: false,
+}),
         }
       )
 
       await fetch(
-        "/api/send-status-email",
-        {
-          method: "POST",
+  "/api/send-status-email",
+  {
+    method: "POST",
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+    headers: {
+      "Content-Type":
+        "application/json",
+    },
 
-          body: JSON.stringify({
-            ...reservation,
-            status,
-          }),
-        }
-      )
+    body: JSON.stringify({
+      ...reservation,
+
+      status,
+
+      depositRequired:
+        askDeposit,
+
+      depositAmount:
+        askDeposit
+          ? (
+              reservation.total *
+              0.20
+            )
+          : 0,
+    }),
+  }
+)
 
       if (status === "rejected") {
 
@@ -209,21 +254,91 @@ console.log(settingsData)
       }
 
       setReservations((prev) =>
-        prev.map((r) =>
-          r.id === reservation.id
-            ? {
-                ...r,
-                status,
-              }
-            : r
-        )
-      )
+  prev.map((r) =>
+    r.id === reservation.id
+      ? {
+          ...r,
+          status,
+
+          depositRequired:
+            askDeposit,
+
+          depositAmount:
+            askDeposit
+              ? reservation.total *
+                (hotelSettings.deposit_percent / 100)
+              : 0,
+
+          depositPaid: false,
+        }
+      : r
+  )
+)
 
     } catch (error) {
 
       console.error(error)
     }
   }
+
+  const markDepositPaid =
+async (
+  reservationId: number
+) => {
+
+  try {
+
+    await fetch(
+
+      `/api/reservations/${reservationId}`,
+
+      {
+        method: "PUT",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+
+          depositPaid: true,
+
+          depositPaidAt:
+            new Date(),
+        }),
+      }
+    )
+
+    setReservations(
+      reservations.map(
+        (reservation) =>
+
+          
+          reservation.id ===
+          reservationId
+
+            ? {
+
+                ...reservation,
+
+                depositPaid:
+                  true,
+
+                depositPaidAt:
+                  new Date()
+                    .toISOString(),
+              }
+
+            : reservation
+      )
+    )
+
+  } catch (error) {
+
+    console.error(error)
+  }
+}
 
   /* ---------------- DELETE ---------------- */
 
@@ -570,8 +685,15 @@ if (
 ) {
 
   total +=
-    occupancy *
-    (hotelSettings.breakfast || 0) *
+    (
+      manualReservation.adults *
+        Number(
+          hotelSettings.breakfast || 12
+        )
+      +
+      manualReservation.children *
+        6
+    ) *
     nights
 }
 
@@ -804,11 +926,14 @@ litParapluie:
 
 const breakfastTotal =
   manualReservation.breakfast
-    ? occupancy *
-      Number(
-        hotelSettings.breakfast || 0
-      ) *
-      nights
+    ? (
+        manualReservation.adults *
+          Number(
+            hotelSettings.breakfast || 12
+          )
+        +
+        manualReservation.children * 6
+      ) * nights
     : 0
 
 const lunchTotal =
@@ -1420,34 +1545,75 @@ const filteredReservations =
 
         </div>
 
-        <div>
+        <div className="flex flex-col items-end gap-3">
 
-          <span
-            className={`
-              rounded-full
-              border
-              px-5
-              py-3
-              text-sm
-              font-bold
+  <span
+    className={`
+      rounded-full
+      border
+      px-5
+      py-3
+      text-sm
+      font-bold
+      ${
+        getStatusStyle(
+          reservation.status
+        ).className
+      }
+    `}
+  >
+    {
+      getStatusStyle(
+        reservation.status
+      ).label
+    }
+  </span>
 
-              ${
-                getStatusStyle(
-                  reservation.status
-                ).className
-              }
-            `}
-          >
+  {reservation.depositRequired && (
 
-            {
-              getStatusStyle(
-                reservation.status
-              ).label
-            }
+    <div
+      className={`
+        rounded-xl
+        px-4
+        py-3
+        text-sm
+        font-bold
 
-          </span>
+        ${
+          reservation.depositPaid
 
+            ? `
+              bg-green-100
+              text-green-700
+            `
+
+            : `
+              bg-orange-100
+              text-orange-700
+            `
+        }
+      `}
+    >
+
+      {reservation.depositPaid
+        ? `✅ Acompte reçu (${reservation.depositAmount.toFixed(2)}€)`
+        : `💰 Acompte demandé (${reservation.depositAmount.toFixed(2)}€)`
+      }
+
+      {reservation.depositPaidAt && (
+        <div className="mt-1 text-xs opacity-70">
+          reçu le{" "}
+          {new Date(
+            reservation.depositPaidAt
+          ).toLocaleDateString("fr-FR")}
         </div>
+      )}
+
+    </div>
+
+  )}
+
+</div>
 
       </div>
 
@@ -1785,38 +1951,53 @@ const filteredReservations =
       >
 
         <button
-          disabled={
-            reservation.status ===
-            "confirmed"
-          }
+  className="
+    rounded-xl
+    bg-green-700
+    px-6
+    py-3
+    font-bold
+    text-white
+    transition
+    hover:bg-green-800
+  "
+  onClick={() => {
 
-          onClick={() =>
-            updateReservationStatus(
-              reservation,
-              "confirmed"
-            )
-          }
+    setReservationToConfirm(
+      reservation
+    )
 
-          className={`
-            rounded-xl
-            px-5
-            py-3
-            font-bold
-            text-white
-            transition
+    setShowConfirmModal(
+      true
+    )
+  }}
+>
+  Confirmer
+</button>
 
-            ${
-              reservation.status ===
-              "confirmed"
+{reservation.depositRequired &&
+ !reservation.depositPaid && (
 
-                ? "cursor-not-allowed bg-green-300"
+  <button
+    onClick={() =>
+      markDepositPaid(
+        reservation.id
+      )
+    }
+    className="
+      rounded-xl
+      bg-emerald-600
+      px-5
+      py-3
+      font-bold
+      text-white
+      hover:bg-emerald-700
+    "
+  >
+    Acompte reçu
+  </button>
 
-                : "bg-green-600 hover:bg-green-700"
-            }
-          `}
-        >
-          Confirmer
-        </button>
+)}
 
         <button
   disabled={
@@ -2335,7 +2516,7 @@ const filteredReservations =
               )
 
             if (!roomsData.length) {
-
+    
   return (
     <div>
       Chargement...
@@ -2639,19 +2820,43 @@ const filteredReservations =
     Petit Déjeuner
 
     {manualReservation.breakfast && (
-      <span className="text-[#6b5b4f]">
+  <span className="text-[#6b5b4f]">
+
+    {manualReservation.adults > 0 && (
+      <>
+        {manualReservation.adults}
+        {" "}adulte(s)
+        ×
         {" "}
-        (
-        {Number(hotelSettings.breakfast || 0)}€
-        {" "}×{" "}
-        {occupancy}
-        {" "}personnes
-        {" "}×{" "}
-        {nights}
-        {" "}nuits
-        )
-      </span>
+        {Number(
+          hotelSettings.breakfast || 12
+        )}€
+        {" "}
+      </>
     )}
+
+    {manualReservation.children > 0 && (
+      <>
+        {manualReservation.children}
+        {" "}enfant(s)
+        × 6€
+        {" "}
+      </>
+    )}
+
+    {manualReservation.babies > 0 && (
+      <>
+        {manualReservation.babies}
+        {" "}bébé(s)
+        gratuits
+        {" "}
+      </>
+    )}
+
+    × {nights} nuit(s)
+
+  </span>
+)}
   </span>
 
   <span>
@@ -2882,6 +3087,171 @@ const filteredReservations =
   </div>
 
 )}
+
+{
+  showConfirmModal &&
+  reservationToConfirm && (
+
+    <div className="
+      fixed
+      inset-0
+      z-50
+      flex
+      items-center
+      justify-center
+      bg-black/50
+    ">
+
+      <div className="
+        w-full
+        max-w-xl
+        rounded-3xl
+        bg-white
+        p-8
+        shadow-2xl
+      ">
+
+        <h2 className="
+          text-3xl
+          font-bold
+          text-[#2f241d]
+        ">
+          Confirmation
+        </h2>
+
+        <p className="
+          mt-4
+          text-[#6b5b4f]
+        ">
+          Souhaitez-vous demander
+          un acompte de
+          <strong>
+            {" "}
+            {hotelSettings.deposit_percent}%
+          </strong>
+          ?
+        </p>
+
+        <div className="
+          mt-6
+          rounded-2xl
+          bg-[#faf7f2]
+          p-5
+        ">
+
+          <p>
+            Client :
+            <strong>
+              {" "}
+              {reservationToConfirm.name}
+            </strong>
+          </p>
+
+          <p>
+            Montant total :
+            <strong>
+              {" "}
+              {reservationToConfirm.total.toFixed(
+                2
+              )}€
+            </strong>
+          </p>
+
+          <p>
+            Acompte :
+            <strong>
+              {" "}
+              {(
+                reservationToConfirm.total *
+                hotelSettings.deposit_percent /
+                100
+              ).toFixed(2)}
+              €
+            </strong>
+          </p>
+
+        </div>
+
+        <div className="
+          mt-8
+          flex
+          justify-end
+          gap-4
+        ">
+
+          <button
+            className="
+              rounded-xl
+              border
+              px-5
+              py-3
+            "
+            onClick={() =>
+              setShowConfirmModal(
+                false
+              )
+            }
+          >
+            Annuler
+          </button>
+
+          <button
+            className="
+              rounded-xl
+              bg-blue-700
+              px-5
+              py-3
+              font-bold
+              text-white
+            "
+            onClick={() => {
+
+              updateReservationStatus(
+                reservationToConfirm,
+                "confirmed",
+                false
+              )
+
+              setShowConfirmModal(
+                false
+              )
+            }}
+          >
+            Sans acompte
+          </button>
+
+          <button
+            className="
+              rounded-xl
+              bg-green-700
+              px-5
+              py-3
+              font-bold
+              text-white
+            "
+            onClick={() => {
+
+              updateReservationStatus(
+                reservationToConfirm,
+                "confirmed",
+                true
+              )
+
+              setShowConfirmModal(
+                false
+              )
+            }}
+          >
+            Avec acompte
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  )
+}
 
     </main>
   )

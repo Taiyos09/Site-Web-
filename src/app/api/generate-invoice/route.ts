@@ -62,6 +62,13 @@ const settings =
     )?.value || 15
   )
 
+const breakfastPrice =
+  Number(
+    settings.find(
+      s => s.key === "option_breakfast"
+    )?.value || 12
+  )
+
 const dinnerPrice =
   Number(
     settings.find(
@@ -456,6 +463,17 @@ const litParapluiePrice =
       nights
     : 0)
   +
+  (reservation.breakfast
+  ? (
+      breakfastPrice *
+      reservation.adults
+      +
+      6 *
+      reservation.children
+    ) *
+    nights
+  : 0)
+    +
   (reservation.dinner
     ? dinnerPrice *
       occupancy *
@@ -612,16 +630,40 @@ const unitPrice =
     const invoiceOptions = [
 
   {
-    label:
-      "Petit déjeuner compris",
+  label: "Petit déjeuner adulte",
+  enabled:
+    reservation.breakfast &&
+    reservation.adults > 0,
 
-    enabled: true,
+  persons:
+    reservation.adults,
 
-    included: true,
+  unitPrice:
+    breakfastPrice,
 
-    persons:
-      occupancy,
-  },
+  total:
+    breakfastPrice *
+    reservation.adults *
+    nights,
+},
+
+{
+  label: "Petit déjeuner enfant",
+  enabled:
+    reservation.breakfast &&
+    reservation.children > 0,
+
+  persons:
+    reservation.children,
+
+  unitPrice:
+    6,
+
+  total:
+    6 *
+    reservation.children *
+    nights,
+},
 
   {
     label:

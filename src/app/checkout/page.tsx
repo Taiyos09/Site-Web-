@@ -907,9 +907,44 @@ const babies =
                   Petit Déjeuner
                 </span>
 
-                <span>
-                  Oui
-                </span>
+                <span className="text-right text-sm">
+
+  {reservation.adults > 0 && (
+    <div>
+      {reservation.adults}
+      {" "}
+      adulte(s)
+      ×
+      {" "}
+      {settings?.breakfast || 12}€
+    </div>
+  )}
+
+  {reservation.children > 0 && (
+    <div>
+      {reservation.children}
+      {" "}
+      enfant(s)
+      × 6€
+    </div>
+  )}
+
+  {reservation.babies > 0 && (
+    <div>
+      {reservation.babies}
+      {" "}
+      bébé(s)
+      gratuits
+    </div>
+  )}
+
+  <div>
+    × {reservation.nights}
+    {" "}
+    nuit(s)
+  </div>
+
+</span>
 
               </div>
 

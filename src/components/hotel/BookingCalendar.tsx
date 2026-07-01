@@ -229,10 +229,11 @@ const [breakfast, setBreakfast] =
       : 0
 
   const litParapluieTotal =
-    litParapluie
-      ? (settings?.litParapluie ?? 5) *
-        nights
-     : 0
+  litParapluie
+    ? (settings?.lit_parapluie ?? 5) *
+      babies *
+      nights
+    : 0
 
   const lunchTotal =
     lunch
@@ -242,11 +243,13 @@ const [breakfast, setBreakfast] =
       : 0
 
   const breakfastTotal =
-    breakfast
-      ? occupancy *
-        (settings?.breakfast ?? 12) *
-        nights
-      : 0
+  breakfast
+    ? (
+        adults * (settings?.breakfast ?? 12)
+        +
+        children * 6
+      ) * nights
+    : 0
 
   const dinnerTotal =
     dinner
@@ -642,9 +645,13 @@ const [breakfast, setBreakfast] =
       </p>
 
       <p className="text-xs text-[#7a6a5d]">
-        +{settings?.breakfast || 12}€
-        / personne
-      </p>
+  Adulte :
+  {settings?.breakfast || 12}€
+  • Enfant :
+  6€
+  • Bébé :
+  gratuit
+</p>
 
     </div>
 
@@ -843,6 +850,48 @@ const [breakfast, setBreakfast] =
     text-white
   "
 >
+{breakfast && (
+
+  <div className="mb-2 text-sm">
+
+    <p className="font-semibold">
+      🥐 Petit déjeuner
+    </p>
+
+    {adults > 0 && (
+      <p>
+        {adults} adulte(s)
+        × {settings?.breakfast || 12}€
+      </p>
+    )}
+
+    {children > 0 && (
+      <p>
+        {children} enfant(s)
+        × 6€
+      </p>
+    )}
+
+    {babies > 0 && (
+      <p>
+        {babies} bébé(s)
+        × gratuit
+      </p>
+    )}
+
+    <p>
+      × {nights}
+      {nights > 1 ? " nuits" : " nuit"}
+    </p>
+
+    <p className="font-bold">
+      Total :
+      {breakfastTotal.toFixed(2)}€
+    </p>
+
+  </div>
+
+)}
 
 {extraPeople > 0 && (
 

@@ -735,7 +735,7 @@ const filteredRooms =
         grid
         gap-6
         md:grid-cols-3
-        lg:grid-cols-5
+        lg:grid-cols-4
       "
     >
 
@@ -1068,6 +1068,7 @@ const filteredRooms =
         bg-white
         p-10
         shadow-xl
+        text-center
       "
     >
 
@@ -1102,17 +1103,17 @@ const filteredRooms =
       >
 
         <div>
-          <strong>Arrivée</strong>
+          <u><strong>Arrivée</strong></u>
           <p>À partir de 16h</p>
         </div>
 
         <div>
-          <strong>Départ</strong>
+          <u><strong>Départ</strong></u>
           <p>Avant 11h</p>
         </div>
 
         <div>
-          <strong>Parking</strong>
+          <u><strong>Parking</strong></u>
           <p>Gratuit pour les clients</p>
         </div>
 

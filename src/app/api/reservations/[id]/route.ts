@@ -25,7 +25,32 @@ export async function PUT(
       },
 
       data: {
-        status: body.status,
+
+        ...(body.status !== undefined && {
+          status: body.status,
+        }),
+
+        ...(body.depositRequired !== undefined && {
+          depositRequired:
+            body.depositRequired,
+        }),
+
+        ...(body.depositAmount !== undefined && {
+          depositAmount:
+            body.depositAmount,
+        }),
+
+        ...(body.depositPaid !== undefined && {
+          depositPaid:
+            body.depositPaid,
+        }),
+
+        ...(body.depositPaidAt && {
+          depositPaidAt:
+            new Date(
+              body.depositPaidAt
+            ),
+        }),
       },
     })
 

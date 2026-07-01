@@ -498,7 +498,11 @@ dinner:
     Options
   </h3>
 
-  <p><strong>🍽 Midi :</strong> ${lunch ? "Oui" : "Non"}</p>
+  <p>
+  Petit déjeuner :
+  <strong>${body.breakfastPrice ? "Oui" : "Non"}
+    </strong></p>
+    <p><strong>🍽 Midi :</strong> ${lunch ? "Oui" : "Non"}</p>
   <p><strong>🌙 Soir :</strong> ${dinner ? "Oui" : "Non"}</p>
   <p><strong>🐶 Animal :</strong> ${pets ? "Oui" : "Non"}</p>
   <p><strong>🍼 Lit parapluie :</strong> ${litParapluie ? "Oui" : "Non"}</p>

@@ -22,7 +22,6 @@ type Room = {
 type HotelSettings = {
   id: number
 
-
   breakfast: number
   lunch: number
   dinner: number
@@ -34,6 +33,11 @@ type HotelSettings = {
   extra_bed: number
 
   lit_parapluie: number
+
+  iban: string
+  bic: string
+  account_name: string
+  deposit_percent: number
 }
 
 export default function HotelAdminPage() {
@@ -259,9 +263,9 @@ setTimeout(() => {
   // =========================
 
   function handleSettingChange(
-    field: keyof HotelSettings,
-    value: number
-  ) {
+  field: keyof HotelSettings,
+  value: string | number
+) {
     if (!settings) return
 
     setSettings({
@@ -294,20 +298,32 @@ setTimeout(() => {
           },
 
           body: JSON.stringify({
-            breakfast: settings.breakfast,
-            lunch: settings.lunch,
-            dinner: settings.dinner,
-            pet: settings.pet,
+  breakfast: settings.breakfast,
+  lunch: settings.lunch,
+  dinner: settings.dinner,
+  pet: settings.pet,
 
-            tourist_tax:
-              settings.tourist_tax,
+  tourist_tax:
+    settings.tourist_tax,
 
-            extra_bed:
-              settings.extra_bed,
+  extra_bed:
+    settings.extra_bed,
 
-            lit_parapluie:
-              settings.lit_parapluie,
-          }),
+  lit_parapluie:
+    settings.lit_parapluie,
+
+  iban:
+    settings.iban,
+
+  bic:
+    settings.bic,
+
+  account_name:
+    settings.account_name,
+
+  deposit_percent:
+    settings.deposit_percent,
+}),
         }
       )
 
@@ -662,6 +678,101 @@ setTimeout(() => {
         "breakfast",
         Number(e.target.value)
       )
+    }
+    className="
+      w-full
+      rounded-2xl
+      border
+      p-4
+    "
+  />
+</div>
+
+<div>
+  <label className="mb-2 block font-bold">
+    IBAN
+  </label>
+
+  <input
+    type="text"
+    value={settings.iban || ""}
+    onChange={(e) =>
+      setSettings({
+        ...settings,
+        iban: e.target.value,
+      })
+    }
+    className="
+      w-full
+      rounded-2xl
+      border
+      p-4
+    "
+  />
+</div>
+
+<div>
+  <label className="mb-2 block font-bold">
+    BIC
+  </label>
+
+  <input
+    type="text"
+    value={settings.bic || ""}
+    onChange={(e) =>
+      setSettings({
+        ...settings,
+        bic: e.target.value,
+      })
+    }
+    className="
+      w-full
+      rounded-2xl
+      border
+      p-4
+    "
+  />
+</div>
+
+<div>
+  <label className="mb-2 block font-bold">
+    Titulaire du compte
+  </label>
+
+  <input
+    type="text"
+    value={settings.account_name || ""}
+    onChange={(e) =>
+      setSettings({
+        ...settings,
+        account_name: e.target.value,
+      })
+    }
+    className="
+      w-full
+      rounded-2xl
+      border
+      p-4
+    "
+  />
+</div>
+
+<div>
+  <label className="mb-2 block font-bold">
+    Acompte (%)
+  </label>
+
+  <input
+    type="number"
+    value={
+      settings.deposit_percent || 20
+    }
+    onChange={(e) =>
+      setSettings({
+        ...settings,
+        deposit_percent:
+          Number(e.target.value),
+      })
     }
     className="
       w-full

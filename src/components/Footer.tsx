@@ -65,7 +65,7 @@ export default function Footer() {
                 font-bold
               "
             >
-              Nous contacter
+             <u> Nous contacter</u>
             </h3>
 
             <div
@@ -106,7 +106,7 @@ export default function Footer() {
                 font-bold
               "
             >
-              Horaires
+              <u>Horaires</u>
             </h3>
 
             <div
@@ -163,7 +163,7 @@ export default function Footer() {
                 font-bold
               "
             >
-              Navigation
+              <u>Navigation</u>
             </h3>
 
             <div

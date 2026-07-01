@@ -31,6 +31,7 @@ type Reservation = {
   arrival: string
   departure: string
   status: string
+  breakfast: boolean
   lunch: boolean
   dinner: boolean
   pets: boolean
@@ -1104,6 +1105,15 @@ return (
                 </p>
 
 <p>
+  <strong>Petit Déjeuner :</strong>
+  {" "}
+  {selectedReservation.breakfast
+    ? `${selectedReservation.adults} adulte(s),
+       ${selectedReservation.children} enfant(s),
+       ${selectedReservation.babies} bébé(s)`
+    : "Non"}
+</p>
+<p>
   <strong>Repas midi :</strong>
   {" "}
   {selectedReservation.lunch
@@ -1325,53 +1335,56 @@ return (
       {
 
         reservations
+  .filter((reservation) => {
 
-          .filter((reservation) => {
+    const today =
+      new Date()
 
-  const today =
-    new Date()
+    const tomorrow =
+      new Date()
 
-  const tomorrow =
-    new Date()
-
-  tomorrow.setDate(
-    tomorrow.getDate() + 1
-  )
-
-  const arrival =
-    new Date(
-      reservation.arrival
+    tomorrow.setDate(
+      tomorrow.getDate() + 1
     )
 
-  const departure =
-    new Date(
-      reservation.departure
+    const arrival =
+      new Date(
+        reservation.arrival
+      )
+
+    const departure =
+      new Date(
+        reservation.departure
+      )
+
+    return (
+
+      reservation.status ===
+      "confirmed"
+
+      &&
+
+      reservation.breakfast
+
+      &&
+
+      arrival <= today
+
+      &&
+
+      departure > tomorrow
     )
+  })
 
-  return (
+  .reduce(
+    (total, reservation) =>
 
-    reservation.status ===
-    "confirmed"
+      total +
+      reservation.adults +
+      reservation.children,
 
-    &&
-
-    arrival <= today
-
-    &&
-
-    departure > tomorrow
+    0
   )
-})
-
-          .reduce(
-            (total, reservation) =>
-
-              total +
-              reservation.adults +
-reservation.children,
-
-            0
-          )
       }
     </h2>
 

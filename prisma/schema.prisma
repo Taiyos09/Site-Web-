@@ -68,6 +68,10 @@ model reservations {
   breakfast    Boolean             @default(false)
   lunch        Boolean             @default(false)
   pets         Boolean             @default(false)
+  depositRequired Boolean          @default(false)
+  depositAmount   Float            @default(0)
+  depositPaid     Boolean          @default(false)
+  depositPaidAt   DateTime?
   rooms        reservation_rooms[]
 }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import nodemailer from "nodemailer"
+import { prisma } from "@/lib/prisma"
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -9,6 +10,39 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 })
+
+const hotelSettings =
+  await prisma.hotel_settings.findMany()
+
+const settings = {
+
+  iban:
+    hotelSettings.find(
+      s => s.key === "hotel_iban"
+    )?.value || "",
+
+  bic:
+    hotelSettings.find(
+      s => s.key === "hotel_bic"
+    )?.value || "",
+
+  account_name:
+    hotelSettings.find(
+      s =>
+        s.key ===
+        "hotel_account_name"
+    )?.value ||
+    "SARL Auberge Saint Aubin",
+
+  deposit_percent:
+    Number(
+      hotelSettings.find(
+        s =>
+          s.key ===
+          "hotel_deposit_percent"
+      )?.value || 20
+    ),
+}
 
 export async function POST(
   req: Request
@@ -43,7 +77,15 @@ export async function POST(
           Nous sommes désolés,
           votre réservation n'a pas pu être acceptée.
         `
+    console.log(
+  "depositRequired =",
+  body.depositRequired
+)
 
+console.log(
+  "depositAmount =",
+  body.depositAmount
+)
     await transporter.sendMail({
 
       from:
@@ -200,7 +242,8 @@ ${
 
   <p>
   Petit déjeuner :
-  <strong>Inclus</strong>
+  <strong>${body.breakfast ? "Oui" : "Non"}
+    </strong>
 </p>
 
   <p>
@@ -264,6 +307,84 @@ ${
   </div>
 
 </div>
+
+${
+  body.depositRequired
+    ? `
+
+<div style="
+  margin-top:30px;
+  background:#fff7e6;
+  border:2px solid #d6b17a;
+  border-radius:20px;
+  padding:25px;
+">
+
+  <h3 style="
+    margin-top:0;
+    color:#8a6330;
+    font-size:24px;
+  ">
+    Demande d'acompte
+  </h3>
+
+  <p style="
+    line-height:1.8;
+  ">
+  Afin de garantir votre réservation,
+  nous vous remercions de bien vouloir
+  effectuer un acompte de
+  <strong>
+    ${settings.deposit_percent}%, soit
+    (${body.depositAmount.toFixed(2)}€) TTC
+  </strong>.
+</p>
+
+  <p style="
+    line-height:1.8;
+  ">
+    Merci d'effectuer votre règlement
+    par virement bancaire :
+  </p>
+
+  <div style="
+    background:white;
+    border-radius:12px;
+    padding:15px;
+    border:1px solid #ddd;
+  ">
+
+    <p>
+      <strong>IBAN :</strong>
+      ${settings.iban}
+    </p>
+
+    <p>
+      <strong>BIC :</strong>
+      ${settings.bic}
+    </p>
+
+    <p>
+      <strong>Titulaire :</strong>
+      ${settings.account_name}
+    </p>
+
+  </div>
+
+  <p style="
+    margin-top:20px;
+    font-size:14px;
+    color:#666;
+  ">
+    Votre réservation sera définitivement
+    garantie à réception de cet acompte.
+  </p>
+
+</div>
+
+`
+    : ""
+}
 
 <hr style="
   margin:40px 0;

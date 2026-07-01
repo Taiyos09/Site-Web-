@@ -27,6 +27,17 @@ export default async function RoomPage({
 }: Props) {
 
   
+  const breakfast =
+  Number(
+    (
+      await prisma.hotel_settings.findUnique({
+        where: {
+          key: "option_breakfast",
+        },
+      })
+    )?.value ?? 12
+  )
+  
   const { slug } =
     await params
 
@@ -161,29 +172,7 @@ if (!room) {
 
             <div className="sticky top-32 overflow-hidden rounded-[36px] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
 
-              {/* PRIX */}
-
-              <div className="mt-6 rounded-3xl bg-[#f8f4ee] p-6">
-
-  <p className="text-sm text-[#6b5b4f]">
-    Tarifs
-  </p>
-
-  <div className="mt-4 space-y-3">
-
-    <div className="flex justify-between">
-      <span>1 personne</span>
-      <strong>{room.priceOnePerson}€</strong>
-    </div>
-
-    <div className="flex justify-between">
-      <span>2 personnes</span>
-      <strong>{room.priceTwoPeople}€</strong>
-    </div>
-
-  </div>
-
-</div>
+              
 
               {/* INFOS */}
 
@@ -280,7 +269,7 @@ if (!room) {
 
   </div>
 
-  <span> 12 €/personne
+  <span> {breakfast}€ / personne
   </span>
 
 </div>

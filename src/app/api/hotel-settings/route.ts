@@ -17,7 +17,38 @@ export async function GET() {
 
   return NextResponse.json({
 
-    lunch: Number(
+    iban:
+  settings.find(
+    (s) =>
+      s.key ===
+      "hotel_iban"
+  )?.value || "",
+
+bic:
+  settings.find(
+    (s) =>
+      s.key ===
+      "hotel_bic"
+  )?.value || "",
+
+account_name:
+  settings.find(
+    (s) =>
+      s.key ===
+      "hotel_account_name"
+  )?.value ||
+  "SARL Auberge Saint Aubin",
+
+deposit_percent:
+  Number(
+    settings.find(
+      (s) =>
+        s.key ===
+        "hotel_deposit_percent"
+    )?.value || 20
+  ),
+  
+  lunch: Number(
       settings.find(
         (s) =>
           s.key === "option_lunch"
@@ -166,6 +197,54 @@ export async function PUT(
       ),
     },
   })
+
+  await prisma.hotel_settings.update({
+
+  where: {
+    id: 11,
+  },
+
+  data: {
+    value: String(body.iban),
+  },
+})
+
+await prisma.hotel_settings.update({
+
+  where: {
+    id: 12,
+  },
+
+  data: {
+    value: String(body.bic),
+  },
+})
+
+await prisma.hotel_settings.update({
+
+  where: {
+    id: 13,
+  },
+
+  data: {
+    value: String(
+      body.account_name
+    ),
+  },
+})
+
+await prisma.hotel_settings.update({
+
+  where: {
+    id: 14,
+  },
+
+  data: {
+    value: String(
+      body.deposit_percent
+    ),
+  },
+})
 
   return NextResponse.json({
     success: true,
