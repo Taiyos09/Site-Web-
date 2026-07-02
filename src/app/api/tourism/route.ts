@@ -2,6 +2,10 @@ import { deleteImage } from "@/lib/delete-image"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
+/* =========================
+   GET
+========================= */
+
 export async function GET() {
 
   const places =
@@ -26,23 +30,9 @@ export async function GET() {
   )
 }
 
-const place =
-  await prisma.tourism_places.findUnique({
-    where: { id }
-  })
-
-if (
-  place?.image
-) {
-
-  deleteImage(
-    place.image
-  )
-}
-
-await prisma.tourism_places.delete({
-  where: { id }
-})
+/* =========================
+   CREATE
+========================= */
 
 export async function POST(
   request: Request
@@ -60,4 +50,46 @@ export async function POST(
   return NextResponse.json(
     place
   )
+}
+
+/* =========================
+   DELETE
+========================= */
+
+export async function DELETE(
+  request: Request
+) {
+
+  const {
+    id,
+  } =
+    await request.json()
+
+  const place =
+    await prisma.tourism_places.findUnique({
+
+      where: {
+        id,
+      },
+    })
+
+  if (
+    place?.image
+  ) {
+
+    deleteImage(
+      place.image
+    )
+  }
+
+  await prisma.tourism_places.delete({
+
+    where: {
+      id,
+    },
+  })
+
+  return NextResponse.json({
+    success: true,
+  })
 }

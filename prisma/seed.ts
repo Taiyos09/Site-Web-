@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { HOTEL_CONFIG } from '../src/data/hotel'
 import { RESTAURANT_CONFIG } from '../src/data/restaurant'
-import { EVENTS } from '../src/data/events'
+//import { EVENTS } from '../src/data/events'
 
 const prisma = new PrismaClient()
 
@@ -35,20 +35,6 @@ async function main() {
     })
   }
   console.log('✅ Chambres créées')
-
-  // Créer les événements
-  for (const event of EVENTS) {
-    await prisma.events.create({
-      data: {
-        title: event.title,
-        date: event.date,
-        description: event.description,
-        image: event.image,
-        gallery: JSON.stringify(event.gallery),
-      },
-    })
-  }
-  console.log('✅ Événements créés')
 
   // Créer les paramètres hôtel (prix, options)
   await prisma.hotel_settings.createMany({

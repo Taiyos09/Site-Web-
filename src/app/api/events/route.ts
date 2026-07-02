@@ -10,26 +10,26 @@ import { deleteImage }
 export async function GET() {
 
   const events =
-  await prisma.events.findMany()
+    await prisma.events.findMany()
 
-return NextResponse.json(
+  return NextResponse.json(
 
-  events.map((event) => ({
+    events.map((event) => ({
 
-    ...event,
+      ...event,
 
-    gallery:
-      typeof event.gallery ===
-      "string"
+      gallery:
+        typeof event.gallery ===
+        "string"
 
-        ? JSON.parse(
-            event.gallery
-          )
+          ? JSON.parse(
+              event.gallery
+            )
 
-        : event.gallery,
+          : event.gallery,
 
-  }))
-)
+    }))
+  )
 }
 
 /* =========================
@@ -45,104 +45,132 @@ export async function POST(
     const events =
       await request.json()
 
-    
-
     console.log(
       "EVENTS RECUS :",
-      JSON.stringify(events, null, 2)
+      JSON.stringify(
+        events,
+        null,
+        2
+      )
     )
 
+    // Supprime les anciennes images
+    const oldEvents =
+      await prisma.events.findMany()
 
+    for (
+      const event
+      of oldEvents
+    ) {
 
-    const event =
-  await prisma.events.findUnique({
-    where: { id }
-  })
+      deleteImage(
+        event.image
+      )
 
-if (event) {
-
-  deleteImage(
-    event.image
-  )
-
-  const gallery =
-    JSON.parse(
-      event.gallery
-      || "[]"
-    )
-
-  for (
-    const image
-    of gallery
-  ) {
-
-    deleteImage(
-      image
-    )
-  }
-}
-
-await prisma.events.delete({
-  where: { id }
-})
-
-await prisma.events.deleteMany()
-
-    for (const event of events) {
-
-  console.log(
-    "DATE RECUE =",
-    event.date
-  )
-
-  const formattedDate =
-    new Date(event.date)
-
-  console.log(
-    "DATE FORMATTEE =",
-    formattedDate
-  )
-
-  await prisma.events.create({
-
-    data: {
-
-      title:
-        event.title,
-
-      slug:
-        event.title
-          .toLowerCase()
-          .replaceAll(" ", "-")
-          .replaceAll("'", "")
-          .replaceAll("é", "e")
-          .replaceAll("è", "e")
-          .replaceAll("ê", "e")
-          .replaceAll("à", "a")
-          .replaceAll("ç", "c"),
-
-      date:
-        formattedDate,
-
-      description:
-        event.description,
-
-      image:
-        event.image,
-
-      gallery:
-        JSON.stringify(
+      const gallery =
+        JSON.parse(
           event.gallery
-        ),
-    },
-  })
-}
+          || "[]"
+        )
+
+      for (
+        const image
+        of gallery
+      ) {
+
+        deleteImage(
+          image
+        )
+      }
+    }
+
+    // Supprime les anciens événements
+    await prisma.events.deleteMany()
+
+    // Recréation
+    for (
+      const event
+      of events
+    ) {
+
+      console.log(
+        "DATE RECUE =",
+        event.date
+      )
+
+      const formattedDate =
+        new Date(
+          event.date
+        )
+
+      console.log(
+        "DATE FORMATTEE =",
+        formattedDate
+      )
+
+      await prisma.events.create({
+
+        data: {
+
+          title:
+            event.title,
+
+          slug:
+            event.title
+              .toLowerCase()
+              .replaceAll(
+                " ",
+                "-"
+              )
+              .replaceAll(
+                "'",
+                ""
+              )
+              .replaceAll(
+                "é",
+                "e"
+              )
+              .replaceAll(
+                "è",
+                "e"
+              )
+              .replaceAll(
+                "ê",
+                "e"
+              )
+              .replaceAll(
+                "à",
+                "a"
+              )
+              .replaceAll(
+                "ç",
+                "c"
+              ),
+
+          date:
+            formattedDate,
+
+          description:
+            event.description,
+
+          image:
+            event.image,
+
+          gallery:
+            JSON.stringify(
+              event.gallery
+            ),
+        },
+      })
+    }
 
     return NextResponse.json({
       success: true,
     })
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
     console.error(
       "ERREUR EVENTS :",

@@ -131,7 +131,8 @@ if (!room) {
             {/* GALERIE */}
 
             <RoomGallery
-  images={images}
+  title={room.name}
+  images={room.images}
   roomName={room.name}
 />
 

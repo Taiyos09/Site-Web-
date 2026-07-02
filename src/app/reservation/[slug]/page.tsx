@@ -15,8 +15,8 @@ type Room = {
   description: string
   capacity: number
 
-  one_person_price: number
-  two_people_price: number
+  priceOnePerson: number
+  priceTwoPeople: number
 
   images: string[]
 }
