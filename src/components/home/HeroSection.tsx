@@ -14,7 +14,7 @@ export default function HeroSection() {
       {/* IMAGE FOND */}
 
       <img
-        src="/images/hero.jpg"
+        src="/images/hero.webp"
         alt="Auberge de St Aubin"
         className="
           absolute

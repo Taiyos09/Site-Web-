@@ -435,7 +435,7 @@ const filteredRooms =
 >
 
   <Image
-    src="/images/hotel/HERO.jpg"
+    src="/images/hotel/HERO.webp"
     alt="Hôtel Auberge de St Aubin"
     fill
     priority

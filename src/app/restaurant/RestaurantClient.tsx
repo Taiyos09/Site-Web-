@@ -20,9 +20,9 @@ import {
 } from "@/data/restaurant"
 
 const images = [
-  "/images/restaurant1.jpeg",
+  "/images/restaurant1.webp",
   "/images/restaurant2.jpeg",
-  "/images/restaurant3.jpeg",
+  "/images/restaurant3.webp",
 ]
 
 export default function RestaurantPage() {
@@ -140,7 +140,7 @@ export default function RestaurantPage() {
   {/* IMAGE */}
 
   <Image
-  src="/images/restaurant-hero2.jpg"
+  src="/images/restaurant-hero2.webp"
   alt="Restaurant Auberge de St Aubin"
   fill
   priority
@@ -176,7 +176,7 @@ export default function RestaurantPage() {
     {/* LOGO */}
 
     <Image
-  src="/images/logo1.png"
+  src="/logo/logo1.webp"
   alt="Logo Auberge St Aubin"
   width={208}
   height={208}
@@ -430,7 +430,7 @@ export default function RestaurantPage() {
 >
 
   <Image
-    src="/images/restaurant-propos.png"
+    src="/images/restaurant-propos.webp"
     alt="Fond restaurant"
     fill
     className="object-cover"
@@ -1017,7 +1017,7 @@ export default function RestaurantPage() {
 >
 
   <Image
-    src="/images/stone-bg.png"
+    src="/images/stone-bg.webp"
     alt="Fond pierre restaurant"
     fill
     className="object-cover"

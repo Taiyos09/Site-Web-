@@ -1,0 +1,28 @@
+/images/bar.webp
+/images/event2.webp
+/images/hotel/bois.webp
+/images/hotel/Chambre 3.webp
+/images/hotel/Chambre1.webp
+/images/hotel/fd1.webp
+/images/logo1.webp
+/logo1.webp
+/logo2.webp
+/restaurant/resto1.webp
+/restaurant/resto2.webp
+/restaurant/resto3.webp
+/rooms/room1.webp
+/rooms/room2.webp
+/rooms/room3.webp
+/uploads/1780698132823-worldcup2.webp
+/uploads/1780698648203-festif.webp
+/uploads/1782035525358-UNE-1.webp
+/uploads/1782052886291-Capture d'écran 2026-06-21 164115.webp
+/uploads/1782053321167-16314-che2949coteau-de-bourbon-l-archambaulte294acs-prestataire-ot-bocage-bourbonnais-aure2949clia-paris-aba-540x500.webp
+/uploads/1782053402864-Capture d'écran 2026-06-21 164948.webp
+/uploads/1782053522774-Capture d'écran 2026-06-21 165147.webp
+/uploads/1782053594247-Capture d'écran 2026-06-21 165306.webp
+/uploads/1782053722093-Capture d'écran 2026-06-21 165507.webp
+/uploads/1782053821514-Capture d'écran 2026-06-21 165609.webp
+/uploads/1782055287616-Capture d'écran 2026-06-21 172115.webp
+/uploads/1782055405854-Capture d'écran 2026-06-21 172316.webp
+/uploads/1782055659113-Capture d'écran 2026-06-21 172729.webp

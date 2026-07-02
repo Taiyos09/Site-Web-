@@ -130,3 +130,18 @@ model tourism_places {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 }
+
+model memories {
+
+  id        Int      @id @default(autoincrement())
+
+  title     String
+
+  images    String   @db.LongText
+
+  featured  Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}

@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+import { deleteImage }
+  from "@/lib/delete-image"
 
 /* =========================
    GET EVENTS
@@ -52,7 +54,39 @@ export async function POST(
 
 
 
-    await prisma.events.deleteMany()
+    const event =
+  await prisma.events.findUnique({
+    where: { id }
+  })
+
+if (event) {
+
+  deleteImage(
+    event.image
+  )
+
+  const gallery =
+    JSON.parse(
+      event.gallery
+      || "[]"
+    )
+
+  for (
+    const image
+    of gallery
+  ) {
+
+    deleteImage(
+      image
+    )
+  }
+}
+
+await prisma.events.delete({
+  where: { id }
+})
+
+await prisma.events.deleteMany()
 
     for (const event of events) {
 

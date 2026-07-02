@@ -48,8 +48,17 @@ export default function EventsPage() {
 
     const updated = [...eventsData]
 
-    updated[eventIndex]
-      .gallery.push("/images/photo.jpg")
+    if (
+  !updated[eventIndex]
+    .gallery
+)
+  updated[eventIndex]
+    .gallery = []
+
+updated[eventIndex]
+  .gallery.push(
+    "/images/photo.jpg"
+  )
 
     setEventsData(updated)
   }
@@ -546,102 +555,106 @@ const filteredEvents =
     </h4>
 
     <button
-      onClick={() =>
-        addGalleryImage(index)
-      }
-      className="
-        rounded-2xl
-        bg-[#2f241d]
-        px-5
-        py-3
-        text-white
-      "
-    >
-      Ajouter une photo
-    </button>
+  onClick={() =>
+    addGalleryImage(
+      index
+    )
+  }
+  className="
+    rounded-xl
+    bg-[#c89b5f]
+    px-5
+    py-3
+    font-bold
+    text-white
+  "
+>
+  Ajouter une photo
+</button>
 
   </div>
 
   <div
-    className="
-      grid
-      gap-6
-      md:grid-cols-2
-      xl:grid-cols-3
-    "
-  >
+  className="
+    grid
+    gap-6
+    md:grid-cols-2
+    xl:grid-cols-3
+  "
+>
 
-    {event.gallery.map(
-      (
-        photo,
-        photoIndex
-      ) => (
+  {event.gallery?.map(
+    (
+      photo: string,
+      photoIndex: number
+    ) => (
+
+      <div
+        key={photoIndex}
+        className="
+          rounded-2xl
+          border
+          p-4
+        "
+      >
 
         <div
-          key={photoIndex}
           className="
-            rounded-3xl
-            bg-white
-            p-3
-            shadow
+            relative
+            mb-4
+            h-48
+            overflow-hidden
+            rounded-2xl
           "
         >
 
-          <div
+          <Image
+            src={photo}
+            alt=""
+            fill
+            sizes="33vw"
             className="
-              relative
-              mb-4
-              h-40
-              overflow-hidden
-              rounded-3xl
+              object-cover
             "
-          >
-
-            <Image
-              src={photo}
-              alt=""
-              fill
-              className="object-cover"
-            />
-
-          </div>
-
-          <label
-            className="
-              block
-              cursor-pointer
-              rounded-xl
-              bg-[#c89b5f]
-              px-4
-              py-3
-              text-center
-              text-white
-            "
-          >
-
-            Remplacer la photo
-
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) =>
-                uploadGalleryImage(
-                  e,
-                  index,
-                  photoIndex
-                )
-              }
-            />
-
-          </label>
+          />
 
         </div>
 
-      )
-    )}
+        <label
+          className="
+            block
+            cursor-pointer
+            rounded-xl
+            bg-[#2f241d]
+            px-4
+            py-3
+            text-center
+            text-white
+          "
+        >
 
-  </div>
+          Modifier
+
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) =>
+              uploadGalleryImage(
+                e,
+                index,
+                photoIndex
+              )
+            }
+          />
+
+        </label>
+
+      </div>
+    )
+  )}
+
+</div>
 
 </div>
 

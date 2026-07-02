@@ -22,8 +22,8 @@ export const HOTEL_CONFIG = {
       description: "Grande chambre familiale chaleureuse et confortable...",
       images: [
         "/images/hotel/chambre1.jpg",
-        "/images/hotel/sdb1.jpg",
-        "/images/hotel/placard1.jpg",
+        "/images/hotel/sdb1.webp",
+        "/images/hotel/placard1.webp",
       ],
     },
 
@@ -34,9 +34,9 @@ export const HOTEL_CONFIG = {
       size: "16m²",
       description: "Chambre élégante et romantique, parfaite pour les couples...",
       images: [
-        "/images/hotel/chambre2.jpg",
-        "/images/hotel/sdb2.jpg",
-        "/images/hotel/placard2.jpg",
+        "/images/hotel/chambre2.webp",
+        "/images/hotel/sdb2.webp",
+        "/images/hotel/placard2.webp",
       ],
     },
 
@@ -47,9 +47,9 @@ export const HOTEL_CONFIG = {
       size: "14m²",
       description: "Petite chambre double confortable et fonctionnelle, idéale pour les voyageurs à petit budget...",
       images: [
-        "/images/hotel/chambre3.jpg",
-        "/images/hotel/sdb3.jpg",
-        "/images/hotel/placard3.jpg",
+        "/images/hotel/chambre3.webp",
+        "/images/hotel/sdb3.webp",
+        "/images/hotel/placard3.webp",
       ],
     },
   ],

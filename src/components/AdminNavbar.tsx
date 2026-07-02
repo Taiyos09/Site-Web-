@@ -50,7 +50,7 @@ export default function AdminSidebar() {
       <div className="p-8">
         
         <Image
-  src="/images/logo2.png"
+  src="/images/logo2.webp"
   alt="Auberge"
   width={48}
   height={48}
@@ -97,6 +97,22 @@ export default function AdminSidebar() {
         </Link>
 
         <Link
+          href="/admin/reservations"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
+        >
+          <CalendarDays size={20} />
+          Réservations
+        </Link>
+
+        <Link
+          href="/admin/calendar"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
+        >
+          <CalendarDays size={20} />
+          Calendrier
+        </Link>
+
+        <Link
           href="/admin/hotel"
           className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
         >
@@ -121,19 +137,11 @@ export default function AdminSidebar() {
         </Link>
 
         <Link
-          href="/admin/reservations"
+          href="/admin/memories"
           className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
         >
-          <CalendarDays size={20} />
-          Réservations
-        </Link>
-
-        <Link
-          href="/admin/calendar"
-          className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
-        >
-          <CalendarDays size={20} />
-          Calendrier
+          <Settings size={20} />
+          Nos souvenir
         </Link>
 
         <Link

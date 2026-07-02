@@ -488,7 +488,7 @@ if (!room) {
 
         <Link
           key={otherRoom.id}
-          href={`/hotel/${otherRoom.slug}`}
+          href={`/chambres/${otherRoom.slug}`}
           className="
             overflow-hidden
             rounded-[32px]

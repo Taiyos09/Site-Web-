@@ -8,7 +8,7 @@ const services = [
     subtitle: "Cuisine traditionnelle",
     description:
       "Produits locaux, menu du jour et ambiance conviviale.",
-    image: "/restaurant/resto1.jpeg",
+    image: "/restaurant/resto1.webp",
     link: "/restaurant",
   },
 
@@ -17,7 +17,7 @@ const services = [
     subtitle: "Séjour confortable",
     description:
       "Des chambres chaleureuses au cœur du Bourbonnais.",
-    image: "/rooms/room1.jpg",
+    image: "/rooms/room1.webp",
     link: "/hotel",
   },
 
@@ -26,7 +26,7 @@ const services = [
     subtitle: "Soirées & animations",
     description:
       "Karaoké, repas à thème et soirées organisées toute l'année.",
-    image: "/images/evenement.avif",
+    image: "/images/evenement.webp",
     link: "/evenements",
   },
 ]

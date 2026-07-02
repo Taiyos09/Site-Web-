@@ -12,9 +12,9 @@ import RoomsSection from "@/components/home/RoomsSection"
 import Footer from "@/components/Footer"
 
 const images = [
-  "/images/image1.jpg",
+  "/images/image1.webp",
   "/images/image2.jpg",
-  "/images/image3.jpg",
+  "/images/image3.webp",
 ]
 
 export default function AubergeSaintAubinHomepage() {
@@ -212,7 +212,7 @@ export default function AubergeSaintAubinHomepage() {
      <section className="relative min-h-[750px] overflow-hidden">
 
         <Image
-          src="/images/hero.jpg"
+          src="/images/hero.webp"
           alt="Auberge de St Aubin"
           fill
           priority
@@ -469,7 +469,7 @@ export default function AubergeSaintAubinHomepage() {
       >
 
         <img
-          src="/images/hotel.png"
+          src="/images/hotel.webp"
           alt="Hôtel"
           className="
             h-full
@@ -556,7 +556,7 @@ export default function AubergeSaintAubinHomepage() {
       >
 
         <img
-          src="/images/restaurant.jpeg"
+          src="/images/restaurant.webp"
           alt="Restaurant"
           className="
             h-full
@@ -643,7 +643,7 @@ export default function AubergeSaintAubinHomepage() {
       >
 
         <img
-          src="/images/evenement.avif
+          src="/images/evenement.webp
         "
           alt="Événements"
           className="

@@ -26,7 +26,7 @@ export default function WelcomeSection() {
 
         <div>
           <img
-            src="/images/auberge.jpg"
+            src="/images/auberge.webp"
             alt="Auberge de St Aubin"
             className="
               h-[380px]

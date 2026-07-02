@@ -95,7 +95,7 @@ export default function ContactPage() {
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
 
           <img
-            src="/images/logo1.png"
+            src="/logo/logo1.webp"
             alt="Logo Auberge"
             className="mb-4 h-50 w-auto drop-shadow-2xl"
           />

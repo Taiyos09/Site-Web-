@@ -36,7 +36,7 @@ export default function Footer() {
           <div>
 
             <Image
-              src="/images/logo1.png"
+              src="/logo/logo1.webp"
               alt="Auberge de St Aubin"
               width={180}
               height={180}

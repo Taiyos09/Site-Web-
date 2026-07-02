@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import fs from "fs"
 import path from "path"
+import sharp from "sharp"
 
 export async function POST(
   request: Request
@@ -18,8 +19,7 @@ export async function POST(
 
       return NextResponse.json(
         {
-          error:
-            "Aucun fichier",
+          error: "Aucun fichier",
         },
         {
           status: 400,
@@ -27,14 +27,10 @@ export async function POST(
       )
     }
 
-    const bytes =
-      await file.arrayBuffer()
-
     const buffer =
-      Buffer.from(bytes)
-
-    const fileName =
-      `${Date.now()}-${file.name}`
+      Buffer.from(
+        await file.arrayBuffer()
+      )
 
     const uploadDir =
       path.join(
@@ -57,16 +53,30 @@ export async function POST(
       )
     }
 
+    // On force le format webp
+    const fileName =
+      `${Date.now()}.webp`
+
     const filePath =
       path.join(
         uploadDir,
         fileName
       )
 
-    fs.writeFileSync(
-      filePath,
-      buffer
-    )
+    await sharp(buffer)
+
+      .resize({
+        width: 1920,
+        height: 1080,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+
+      .webp({
+        quality: 82,
+      })
+
+      .toFile(filePath)
 
     return NextResponse.json({
 

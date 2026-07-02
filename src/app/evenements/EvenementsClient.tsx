@@ -5,37 +5,63 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
+import EventCarousel
+from "@/components/EventCarousel"
 
 export default function EvenementsPage() {
 
-  const [eventsData, setEventsData] = useState<any[]>([])
-const [currentImage, setCurrentImage] = useState(0)
+const [eventsData, setEventsData] = useState<any[]>([])
+const [memories, setMemories] = useState<any[]>([])
+
+const images =
+  memories.flatMap(
+    (memory) => {
+
+      try {
+
+        const imgs =
+          typeof memory.images === "string"
+            ? JSON.parse(memory.images)
+            : memory.images
+
+        return imgs.filter(
+          (img: string) =>
+            img &&
+            img.trim() !== ""
+        )
+
+      } catch {
+
+        return []
+      }
+    }
+  )
+
+  console.log(
+  "EVENTS",
+  eventsData
+)
+
+console.log(
+  "IMAGES",
+  images
+)
 
   useEffect(() => {
 
   fetch("/api/events")
-
     .then((res) => res.json())
-
     .then((data) => {
-
       setEventsData(data)
-
     })
-
     .catch(console.error)
 
-}, [])
-
-useEffect(() => {
-
-  const interval = setInterval(() => {
-
-    setCurrentImage((prev) => prev + 1)
-
-  }, 3500)
-
-  return () => clearInterval(interval)
+  fetch("/api/memories")
+    .then((res) => res.json())
+    .then((data) => {
+      setMemories(data)
+    })
+    .catch(console.error)
 
 }, [])
 
@@ -58,7 +84,7 @@ useEffect(() => {
   >
 
     <Image
-      src="/images/festif.png"
+      src="/images/festif.webp"
       alt="Ambiance festive"
       fill
       priority
@@ -79,7 +105,7 @@ useEffect(() => {
       <section className="relative h-[75vh] overflow-hidden">
 
   <Image
-    src="/images/festif.png"
+    src="/images/festif.webp"
     alt="Événements"
     fill
     priority
@@ -275,24 +301,9 @@ useEffect(() => {
 
     </div>
 
-    <div className="grid gap-6 md:grid-cols-3">
-
-      <img
-        src="/images/events/karaoke.jpg"
-        className="h-[350px] w-full rounded-[28px] object-cover"
-      />
-
-      <img
-        src="/images/events/repas.jpg"
-        className="h-[350px] w-full rounded-[28px] object-cover"
-      />
-
-      <img
-        src="/images/events/concert.jpg"
-        className="h-[350px] w-full rounded-[28px] object-cover"
-      />
-
-    </div>
+    <EventCarousel
+  images={images}
+/>
 
   </div>
 

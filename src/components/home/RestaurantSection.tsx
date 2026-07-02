@@ -186,7 +186,7 @@ export default function RestaurantSection() {
   "
 />
               <Image
-                src="/restaurant/resto1.jpeg"
+                src="/restaurant/resto1.webp"
                 alt="Restaurant"
                 fill
                 className="object-cover"

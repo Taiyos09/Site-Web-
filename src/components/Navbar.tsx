@@ -91,7 +91,7 @@ export default function Navbar() {
         >
 
           <Image
-  src="/images/logo2.png"
+  src="/logo/logo2.webp"
   alt="Auberge Saint Aubin"
   width={52}
   height={52}
