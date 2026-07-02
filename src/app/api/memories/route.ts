@@ -10,7 +10,7 @@ export async function GET() {
   )
 
   const memories =
-    await prisma.memories.findMany()
+    await prisma["memories"].findMany()
 
   console.log(
     memories
@@ -29,7 +29,7 @@ export async function POST(
     await request.json()
 
 const oldMemories =
-  await prisma.memories.findMany()
+  await prisma["memories"].findMany()
 
 for (
   const memory
@@ -52,14 +52,14 @@ for (
   }
 }
 
-  await prisma.memories.deleteMany()
+  await prisma["memories"].deleteMany()
 
   for (
     const memory
     of memories
   ) {
 
-    await prisma.memories.create({
+    await prisma["memories"].create({
 
       data: {
 

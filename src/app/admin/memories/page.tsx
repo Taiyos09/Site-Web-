@@ -257,7 +257,7 @@ export default function MemoriesPage() {
 
         const response =
           await fetch(
-            "/api/upload",
+            "/api/uploads",
             {
               method: "POST",
               body: formData,

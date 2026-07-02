@@ -1,8 +1,13 @@
 "use client"
 
-import { useMemo, useState, useEffect } from "react"
-import Link from "next/link"
+import {
+  Suspense,
+  useMemo,
+  useState,
+  useEffect,
+} from "react"
 
+import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 
 type ReservationData = {
@@ -25,7 +30,7 @@ type ReservationData = {
   total: number
 }
 
-export default function CheckoutPage() {
+function CheckoutContent() {
 
   const searchParams =
     useSearchParams()
@@ -1076,5 +1081,19 @@ const babies =
 </footer>
 
     </main>
+  )
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center">
+          Chargement...
+        </main>
+      }
+    >
+      <CheckoutContent />
+    </Suspense>
   )
 }

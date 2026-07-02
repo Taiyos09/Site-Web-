@@ -92,19 +92,15 @@ const renderCard = (place: any) => (
     )}
 
     {place.image && (
-
-      <div className="relative h-64">
-
-        <Image
-          src={place.image}
-          alt={place.name}
-          fill
-          className="object-cover"
-        />
-
-      </div>
-
-    )}
+  <div className="relative h-64 overflow-hidden">
+    <Image
+      src={place.image}
+      alt={place.name}
+      fill
+      className="object-cover"
+    />
+  </div>
+)}
 
     <div className="p-6">
 

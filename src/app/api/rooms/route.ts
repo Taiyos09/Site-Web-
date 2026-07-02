@@ -51,7 +51,7 @@ export async function GET() {
 }
 
 // AUTRE FONCTION
-export async function getHotelData() {
+async function getHotelData() {
 
   const roomsResponse =
     await fetch(

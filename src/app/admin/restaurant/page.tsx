@@ -176,14 +176,6 @@ export default function RestaurantAdminPage() {
 
   return (
 
-    <>
-
-      <style jsx global>{`
-        .public-navbar {
-          display: none !important;
-        }
-      `}</style>
-
       <main className="
         min-h-screen
         bg-[#f5f1ea]
@@ -816,7 +808,5 @@ export default function RestaurantAdminPage() {
         </div>
 
       </main>
-
-    </>
   )
 }

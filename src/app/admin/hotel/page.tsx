@@ -63,7 +63,7 @@ export default function HotelAdminPage() {
 
   const res =
     await fetch(
-      "/api/upload",
+      "/api/uploads",
       {
         method: "POST",
         body: formData,

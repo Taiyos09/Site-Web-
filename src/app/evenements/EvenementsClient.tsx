@@ -188,10 +188,10 @@ console.log(
       >
 
         <Image
-          src={event.image}
-          alt={event.title}
-          fill
-          className="
+    src={event.image}
+    alt={event.title}
+    fill
+    className="
             object-cover
             transition-all
             duration-700

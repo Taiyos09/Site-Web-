@@ -186,20 +186,7 @@ const filteredEvents =
 
   return (
 
-    <>
-
-      <style jsx global>{`
-        .public-navbar {
-          display: none !important;
-        }
-      `}</style>
-
-      <main className="
-        min-h-screen
-        bg-[#f5f1ea]
-        p-10
-        text-[#2f241d]
-      ">
+      <main className="min-h-screen bg-[#f5f1ea] p-10 text-[#2f241d]">
 
         <div className="mt-10">
 
@@ -240,7 +227,7 @@ const filteredEvents =
 
               </div>
 
-              <div className="mt-4 flex gap-4">
+              <div className="flex items-center gap-4">
 
   <div className="rounded-2xl bg-[#f5f1ea] px-4 py-3">
     <p className="text-sm text-[#6b5b4f]">
@@ -252,35 +239,37 @@ const filteredEvents =
     </p>
   </div>
 
+  <button
+    onClick={addEvent}
+    className="
+      rounded-2xl
+      bg-[#c89b5f]
+      px-6
+      py-3
+      font-semibold
+      text-white
+    "
+  >
+    Ajouter un événement
+  </button>
+
+  <button
+    onClick={saveEvents}
+    className="
+      rounded-2xl
+      bg-green-600
+      px-6
+      py-3
+      font-semibold
+      text-white
+    "
+  >
+    Sauvegarder
+  </button>
+
 </div>
 
-              <button
-                onClick={addEvent}
-                className="
-                  rounded-2xl
-                  bg-[#c89b5f]
-                  px-6
-                  py-3
-                  font-semibold
-                  text-white
-                "
-              >
-                Ajouter un événement
-              </button>
-
-              <button
-  onClick={saveEvents}
-  className="
-    rounded-2xl
-    bg-green-600
-    px-6
-    py-3
-    font-semibold
-    text-white
-  "
->
-  Sauvegarder
-</button>
+</div>
 
 <input
   type="text"
@@ -290,15 +279,13 @@ const filteredEvents =
     setSearch(e.target.value)
   }
   className="
-    mt-6
+    mb-10
     w-full
     rounded-2xl
     border
     p-4
   "
 />
-
-            </div>
 
             <div className="space-y-10">
 
@@ -375,8 +362,6 @@ const filteredEvents =
                   </div>
 
                   <div className="grid gap-6">
-
-                    <div className="grid gap-6">
 
   <input
     type="text"
@@ -507,7 +492,7 @@ const filteredEvents =
 
           const res =
             await fetch(
-              "/api/upload",
+              "/api/uploads",
               {
                 method: "POST",
                 body: formData,
@@ -528,8 +513,6 @@ const filteredEvents =
     </label>
 
   </div>
-
-</div>
 
 {/* GALERIE */}
 
@@ -611,11 +594,9 @@ const filteredEvents =
           <Image
             src={photo}
             alt=""
-            fill
             sizes="33vw"
-            className="
-              object-cover
-            "
+            fill
+            className="object-cover"
           />
 
         </div>
@@ -655,21 +636,18 @@ const filteredEvents =
   )}
 
 </div>
+</div>
 
 </div>
 
-                  </div>
+))}
 
-              ))}
-
-            </div>
-
+</div>
           </section>
 
         </div>
 
       </main>
 
-    </>
   )
 }

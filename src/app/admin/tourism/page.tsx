@@ -135,7 +135,7 @@ async function handleDelete(
 
     const uploadResponse =
       await fetch(
-        "/api/upload",
+        "/api/uploads",
         {
           method: "POST",
           body: formData,

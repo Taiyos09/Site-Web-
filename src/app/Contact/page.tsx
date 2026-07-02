@@ -84,28 +84,51 @@ export default function ContactPage() {
 
       {/* HERO */}
       <section
-        className="relative h-[55vh] bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('/images/contact-hero.webp')",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/50" />
+  className="
+    relative
+    h-[60vh]
+    bg-cover
+    bg-center
+  "
+  style={{
+    backgroundImage:
+      "url('/images/contact-hero.webp')",
+  }}
+>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px]" />
 
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
+        <div
+  className="
+    relative
+    z-10
+    flex
+    h-full
+    flex-col
+    items-center
+    justify-center
+    px-6
+    text-center
+    text-white
+  "
+>
 
           <img
-            src="/logo/logo1.webp"
-            alt="Logo Auberge"
-            className="mb-4 h-50 w-auto drop-shadow-2xl"
-          />
+  src="/logo/logo1.webp"
+  alt="Logo Auberge"
+  className="
+    mb-6
+    h-40
+    w-auto
+    drop-shadow-2xl
+  "
+/>
 
           <h1
   className="
     font-serif
     text-6xl
     font-bold
-    md:text-7xl
+    md:text-5xl
   "
 >
             Contact

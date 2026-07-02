@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  Suspense,
   useEffect,
   useMemo,
   useState,
@@ -15,7 +16,7 @@ import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
 
 
-export default function HotelPage() {
+function HotelContent() {
 
   const [hotelConfig, setHotelConfig] =
     useState<any>(null)
@@ -1130,5 +1131,19 @@ const filteredRooms =
       <Footer />
 
     </div>
+  )
+}
+
+export default function HotelPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center">
+          Chargement...
+        </main>
+      }
+    >
+      <HotelContent />
+    </Suspense>
   )
 }

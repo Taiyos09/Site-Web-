@@ -227,11 +227,11 @@ if (!response.ok) {
 
   return (
     <>
-      <style jsx global>{`
-        .public-navbar {
-          display: none !important;
-        }
-      `}</style>
+      <style>{`
+  .public-navbar {
+    display: none !important;
+  }
+`}</style>
 
       <main
         className="
@@ -938,8 +938,9 @@ return (
 
   </button>
 )
-                            
-                          })}
+
+})}
+
                         </div>
                       </div>
                     )

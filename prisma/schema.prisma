@@ -50,41 +50,41 @@ model reservation_rooms {
 }
 
 model reservations {
-  id           Int                 @id @default(autoincrement())
-  name         String
-  email        String
-  phone        String
-  arrival      DateTime
-  departure    DateTime
-  adults       Int
-  children     Int                 @default(0)
-  babies       Int                 @default(0)
-  litParapluie Boolean             @default(false)
-  total        Float
-  status       String              @default("pending")
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-  dinner       Boolean             @default(false)
-  breakfast    Boolean             @default(false)
-  lunch        Boolean             @default(false)
-  pets         Boolean             @default(false)
-  depositRequired Boolean          @default(false)
-  depositAmount   Float            @default(0)
-  depositPaid     Boolean          @default(false)
+  id              Int                 @id @default(autoincrement())
+  name            String
+  email           String
+  phone           String
+  arrival         DateTime
+  departure       DateTime
+  adults          Int
+  children        Int                 @default(0)
+  babies          Int                 @default(0)
+  litParapluie    Boolean             @default(false)
+  total           Float
+  status          String              @default("pending")
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  dinner          Boolean             @default(false)
+  lunch           Boolean             @default(false)
+  pets            Boolean             @default(false)
+  breakfast       Boolean             @default(false)
+  depositAmount   Float               @default(0)
+  depositPaid     Boolean             @default(false)
   depositPaidAt   DateTime?
-  rooms        reservation_rooms[]
+  depositRequired Boolean             @default(false)
+  rooms           reservation_rooms[]
 }
 
 model events {
   id          Int      @id @default(autoincrement())
   title       String
-  slug        String   @unique
   date        DateTime
   description String
   image       String
   gallery     String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  slug        String   @unique
 }
 
 model rooms {
@@ -94,54 +94,38 @@ model rooms {
   size            String
   description     String
   images          String
-  capacity        Int @default(2)
   priceOnePerson  Int
   priceTwoPeople  Int
   priceDoubleRoom Int
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
+  capacity        Int                 @default(2)
   reservations    reservation_rooms[]
 }
 
 model tourism_places {
   id          Int      @id @default(autoincrement())
-
   name        String
   slug        String?  @unique
-
   description String?  @db.Text
-
   image       String?
-
   address     String?
-
-  travel_time String?
-
   maps_url    String?
   website     String?
-
   category    String?
-
   featured    Boolean  @default(false)
   is_active   Boolean  @default(true)
-
   sort_order  Int      @default(0)
-
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+  travel_time String?
 }
 
 model memories {
-
   id        Int      @id @default(autoincrement())
-
   title     String
-
   images    String   @db.LongText
-
   featured  Boolean  @default(true)
-
   createdAt DateTime @default(now())
-
   updatedAt DateTime @updatedAt
 }

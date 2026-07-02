@@ -1,12 +1,11 @@
-import RestaurantClient from "./HotelClient"
+import HotelClient from "./HotelClient"
 
 export const metadata = {
-  title: "Restaurant | Auberge de St Aubin",
+  title: "Hôtel | Auberge de St Aubin",
   description:
-    "Découvrez notre restaurant traditionnel.",
+    "Découvrez nos chambres et notre hôtel.",
 }
 
-export default function RestaurantPage() {
-  return <RestaurantClient />
+export default function HotelPage() {
+  return <HotelClient />
 }
-
