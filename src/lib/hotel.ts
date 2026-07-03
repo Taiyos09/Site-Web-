@@ -1,14 +1,8 @@
-export async function
-getHotelData() {
+export async function getHotelData() {
 
   const roomsResponse =
     await fetch(
-
-      "http://localhost:3000/api/rooms",
-
-      {
-        cache: "no-store",
-      }
+      "/api/rooms"
     )
 
   const rooms =
@@ -16,12 +10,7 @@ getHotelData() {
 
   const settingsResponse =
     await fetch(
-
-      "http://localhost:3000/api/hotel-settings",
-
-      {
-        cache: "no-store",
-      }
+      "/api/hotel-settings"
     )
 
   const settings =

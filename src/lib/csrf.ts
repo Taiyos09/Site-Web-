@@ -9,7 +9,7 @@ export async function setCSRFCookie(token: string): Promise<void> {
   const cookieStore = await cookies()
   cookieStore.set('csrf_token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: false,
     sameSite: 'strict',
     path: '/',
     maxAge: 60 * 60 * 24,

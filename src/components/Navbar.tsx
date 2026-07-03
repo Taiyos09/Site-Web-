@@ -407,6 +407,10 @@ export default function Navbar() {
         Événements
       </Link>
 
+      <Link href="/contact" onClick={() => setIsOpen(false)} className="text-white">
+        Contact
+      </Link>
+
       <Link href="/notre-region" onClick={() => setIsOpen(false)} className="text-white">
         Notre Region
       </Link>

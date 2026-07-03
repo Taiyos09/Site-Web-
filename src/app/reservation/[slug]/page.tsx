@@ -67,7 +67,7 @@ useEffect(() => {
       const response =
   await fetch(
 
-    "http://localhost:3000/api/rooms",
+    "/api/rooms",
 
     {
       cache: "no-store",
@@ -123,8 +123,12 @@ console.log(room)
   }
 
   if (!room) {
-    notFound()
-  }
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      Chambre introuvable
+    </div>
+  )
+}
 console.log(room)
   return (
 

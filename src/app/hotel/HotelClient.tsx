@@ -142,124 +142,90 @@ function HotelContent() {
   /* LOAD HOTEL */
   /* ====================================== */
 
-  useEffect(() => {
+useEffect(() => {
 
-  const loadHotel =
-    async () => {
+  const loadHotel = async () => {
 
-      try {
+    try {
 
-        const data =
-          await getHotelData()
+      const [roomsRes, settingsRes] =
+        await Promise.all([
+          fetch("/api/rooms"),
+          fetch("/api/hotel-settings"),
+        ])
 
-        console.log(
-          "HOTEL DATA:",
-          data
-        )
+      const rooms =
+        await roomsRes.json()
 
-        if (!data) {
+      const settings =
+        await settingsRes.json()
 
-          console.error(
-            "Aucune donnée hôtel"
-          )
+      console.log("ROOMS", rooms)
+      console.log("SETTINGS", settings)
 
-          return
-        }
+      const formattedRooms =
+        rooms.map((room: any) => {
 
-        const formattedRooms =
-  (data.rooms || []).map(
-    (room: any) => {
+          let images: string[] = []
 
-      let images: string[] = []
+          if (Array.isArray(room.images)) {
+            images = room.images
+          }
 
-      // CAS ARRAY
-      if (Array.isArray(room.images)) {
+          else if (
+            typeof room.images === "string"
+          ) {
 
-        images = room.images.map(
-          (img: string) =>
+            try {
+              images =
+                JSON.parse(room.images)
+            }
 
-            img
-              .trim()
-              .replace(/\r/g, "")
-              .replace(/\n/g, "")
-              .replace(/\t/g, "")
-              .replace(/\\/g, "/")
-        )
-      }
+            catch {
+              images = []
+            }
+          }
 
-      // CAS STRING
-      else if (
-        typeof room.images === "string"
-      ) {
-
-        images = room.images
-
-          .replace("[", "")
-          .replace("]", "")
-          .replaceAll('"', "")
-
-          .split(",")
-
-          .map((img: string) =>
-
-            img
-
-              .trim()
-
-              .replace(/\r/g, "")
-              .replace(/\n/g, "")
-              .replace(/\t/g, "")
-
-              .replace(/\\/g, "/")
-          )
-
-          .filter(Boolean)
-      }
-
-      return {
-        ...room,
-        images,
-      }
-    }
-  )
-
-        setHotelConfig({
-
-          rooms: formattedRooms,
-
-          options: {
-
-            breakfast:
-              data.settings?.breakfast || 0,
-
-            lunch:
-              data.settings?.lunch || 0,
-
-            dinner:
-              data.settings?.dinner || 0,
-
-            pet:
-              data.settings?.pet || 0,
-
-            touristTax:
-              data.settings?.tourist_tax || 0,
-          },
+          return {
+            ...room,
+            images,
+          }
         })
 
-        setCurrentImages(
-          formattedRooms.map(() => 0)
-        )
+      setHotelConfig({
 
-      } catch (error) {
+        rooms: formattedRooms,
 
-        console.error(
-          "Erreur chargement hôtel :",
-          error
-        )
+        options: {
+          breakfast:
+            settings.breakfast || 0,
 
-      }
+          lunch:
+            settings.lunch || 0,
 
+          dinner:
+            settings.dinner || 0,
+
+          pet:
+            settings.pet || 0,
+
+          touristTax:
+            settings.tourist_tax || 0,
+        },
+      })
+
+      setCurrentImages(
+        formattedRooms.map(() => 0)
+      )
+
+    } catch (e) {
+
+      console.error(
+        "Erreur hotel",
+        e
+      )
     }
+  }
 
   loadHotel()
 
