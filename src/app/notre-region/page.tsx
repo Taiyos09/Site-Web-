@@ -293,7 +293,7 @@ const renderCard = (place: any) => (
     <h2
       className="
         mb-8
-        text-4xl
+        text-3xl
         font-serif
         font-bold
         text-[#2f241d]

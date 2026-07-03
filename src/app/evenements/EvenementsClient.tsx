@@ -122,7 +122,7 @@ console.log(
         ÉVÉNEMENTS
       </p>
 
-      <h1 className="font-serif text-6xl font-bold">
+      <h1 className="font-serif text-5xl font-bold">
         Des moments festifs
         <br />
         toute l'année
@@ -149,7 +149,7 @@ console.log(
         ÉVÉNEMENTS À VENIR
       </p>
 
-      <h2 className="mt-4 font-serif text-6xl font-bold text-[#2f241d]">
+      <h2 className="mt-4 font-serif text-5xl font-bold text-[#2f241d]">
         Nos prochains rendez-vous
       </h2>
 
@@ -295,7 +295,7 @@ console.log(
         SOUVENIRS
       </p>
 
-      <h2 className="mt-4 font-serif text-6xl font-bold text-[#2f241d]">
+      <h2 className="mt-4 font-serif text-5xl font-bold text-[#2f241d]">
         Nos soirées en images
       </h2>
 
@@ -327,7 +327,7 @@ console.log(
       ORGANISATION
     </p>
 
-    <h2 className="mt-4 font-serif text-6xl font-bold text-[#2f241d]">
+    <h2 className="mt-4 font-serif text-5xl font-bold text-[#2f241d]">
       Organisez votre événement
     </h2>
 

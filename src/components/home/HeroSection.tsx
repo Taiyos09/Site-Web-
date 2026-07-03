@@ -46,7 +46,7 @@ export default function HeroSection() {
           min-h-screen
           max-w-7xl
           item-start
-          pt-48
+          pt-32 sm:pt-40 md:pt-48
           px-6
         "
       >
@@ -56,7 +56,7 @@ export default function HeroSection() {
             className="
               mb-6
               uppercase
-              tracking-[0.4em]
+              tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.4em]
               text-[#d6b98c]
             "
           >
@@ -66,7 +66,7 @@ export default function HeroSection() {
           <h1
             className="
               font-serif
-              text-6xl
+              text-4xl sm:text-5xl md:text-6xl
               font-bold
               leading-none
               text-white
@@ -83,7 +83,7 @@ export default function HeroSection() {
             className="
               mt-8
               max-w-2xl
-              text-xl
+              text-base sm:text-lg md:text-xl
               leading-relaxed
               text-white/90
             "

@@ -39,8 +39,8 @@ export default function RoomsSection() {
           className="
             mb-12
             flex
-            items-end
-            justify-between
+            flex-col sm:flex-row sm:items-end
+            sm:justify-between
           "
         >
 
@@ -74,6 +74,10 @@ export default function RoomsSection() {
             href="/hotel"
             className="
               rounded-full
+              mt-5
+              sm:mt-0
+              self-center
+              sm:self-auto
               border
               border-[#d9c6a7]
               px-5
@@ -93,7 +97,7 @@ export default function RoomsSection() {
           className="
             grid
             gap-8
-            lg:grid-cols-3
+            sm:grid-cols-2 lg:grid-cols-3
           "
         >
 
@@ -114,7 +118,7 @@ export default function RoomsSection() {
 
               {/* IMAGE */}
 
-              <div className="h-[180px]">
+              <div className="h-[200px] sm:h-[180px]">
 
                 <img
                   src={room.images?.[0]}
@@ -174,7 +178,7 @@ export default function RoomsSection() {
                   className="
                     flex
                     items-center
-                    justify-between
+                    sm:justify-between
                     border-t
                     border-[#e7ddd0]
                     pt-5

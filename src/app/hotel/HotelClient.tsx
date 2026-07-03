@@ -446,7 +446,8 @@ const filteredRooms =
       font-serif
       text-5xl
       font-bold
-      md:text-7xl
+      mt-14
+      text-3xl sm:text-4xl md:text-5xl lg:text-7xl
     "
   >
     Nos Chambres
@@ -688,7 +689,7 @@ const filteredRooms =
         className="
           mt-3
           font-serif
-          text-5xl
+          text-2xl sm:text-3xl md:text-4xl
           text-[#2f241d]
         "
       >
@@ -811,7 +812,7 @@ const filteredRooms =
     className="
       mt-3
       font-serif
-      text-5xl
+      text-2xl sm:text-3xl md:text-4xl
       text-[#2f241d]
     "
   >
@@ -1053,7 +1054,7 @@ const filteredRooms =
         className="
           mt-3
           font-serif
-          text-4xl
+          text-2xl sm:text-3xl md:text-4xl
           text-[#2f241d]
         "
       >

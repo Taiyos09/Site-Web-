@@ -167,8 +167,8 @@ export default function RestaurantSection() {
             <div
               className="
                 relative
-                h-[320px]
-                md:h-[320px]
+                h-[250px]
+                sm:h-[320px]
                 overflow-hidden
               "
             >

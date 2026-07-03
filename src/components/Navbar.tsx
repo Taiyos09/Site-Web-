@@ -84,7 +84,7 @@ export default function Navbar() {
         <div
           className="
             flex
-            w-[260px]
+            w-[200px] sm:w-[240px] md:w-[260px]
             items-center
             gap-3
           "
@@ -108,7 +108,7 @@ export default function Navbar() {
             <div
   className="
     font-serif
-    text-lg
+    text-base sm:text-lg
     md:text-2xl
     leading-none
     text-white
@@ -342,7 +342,7 @@ export default function Navbar() {
   className="
     hidden
     lg:flex
-    w-[260px]
+    w-[200px] sm:w-[240px] md:w-[260px]
     justify-end
   "
 >

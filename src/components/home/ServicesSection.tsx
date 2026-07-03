@@ -92,13 +92,15 @@ export default function ServicesSection() {
 
         {/* CARTES */}
 
-        <div
-          className="
-            grid
-            gap-10
-            lg:grid-cols-3
-          "
-        >
+       <div
+  className="
+    grid
+    gap-10
+    grid-cols-1
+    sm:grid-cols-2
+    lg:grid-cols-3
+  "
+>
           {services.map((service) => (
 
             <div
@@ -110,18 +112,17 @@ export default function ServicesSection() {
                 bg-white
                 shadow-xl
                 transition-all
-                duration-300
                 hover:-translate-y-2
               "
             >
 
               <div
                 className="
-                  relative
-                  h-[500px]
-                  max-w-[380px]
-                  overflow-hidden
-                "
+                relative
+                aspect-[3/4]
+                w-full
+                overflow-hidden
+              "
               >
 
                 <img
@@ -134,7 +135,6 @@ export default function ServicesSection() {
                     w-full
                     object-cover
                     transition
-                    duration-700
                     group-hover:scale-105
                   "
                 />
@@ -160,22 +160,28 @@ export default function ServicesSection() {
                 >
 
                   <p
-                    className="
-                      mb-3
-                      uppercase
-                      tracking-[0.3em]
-                      text-[#d6b98c]
-                    "
-                  >
-                    {service.subtitle}
-                  </p>
+  className="
+    inline-block
+    px-3 py-1
+    rounded-full
+    bg-black/40
+    text-[#CFAE7C]
+    uppercase
+    tracking-[0.15em]
+    font-semibold
+    backdrop-blur-sm
+  "
+  >
+  {service.subtitle}
+</p>
 
                   <h3
                     className="
                       mb-4
                       font-serif
-                      text-[3rem]
+                      text-[2.5rem]
                       font-bold
+                      text-center
                       leading-tight
                     "
                   >

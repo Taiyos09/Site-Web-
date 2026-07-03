@@ -29,7 +29,7 @@ export default function WelcomeSection() {
             src="/images/auberge.webp"
             alt="Auberge de St Aubin"
             className="
-              h-[380px]
+              h-[280px] sm:h-[320px] md:h-[380px]
               w-full
               rounded-[32px]
               object-cover
@@ -48,7 +48,7 @@ export default function WelcomeSection() {
       right-0
       bottom-0
       opacity-5
-      text-[220px]
+      text-[120px] sm:text-[150px] md:text-[220px]
       pointer-events-none
       select-none
     "
@@ -60,7 +60,7 @@ export default function WelcomeSection() {
     className="
       mb-4
       uppercase
-      tracking-[0.35em]
+      tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.35em]
       text-[#c89b5f]
     "
   >
@@ -70,7 +70,7 @@ export default function WelcomeSection() {
   <h2
     className="
       font-serif
-      text-4xl
+      text-3xl sm:text-4xl
       md:text-5xl
       font-bold
       leading-tight
@@ -85,7 +85,7 @@ export default function WelcomeSection() {
   <p
     className="
       mt-10
-      text-lg
+      text-base sm:text-lg
       leading-relaxed
       text-[#5a4c42]
     "
@@ -101,7 +101,7 @@ export default function WelcomeSection() {
   <p
     className="
       mt-6
-      text-lg
+      text-base sm:text-lg
       leading-relaxed
       text-[#5a4c42]
     "
@@ -128,7 +128,7 @@ export default function WelcomeSection() {
       hover:bg-[#43352c]
     "
   >
-    Activiter aux Alentour
+    Activités aux Alentours
   </Link>
 
 </div>

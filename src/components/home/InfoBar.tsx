@@ -13,7 +13,7 @@ export default function InfoBar() {
       <div
         className="
           mx-auto
-          -mt-28
+          -mt-16 sm:-mt-20 md:-mt-28
           max-w-6xl
           rounded-[28px]
           bg-white
@@ -26,7 +26,7 @@ export default function InfoBar() {
           className="
             grid
             gap-8
-            md:grid-cols-4
+            grid-cols-2 sm:grid-cols-3 md:grid-cols-4
           "
         >
           <div className="flex items-start gap-3">

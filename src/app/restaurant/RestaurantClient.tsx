@@ -196,12 +196,12 @@ export default function RestaurantPage() {
         mb-6
         max-w-5xl
         font-serif
-        text-5xl
+        text-3xl sm:text-4xl md:text-5xl lg:text-7xl
         font-bold
         leading-tight
         text-white
         drop-shadow-[0_5px_18px_rgba(0,0,0,0.95)]
-        md:text-7xl
+        
       "
     >
       Restaurant
@@ -329,7 +329,7 @@ export default function RestaurantPage() {
                 text-4xl
                 font-bold
                 leading-tight
-                md:text-4xl
+                text-2xl sm:text-3xl md:text-4xl
               "
             >
               Une cuisine généreuse
@@ -475,9 +475,9 @@ export default function RestaurantPage() {
               className="
                 mb-4
                 font-serif
-                text-4xl
+                text-2xl sm:text-3xl md:text-4xl
                 font-bold
-                md:text-4xl
+                
               "
             >
               Nos propositions culinaires
@@ -548,9 +548,9 @@ export default function RestaurantPage() {
           className="
             mb-3
             font-serif
-            text-3xl
+            text-2xl sm:text-3xl md:text-4xl
             font-bold
-            md:text-4xl
+            
           "
         >
           Menu du jour
@@ -639,9 +639,9 @@ export default function RestaurantPage() {
           className="
             mb-3
             font-serif
-            text-3xl
+            text-2xl sm:text-3xl md:text-4xl
             font-bold
-            md:text-4xl
+            
           "
         >
           Menu enfant
@@ -940,9 +940,9 @@ export default function RestaurantPage() {
             <h2
               className="
                 font-serif
-                text-4xl
+                text-2xl sm:text-3xl md:text-4xl
                 font-bold
-                md:text-5xl
+                
               "
             >
               Horaires du restaurant
@@ -1057,9 +1057,9 @@ export default function RestaurantPage() {
               className="
                 mb-8
                 font-serif
-                text-4xl
+                text-2xl sm:text-3xl md:text-4xl
                 font-bold
-                md:text-4xl
+                
               "
             >
               Informations pratiques

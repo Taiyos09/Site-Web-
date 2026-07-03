@@ -123,6 +123,10 @@ export default function Footer() {
                 </p>
 
                 <p>
+                  Du Lundi au Jeudi
+                </p>
+                
+                <p>
                   12h - 14h
                 </p>
 
@@ -142,6 +146,9 @@ export default function Footer() {
                   🍺 Bar
                 </p>
 
+                <p>
+                  Du lundi au Samedi
+                </p>
                 <p>
                   8h - 20h
                 </p>
