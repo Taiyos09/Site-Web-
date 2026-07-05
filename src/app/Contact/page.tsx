@@ -21,6 +21,11 @@ export default function ContactPage() {
   setAcceptPrivacy,
 ] = useState(false)
 
+const [
+  showSuccessModal,
+  setShowSuccessModal,
+] = useState(false)
+
   const handleSubmit = async (
     e: React.FormEvent
   ) => {
@@ -55,14 +60,7 @@ export default function ContactPage() {
 
       if (response.ok) {
 
-        alert("Message envoyé !")
-
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          message: "",
-        })
+        setShowSuccessModal(true)
 
       } else {
 
@@ -78,6 +76,175 @@ export default function ContactPage() {
   }
 
   return (
+
+    <>
+    {showSuccessModal && (
+
+  <div
+    className="
+      fixed
+      inset-0
+      z-[9999]
+      flex
+      items-center
+      justify-center
+      bg-black/70
+      p-4
+    "
+  >
+
+    <div
+      className="
+        max-w-2xl
+        rounded-[32px]
+        bg-white
+        p-8
+        shadow-2xl
+      "
+    >
+
+      <div
+  className="
+    mb-8
+    flex
+    flex-col
+    items-center
+    text-center
+  "
+>
+
+  <div
+    className="
+      mb-4
+      text-6xl
+    "
+  >
+    ✉️
+  </div>
+
+  <h2
+    className="
+      font-serif
+      text-5xl
+      font-bold
+      text-[#2f241d]
+    "
+  >
+    Message envoyé
+  </h2>
+
+</div>
+
+      <p
+        className="
+          mb-6
+          leading-8
+          text-[#6b5b4d]
+        "
+      >
+        Votre message a bien été transmis
+        à l'équipe de l'Auberge de
+        Saint-Aubin.
+      </p>
+
+      <div
+        className="
+          mb-8
+          rounded-3xl
+          border
+          border-[#eadfce]
+          bg-[#faf7f2]
+          p-6
+          text-[#5e4f42]
+        "
+      >
+
+        <p
+          className="
+            mb-4
+            flex
+            gap-3
+          "
+        >
+          <span>📧</span>
+
+          <span>
+            Votre demande a été enregistrée
+      et transmise à notre équipe.
+          </span>
+        </p>
+
+        <p
+          className="
+            mb-4
+            flex
+            gap-3
+          "
+        >
+          <span>⏳</span>
+
+          <span>
+            Nous vous répondrons dans
+      les plus brefs délais.
+          </span>
+        </p>
+
+        <p
+          className="
+            flex
+            gap-3
+          "
+        >
+          <span>☎️</span>
+
+          <span>
+            En cas d'urgence ou pour toute
+      demande particulière, n'hésitez
+      pas à nous contacter directement.
+          </span>
+        </p>
+
+      </div>
+
+      <button
+        onClick={() => {
+
+          window.location.href = "/"
+
+        }}
+        className="
+          w-full
+          rounded-2xl
+          bg-[#c89b5f]
+          py-4
+          text-lg
+          font-semibold
+          text-white
+          transition
+          hover:opacity-90
+        "
+      >
+        Retour à l'accueil
+      </button>
+
+      <p
+        className="
+          mt-4
+          text-center
+          text-sm
+          text-[#7a6a5d]
+        "
+      >
+        Merci d'avoir contacté
+        l'Auberge de Saint-Aubin.
+      </p>
+
+    </div>
+
+  </div>
+
+)}
+
     <div className="min-h-screen bg-[#f5f1ea] text-[#2f241d]">
 
       <Navbar />
@@ -482,5 +649,6 @@ export default function ContactPage() {
 
       <Footer />
     </div>
+    </>
   )
 }

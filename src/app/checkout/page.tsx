@@ -19,6 +19,12 @@ type ReservationData = {
   roomId: number
   status: string
   nights: number
+  breakfastDays: number
+  lunchDays: number
+  dinnerDays: number
+  breakfastTotal: number
+  lunchTotal: number
+  dinnerTotal: number
   adults: number
   children: number
   babies: number
@@ -28,6 +34,8 @@ type ReservationData = {
   lunch: boolean
   dinner: boolean
   litParapluie: boolean
+  roomPrice: number
+  roomTotal: number
   total: number
 }
 
@@ -142,6 +150,20 @@ const babies =
           ) || 0
         )
 
+      const roomPrice =
+  Number(
+    searchParams.get(
+      "roomPrice"
+    ) || 0
+  )
+
+const roomTotal =
+  Number(
+    searchParams.get(
+      "roomTotal"
+    ) || 0
+  )
+
       const fromDate =
         new Date(arrival)
 
@@ -165,6 +187,81 @@ const babies =
           )
         )
 
+    /* =========================
+   SERVICES
+========================= */
+
+const breakfastDays =
+  nights;
+
+let lunchDays = 0;
+let dinnerDays = 0;
+
+const occupancy =
+  adults + children;
+
+const current =
+  new Date(fromDate);
+
+while (
+  current < toDate
+) {
+
+  const day =
+    current.getDay();
+
+  // Repas du soir :
+  // jour d'arrivée inclus
+  // dimanche exclu
+  if (day !== 0) {
+    dinnerDays++;
+  }
+
+  // Repas du midi :
+  // pas le jour d'arrivée
+  // pas le dimanche
+  if (
+    current.getTime() !==
+      fromDate.getTime() &&
+    day !== 0
+  ) {
+    lunchDays++;
+  }
+
+  current.setDate(
+    current.getDate() + 1
+  );
+}
+
+/* =========================
+   TOTAUX
+========================= */
+
+const breakfastTotal =
+  breakfast
+    ? (
+        adults *
+          (settings?.breakfast ?? 12)
+        +
+        children * 6
+      ) *
+      breakfastDays
+    : 0;
+
+const lunchTotal =
+  lunch
+    ? occupancy *
+      (settings?.lunch ?? 18) *
+      lunchDays
+    : 0;
+
+const dinnerTotal =
+  dinner
+    ? occupancy *
+      (settings?.dinner ?? 18) *
+      dinnerDays
+    : 0;
+
       return {
 
         from: arrival,
@@ -173,12 +270,23 @@ const babies =
         roomName,
         roomSlug,
 
+        roomPrice,
+        roomTotal,
+
         roomId:
           roomIds?.[0] || 0,
 
         status: "pending",
 
         nights,
+
+        breakfastDays,
+        lunchDays,
+        dinnerDays,
+
+        breakfastTotal,
+        lunchTotal,
+        dinnerTotal,
 
         adults,
         children,
@@ -215,6 +323,11 @@ const babies =
   const [message, setMessage] =
     useState("")
 
+  const [
+  showSuccessModal,
+  setShowSuccessModal,
+] = useState(false)
+
   const [acceptCGV, setAcceptCGV] =
   useState(false)
 
@@ -227,18 +340,18 @@ const babies =
     async () => {
 
       if (
-        !firstName ||
-        !lastName ||
-        !email ||
-        !phone
-      ) {
+  !firstName ||
+  !lastName ||
+  !email ||
+  !phone
+) {
 
-        alert(
-          "Veuillez remplir tous les champs obligatoires"
-        )
+  alert(
+    "Veuillez remplir tous les champs."
+  )
 
-        return
-      }
+  return
+}
 
       if (
   !acceptCGV ||
@@ -355,12 +468,7 @@ const babies =
           return
         }
 
-        alert(
-          "Votre réservation a bien été envoyée."
-        )
-
-        window.location.href =
-          "/"
+        setShowSuccessModal(true)
 
       } catch (error) {
 
@@ -375,6 +483,192 @@ const babies =
     }
 
   return (
+
+    <>
+    {showSuccessModal && (
+
+  <div
+    className="
+      fixed
+      inset-0
+      z-[9999]
+      flex
+      items-center
+      justify-center
+      bg-black/70
+      p-4
+    "
+  >
+
+    <div
+      className="
+        max-w-2xl
+        rounded-[32px]
+        bg-white
+        p-8
+        shadow-2xl
+      "
+    >
+
+      <div
+        className="
+          mb-5
+          text-6xl
+        "
+      >
+        ✅
+      </div>
+
+      <h2
+        className="
+          mb-5
+          font-serif
+          text-4xl
+          font-bold
+          text-[#2f241d]
+        "
+      >
+        Réservation enregistrée
+      </h2>
+
+      <p
+        className="
+          mb-6
+          leading-8
+          text-[#6b5b4d]
+        "
+      >
+        Votre demande de réservation a
+        bien été prise en compte.
+      </p>
+
+      <div
+  className="
+    mb-6
+    rounded-2xl
+    border
+    border-[#eadfce]
+    bg-[#faf7f2]
+    p-5
+    text-[#5e4f42]
+  "
+>
+
+  <div className="mb-2">
+    🏨 <span className="font-semibold">
+      {reservation.roomName}
+    </span>
+  </div>
+
+  <div className="mb-2">
+    📅 Du{" "}
+    {new Date(
+      reservation.from
+    ).toLocaleDateString(
+      "fr-FR"
+    )}
+    {" "}au{" "}
+    {new Date(
+      reservation.to
+    ).toLocaleDateString(
+      "fr-FR"
+    )}
+  </div>
+
+  <div>
+    👥 {reservation.adults}
+    {" "}
+    adulte
+    {reservation.adults > 1
+      ? "s"
+      : ""}
+    {reservation.children > 0 &&
+      ` • ${reservation.children} enfant${
+        reservation.children > 1
+          ? "s"
+          : ""
+      }`}
+  </div>
+
+</div>
+
+      <div
+  className="
+    mb-8
+    rounded-3xl
+    border
+    border-[#eadfce]
+    bg-[#faf7f2]
+    p-6
+    text-[#5e4f42]
+  "
+>
+
+  <p className="mb-4 flex gap-3">
+    <span>📧</span>
+    <span>
+      Un e-mail de confirmation de
+      réception vient de vous être envoyé.
+    </span>
+  </p>
+
+  <p className="mb-4 flex gap-3">
+    <span>⏳</span>
+    <span>
+      Notre équipe va vérifier les
+      disponibilités et traiter votre
+      demande.
+    </span>
+  </p>
+
+  <p className="flex gap-3">
+    <span>✉️</span>
+    <span>
+      Vous recevrez ensuite un e-mail
+      vous informant de l'acceptation
+      ou du refus de votre réservation.
+    </span>
+  </p>
+
+</div>
+
+      <button
+        onClick={() => {
+
+  window.location.href = "/"
+}}
+        className="
+          w-full
+          rounded-2xl
+          bg-[#c89b5f]
+          py-4
+          text-lg
+          font-semibold
+          text-white
+          transition
+          hover:opacity-90
+        "
+      >
+        Retour à l'accueil
+      </button>
+
+      <p
+  className="
+    mt-4
+    text-center
+    text-sm
+    text-[#7a6a5d]
+  "
+>
+  Merci d'avoir choisi
+  l'Auberge de Saint-Aubin.
+</p>
+
+    </div>
+
+  </div>
+
+)}
 
     <main
       className="
@@ -854,53 +1148,139 @@ const babies =
 )}
 
 
+ <div
+  className="
+    flex
+    justify-between
+    border-b
+    pb-3
+  "
+>
+
+  <span>
+    Chambre
+  </span>
+
+  <span
+    className="
+      text-right
+      text-sm
+    "
+  >
+
+    <div>
+      {reservation.adults}
+      {" "}
+      personne
+      {
+        reservation.adults > 1
+          ? "s"
+          : ""
+      }
+      ×
+      {" "}
+      {
+        reservation.roomPrice
+      }€
+    </div>
+
+    <div>
+      ×
+      {" "}
+      {
+        reservation.nights
+      }
+      {" "}
+      nuit
+      {
+        reservation.nights > 1
+          ? "s"
+          : ""
+      }
+    </div>
+
+    <div
+      className="
+        mt-2
+        font-semibold
+      "
+    >
+      =
+      {" "}
+      {
+        reservation
+          .roomTotal
+          .toFixed(2)
+      }
+      €
+    </div>
+
+  </span>
+
+</div>
+
+
             <div
-              className="
-                flex
-                justify-between
-                border-b
-                pb-3
-              "
-            >
+  className="
+    flex
+    justify-between
+    border-b
+    pb-3
+  "
+>
 
-              <span>
-                Taxe de séjour
-              </span>
+  <span>
+    Taxe de séjour
+  </span>
 
-              <span>
+  <span
+    className="
+      text-right
+      text-sm
+    "
+  >
 
-                {
-                  reservation
-                    .touristTaxTotal
-                    .toFixed(2)
-                }€
+    <div>
+      {reservation.adults}
+      {" "}
+      adulte
+      {
+        reservation.adults > 1
+          ? "s"
+          : ""
+      }
+      ×
+      {" "}
+      {settings?.tourist_tax || 1.3}€
+    </div>
 
-              </span>
+    <div>
+      ×
+      {" "}
+      {reservation.nights}
+      {" "}
+      nuit
+      {
+        reservation.nights > 1
+          ? "s"
+          : ""
+      }
+    </div>
 
-            </div>
+    <div className="mt-2 font-semibold">
+      =
+      {" "}
+      {
+        reservation
+          .touristTaxTotal
+          .toFixed(2)
+      }
+      €
+    </div>
 
-            {reservation.lunch && (
+  </span>
 
-              <div
-                className="
-                  flex
-                  justify-between
-                  border-b
-                  pb-3
-                "
-              >
-
-                <span>
-                  Repas midi
-                </span>
-
-                <span>
-                  Oui
-                </span>
-
-              </div>
-
-            )}
+</div>
 
             {reservation.breakfast && (
 
@@ -949,10 +1329,90 @@ const babies =
   )}
 
   <div>
-    × {reservation.nights}
-    {" "}
-    nuit(s)
-  </div>
+  × {reservation.breakfastDays}
+  {
+    reservation.breakfastDays > 1
+      ? " petits-déjeuners"
+      : " petit-déjeuner"
+  }
+</div>
+
+<p className="mt-2 font-semibold">
+  = {
+      reservation
+        .breakfastTotal
+        .toFixed(2)
+    }€
+</p>
+
+</span>
+
+              </div>
+
+            )}
+
+            {reservation.lunch && (
+
+              <div
+                className="
+                  flex
+                  justify-between
+                  border-b
+                  pb-3
+                "
+              >
+
+                <span>
+                  Repas Midi
+                </span>
+
+                <span className="text-right text-sm">
+
+  {reservation.adults > 0 && (
+    <div>
+      {reservation.adults}
+      {" "}
+      adulte(s)
+      ×
+      {" "}
+      {settings?.lunch || 15}€
+    </div>
+  )}
+
+  {reservation.children > 0 && (
+    <div>
+      {reservation.children}
+      {" "}
+      enfant(s)
+      × 10€
+    </div>
+  )}
+
+  {reservation.babies > 0 && (
+    <div>
+      {reservation.babies}
+      {" "}
+      bébé(s)
+      gratuits
+    </div>
+  )}
+
+  <div>
+  × {reservation.lunchDays}
+  {
+    reservation.lunchDays > 1
+      ? " repas"
+      : " repas"
+  }
+</div>
+
+  <p className="mt-2 font-semibold">
+  = {
+      reservation
+        .lunchTotal
+        .toFixed(2)
+    }€
+</p>
 
 </span>
 
@@ -972,16 +1432,63 @@ const babies =
               >
 
                 <span>
-                  Repas soir
+                  Repas Soir
                 </span>
 
-                <span>
-                  Oui
-                </span>
+                <span className="text-right text-sm">
+
+  {reservation.adults > 0 && (
+    <div>
+      {reservation.adults}
+      {" "}
+      adulte(s)
+      ×
+      {" "}
+      {settings?.dinner || 20}€
+    </div>
+  )}
+
+  {reservation.children > 0 && (
+    <div>
+      {reservation.children}
+      {" "}
+      enfant(s)
+      × 10€
+    </div>
+  )}
+
+  {reservation.babies > 0 && (
+    <div>
+      {reservation.babies}
+      {" "}
+      bébé(s)
+      gratuits
+    </div>
+  )}
+
+  <div>
+  × {reservation.dinnerDays}
+  {
+    reservation.dinnerDays > 1
+      ? " repas"
+      : " repas"
+  }
+</div>
+
+  <p className="mt-2 font-semibold">
+  = {
+      reservation
+        .dinnerTotal
+        .toFixed(2)
+    }€
+</p>
+
+</span>
 
               </div>
 
             )}
+
 
             {reservation.pets && (
 
@@ -1041,7 +1548,9 @@ const babies =
             <Footer />
 
     </main>
-  )
+
+  </>
+)
 }
 
 export default function CheckoutPage() {

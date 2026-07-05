@@ -68,6 +68,33 @@ const [breakfast, setBreakfast] =
   const [settings, setSettings] =
     useState<any>(null)
 
+  const [showEventPopup,
+  setShowEventPopup] =
+  useState(false);
+
+const [eventsWarning,
+  setEventsWarning] =
+  useState<any[]>([]);
+
+const [accepted,
+  setAccepted] =
+  useState(false);
+
+const [
+  showSundayInfo,
+  setShowSundayInfo,
+] = useState(false)
+
+const [
+  showSundayModal,
+  setShowSundayModal,
+] = useState(false)
+
+const [
+  sundayDates,
+  setSundayDates,
+] = useState<Date[]>([])
+
   const router =
   useRouter()
 
@@ -188,18 +215,193 @@ const [breakfast, setBreakfast] =
 
   }, [])
 
-  /* =========================
-     NUITS
-  ========================= */
+  useEffect(() => {
 
-  const nights =
-    range?.from && range?.to
-      ? differenceInDays(
-          range.to,
-          range.from
+     console.log("RANGE =", range);
+
+  if (!range?.from || !range?.to)
+    return
+
+  const checkEvents =
+    async () => {
+
+      console.log("CHECK EVENTS");
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/events/warnings",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+
+              body: JSON.stringify({
+                arrival: format(
+                  range.from,
+                  "yyyy-MM-dd"
+                ),
+
+                departure: format(
+                  range.to,
+                  "yyyy-MM-dd"
+                ),
+              }),
+            }
+          )
+
+        const data =
+          await response.json();
+
+          console.log(
+      "EVENTS FOUND =",
+      data
+    );
+
+        if (
+          Array.isArray(data) &&
+          data.length > 0
+        ) {
+          console.log(
+        "SHOW POPUP"
+          );
+
+          setEventsWarning(data)
+
+          setAccepted(false)
+
+          setShowEventPopup(
+            true
+          )
+        }
+
+      } catch (error) {
+
+        console.error(
+          error
         )
-      : 0
+      }
+    }
 
+  if (
+  range?.from &&
+  range?.to
+) {
+
+  const sundays: Date[] = []
+
+  const current =
+    new Date(range.from)
+
+  while (
+    current < range.to
+  ) {
+
+    if (
+      current.getDay() === 0
+    ) {
+
+      sundays.push(
+        new Date(current)
+      )
+    }
+
+    current.setDate(
+      current.getDate() + 1
+    )
+  }
+
+  if (
+    sundays.length > 0
+  ) {
+
+    setSundayDates(
+      sundays
+    )
+
+    setShowSundayInfo(
+      true
+    )
+  }
+}
+
+  checkEvents()
+
+}, [range])
+
+  /* =========================
+   NUITS
+========================= */
+
+const nights =
+  range?.from && range?.to
+    ? differenceInDays(
+        range.to,
+        range.from
+      )
+    : 0
+
+/* =========================
+   SERVICES
+========================= */
+
+let breakfastDays = 0;
+let lunchDays = 0;
+let dinnerDays = 0;
+
+if (
+  range?.from &&
+  range?.to
+) {
+
+  // Petit déjeuner :
+  // tous les matins du séjour
+  // y compris le jour du départ
+  breakfastDays =
+  differenceInDays(
+    range.to,
+    range.from
+  );
+
+  const current =
+    new Date(range.from);
+
+  while (
+    current < range.to
+  ) {
+
+    const day =
+      current.getDay();
+
+    // Repas du soir :
+    // jour d'arrivée inclus
+    // dimanche exclu
+    if (day !== 0) {
+      dinnerDays++;
+    }
+
+    // Repas du midi :
+    // pas le jour d'arrivée
+    // pas le dimanche
+    if (
+      current.getTime() !==
+        range.from.getTime() &&
+      day !== 0
+    ) {
+      lunchDays++;
+    }
+
+    current.setDate(
+      current.getDate() + 1
+    );
+  }
+}
+
+  
   /* =========================
      TARIFS
   ========================= */
@@ -236,11 +438,11 @@ const [breakfast, setBreakfast] =
     : 0
 
   const lunchTotal =
-    lunch
-      ? occupancy *
-        (settings?.lunch ?? 15) *
-        nights
-      : 0
+  lunch
+    ? occupancy *
+      (settings?.lunch ?? 15) *
+      lunchDays
+    : 0
 
   const breakfastTotal =
   breakfast
@@ -248,15 +450,15 @@ const [breakfast, setBreakfast] =
         adults * (settings?.breakfast ?? 12)
         +
         children * 6
-      ) * nights
+      ) * breakfastDays
     : 0
 
   const dinnerTotal =
-    dinner
-      ? occupancy *
-        (settings?.dinner ?? 20) *
-        nights
-      : 0
+  dinner
+    ? occupancy *
+      (settings?.dinner ?? 20) *
+      dinnerDays
+    : 0
 
   const touristTaxTotal =
   nights *
@@ -277,7 +479,427 @@ const [breakfast, setBreakfast] =
   touristTaxTotal +
   litParapluieTotal
 
+console.log(
+  "POPUP =",
+  showEventPopup
+);
+
   return (
+
+    <>
+
+  {showSundayInfo && (
+
+  <div
+    className="
+      fixed
+      inset-0
+      z-[9999]
+      flex
+      items-center
+      justify-center
+      bg-black/70
+      p-4
+    "
+  >
+
+    <div
+      className="
+        max-w-xl
+        rounded-[32px]
+        bg-white
+        p-8
+        shadow-2xl
+      "
+    >
+
+      <div
+        className="
+          mb-4
+          text-5xl
+        "
+      >
+        🍽️
+      </div>
+
+      <h2
+        className="
+          mb-5
+          font-serif
+          text-3xl
+          font-bold
+        "
+      >
+        Information restauration
+      </h2>
+
+      <p
+        className="
+          mb-6
+          leading-7
+          text-[#6b5b4d]
+        "
+      >
+        Votre séjour comprend
+        un ou plusieurs dimanches.
+
+        <br /><br />
+
+        L'Auberge de Saint-Aubin
+        ne propose pas de service
+        de restauration le dimanche
+        midi et le dimanche soir.
+
+        <br /><br />
+
+        Nous vous invitons à prévoir
+        vos repas à l'extérieur.
+
+        <br /><br />
+
+        Les petits-déjeuners restent
+        servis normalement.
+      </p>
+
+      <div
+        className="
+          mb-8
+          rounded-2xl
+          bg-[#faf7f2]
+          p-4
+        "
+      >
+
+        {sundayDates.map(
+          (date) => (
+
+            <div key={date.toISOString()}>
+              • {
+                date.toLocaleDateString(
+                  "fr-FR",
+                  {
+                    weekday:
+                      "long",
+                    day:
+                      "numeric",
+                    month:
+                      "long",
+                  }
+                )
+              }
+            </div>
+
+          )
+        )}
+
+      </div>
+
+      <button
+        onClick={() =>
+          setShowSundayInfo(
+            false
+          )
+        }
+        className="
+          w-full
+          rounded-2xl
+          bg-[#c9a063]
+          py-4
+          font-semibold
+          text-white
+        "
+      >
+        J'ai compris
+      </button>
+
+    </div>
+
+  </div>
+
+)}
+
+  {showSundayModal && (
+
+  <div
+    className="
+      fixed
+      inset-0
+      z-[9999]
+      flex
+      items-center
+      justify-center
+      bg-black/70
+      p-4
+    "
+  >
+
+    <div
+      className="
+        max-w-md
+        rounded-[32px]
+        bg-white
+        p-8
+        shadow-2xl
+      "
+    >
+
+      <div
+        className="
+          mb-5
+          text-5xl
+        "
+      >
+        📅
+      </div>
+
+      <h2
+        className="
+          mb-4
+          font-serif
+          text-3xl
+          font-bold
+          text-[#2f241d]
+        "
+      >
+        Arrivée indisponible
+      </h2>
+
+      <p
+        className="
+          mb-8
+          leading-7
+          text-[#6b5b4d]
+        "
+      >
+        Les arrivées le dimanche ne sont
+        pas possibles à l'Auberge de
+        Saint-Aubin.
+
+        <br />
+        <br />
+
+        Merci de sélectionner une autre
+        date d'arrivée.
+      </p>
+
+      <button
+        onClick={() =>
+          setShowSundayModal(false)
+        }
+        className="
+          w-full
+          rounded-2xl
+          bg-[#c9a063]
+          py-4
+          font-semibold
+          text-white
+          transition
+          hover:bg-[#b88d4f]
+        "
+      >
+        Compris
+      </button>
+
+    </div>
+
+  </div>
+
+)}
+
+  {showEventPopup && (
+
+<div
+  className="
+    fixed
+    inset-0
+    z-[999]
+    flex
+    items-center
+    justify-center
+    bg-black/70
+    p-4
+  "
+>
+
+<div
+  className="
+    max-w-xl
+    rounded-3xl
+    bg-white
+    p-8
+    shadow-2xl
+  "
+>
+
+<h2
+  className="
+    mb-4
+    text-3xl
+    font-bold
+  "
+>
+  ⚠️ Information
+</h2>
+
+<p className="mb-6">
+
+  Des événements sont prévus
+  durant votre séjour.
+
+  Ceux-ci peuvent provoquer
+  du bruit ou une fréquentation
+  plus importante.
+
+</p>
+
+<div className="space-y-4">
+
+  {eventsWarning.map((event) => (
+
+    <div
+      key={event.id}
+      className="
+        flex
+        overflow-hidden
+        rounded-2xl
+        border
+        bg-white
+      "
+    >
+
+      {/* TEXTE */}
+
+      <div className="flex-1 p-5">
+
+        <div className="mb-2 font-bold text-xl">
+          {event.title}
+        </div>
+
+        <div className="mb-3 text-sm text-gray-500">
+          {new Date(
+            event.date
+          ).toLocaleDateString(
+            "fr-FR"
+          )}
+        </div>
+
+        {event.description && (
+          <p className="text-[#6b5b4f]">
+            {event.description}
+          </p>
+        )}
+
+      </div>
+
+      {/* IMAGE */}
+
+      {event.image && (
+        <div
+          className="
+            relative
+            hidden
+            w-38
+            md:block
+          "
+        >
+          <img
+            src={event.image}
+            alt={event.title}
+            className="
+              h-full
+              w-full
+              object-cover
+            "
+          />
+        </div>
+      )}
+
+    </div>
+
+  ))}
+
+</div>
+
+<label
+  className="
+    mt-6
+    flex
+    items-center
+    gap-3
+  "
+>
+
+  <input
+    type="checkbox"
+    checked={accepted}
+    onChange={(e) =>
+      setAccepted(
+        e.target.checked
+      )
+    }
+  />
+
+  J'ai pris connaissance
+  des informations.
+
+</label>
+
+<div
+  className="
+    mt-8
+    flex
+    justify-end
+    gap-4
+  "
+>
+
+<button
+  onClick={() => {
+
+    setRange(
+      undefined
+    )
+
+    setShowEventPopup(
+      false
+    )
+
+  }}
+  className="
+    rounded-xl
+    border
+    px-5
+    py-3
+  "
+>
+  Changer mes dates
+</button>
+
+<button
+  disabled={!accepted}
+  onClick={() =>
+    setShowEventPopup(
+      false
+    )
+  }
+  className="
+    rounded-xl
+    bg-[#c89b5f]
+    px-5
+    py-3
+    text-white
+    disabled:opacity-50
+  "
+>
+  Continuer
+</button>
+
+</div>
+
+</div>
+</div>
+
+)}
 
     <div
       className="
@@ -327,7 +949,21 @@ const [breakfast, setBreakfast] =
 
           selected={range}
 
-          onSelect={setRange}
+          onSelect={(selected) => {
+
+  // interdit une arrivée le dimanche
+  if (
+  selected?.from &&
+  selected.from.getDay() === 0
+) {
+
+  setShowSundayModal(true)
+
+  return
+}
+
+  setRange(selected);
+}}
 
           numberOfMonths={1}
 
@@ -653,6 +1289,17 @@ const [breakfast, setBreakfast] =
   gratuit
 </p>
 
+{breakfast && breakfastDays > 0 && (
+  <p className="mt-1 text-xs italic text-[#7a6a5d]">
+    {occupancy}
+    {occupancy > 1 ? " personnes" : " personne"}
+    × {breakfastDays}
+    {breakfastDays > 1
+      ? " petits-déjeuners"
+      : " petit-déjeuner"}
+  </p>
+)}
+
     </div>
 
     <input
@@ -694,6 +1341,17 @@ const [breakfast, setBreakfast] =
         +{settings?.lunch || 15}€
         / personne
       </p>
+
+      {lunch && lunchDays > 0 && (
+  <p className="mt-1 text-xs italic text-[#7a6a5d]">
+    {occupancy}
+    {occupancy > 1 ? " personnes" : " personne"}
+    × {lunchDays}
+    {lunchDays > 1
+      ? " repas"
+      : " repas"}
+  </p>
+)}
 
     </div>
 
@@ -737,6 +1395,16 @@ const [breakfast, setBreakfast] =
         / personne
       </p>
 
+      {dinner && dinnerDays > 0 && (
+  <p className="mt-1 text-xs italic text-[#7a6a5d]">
+    {occupancy}
+    {occupancy > 1 ? " personnes" : " personne"}
+    × {dinnerDays}
+    {dinnerDays > 1
+      ? " repas"
+      : " repas"}
+  </p>
+)}
     </div>
 
     <input
@@ -751,6 +1419,18 @@ const [breakfast, setBreakfast] =
     />
 
   </label>
+
+  <p
+  className="
+    px-2
+    text-xs
+    italic
+    text-[#7a6a5d]
+  "
+>
+  * Les repas du midi et du soir
+  ne sont pas servis le dimanche.
+</p>
 
   {/* ANIMAUX */}
 
@@ -850,48 +1530,6 @@ const [breakfast, setBreakfast] =
     text-white
   "
 >
-{breakfast && (
-
-  <div className="mb-2 text-sm">
-
-    <p className="font-semibold">
-      🥐 Petit déjeuner
-    </p>
-
-    {adults > 0 && (
-      <p>
-        {adults} adulte(s)
-        × {settings?.breakfast || 12}€
-      </p>
-    )}
-
-    {children > 0 && (
-      <p>
-        {children} enfant(s)
-        × 6€
-      </p>
-    )}
-
-    {babies > 0 && (
-      <p>
-        {babies} bébé(s)
-        × gratuit
-      </p>
-    )}
-
-    <p>
-      × {nights}
-      {nights > 1 ? " nuits" : " nuit"}
-    </p>
-
-    <p className="font-bold">
-      Total :
-      {breakfastTotal.toFixed(2)}€
-    </p>
-
-  </div>
-
-)}
 
 {extraPeople > 0 && (
 
@@ -972,6 +1610,18 @@ const [breakfast, setBreakfast] =
   onClick={() => {
 
     if (
+  eventsWarning.length > 0 &&
+  !accepted
+) {
+
+  setShowEventPopup(
+    true
+  )
+
+  return
+}
+
+    if (
       !range?.from ||
       !range?.to
     ) {
@@ -998,7 +1648,8 @@ const [breakfast, setBreakfast] =
         "yyyy-MM-dd"
       )}&roomName=${roomName}&roomSlug=${roomSlug}&roomIds=${JSON.stringify(
         [roomId]
-      )}&adults=${adults}&children=${children}&babies=${babies}&pets=${pets}&breakfast=${breakfast}&lunch=${lunch}&dinner=${dinner}&litParapluie=${litParapluie}&total=${total}`
+      )}&adults=${adults}&children=${children}&babies=${babies}&pets=${pets}&breakfast=${breakfast}&lunch=${lunch}&dinner=${dinner}&litParapluie=${litParapluie}&roomPrice=${roomPrice}
+&roomTotal=${roomTotal}&total=${total}`
 
     )
   }}
@@ -1036,5 +1687,6 @@ const [breakfast, setBreakfast] =
       </div>
 
     </div>
+    </>
   )
 }

@@ -1085,6 +1085,11 @@ const filteredRooms =
           <p>Gratuit pour les clients</p>
         </div>
 
+        <div>
+          <u><strong>Dimanche</strong></u>
+          <p>Les repas du Midi et soir ne sont pas disponibles</p>
+        </div>
+
       </div>
 
     </div>

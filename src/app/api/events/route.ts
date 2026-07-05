@@ -156,6 +156,9 @@ export async function POST(
           image:
             event.image,
 
+          showWarning:
+            event.showWarning ?? false,
+
           gallery:
             JSON.stringify(
               event.gallery

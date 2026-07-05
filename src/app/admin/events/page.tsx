@@ -26,20 +26,20 @@ export default function EventsPage() {
 }, [])
 
   const updateEvent = (
-    index: number,
-    field: string,
-    value: string
-  ) => {
+  index: number,
+  field: string,
+  value: any
+) => {
 
-    const updated = [...eventsData]
+  const updated = [...eventsData];
 
-    updated[index] = {
-      ...updated[index],
-      [field]: value,
-    }
+  updated[index] = {
+    ...updated[index],
+    [field]: value,
+  };
 
-    setEventsData(updated)
-  }
+  setEventsData(updated);
+}
 
 
   const addGalleryImage = (
@@ -125,6 +125,7 @@ updated[eventIndex]
       description: "",
       image: "",
       gallery: [],
+      showWarning: false,
     },
   ])
 }
@@ -341,6 +342,42 @@ const filteredEvents =
     {event.title || "Nouvel événement"}
   </h3>
 
+</div>
+
+<div
+  className="
+    flex
+    items-center
+    gap-4
+    rounded-2xl
+    border
+    p-4
+  "
+>
+  <input
+    type="checkbox"
+  checked={event.showWarning || false}
+  onChange={(e) =>
+    updateEvent(
+      index,
+      "showWarning",
+      e.target.checked
+      )
+    }
+    className="h-5 w-5"
+  />
+
+  <div>
+    <div className="font-semibold">
+      Avertir les clients
+    </div>
+
+    <div className="text-sm text-gray-500">
+      Cet événement peut provoquer
+      du bruit ou une fréquentation
+      plus importante.
+    </div>
+  </div>
 </div>
 
                     <button
