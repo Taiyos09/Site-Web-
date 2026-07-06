@@ -23,6 +23,7 @@ model blocked_dates {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   room_slug String?
+  reservation_id Int?
   from_date DateTime?
   to_date   DateTime?
 }

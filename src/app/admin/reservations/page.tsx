@@ -727,15 +727,22 @@ total +=
   manualReservation.adults *
   nights
 
+const firstRoom =
+  roomsData.find(
+    (r) =>
+      r.name ===
+      manualReservation.rooms[0]
+  )
+
 console.log(
   JSON.stringify({
     ...manualReservation,
     total,
-    roomSlug: "confort",
-    roomName: "Chambre Confort",
+    roomSlug: firstRoom?.slug,
+    roomName: firstRoom?.name,
   }, null, 2)
 )
-        const response =
+const response =
   await fetch(
     "/api/reservations",
     {
@@ -748,26 +755,29 @@ console.log(
 
       body: JSON.stringify({
 
-  ...manualReservation,
+        ...manualReservation,
 
-  roomSlug: "confort",
+        roomSlug:
+          firstRoom?.slug,
 
-  roomName: "Chambre Confort",
+        roomName:
+          firstRoom?.name,
 
-  total,
+        total,
 
-  roomIds:
-    manualReservation.rooms
-      .map((roomName) => {
-        const room =
-          roomsData.find(
-            (r) => r.name === roomName
-          )
+        roomIds:
+          manualReservation.rooms
+            .map((roomName) => {
+              const room =
+                roomsData.find(
+                  (r) =>
+                    r.name === roomName
+                )
 
-        return room?.id
-      })
-      .filter(Boolean),
-}),
+              return room?.id
+            })
+            .filter(Boolean),
+      }),
     }
   )
 

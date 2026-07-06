@@ -229,7 +229,14 @@ const [
 
       try {
 
-        const response =
+        if (
+  !range?.from ||
+  !range?.to
+) {
+  return
+}
+
+const response =
           await fetch(
             "/api/events/warnings",
             {

@@ -54,6 +54,18 @@ export async function PUT(
       },
     })
 
+    if (body.status === "rejected") {
+
+  await prisma.blocked_dates.deleteMany({
+
+    where: {
+      reservation_id:
+        Number(params.id),
+    },
+
+  })
+}
+
   return NextResponse.json(
     reservation
   )
@@ -69,6 +81,15 @@ export async function DELETE(
 
   const reservationId =
     Number(params.id)
+
+  await prisma.blocked_dates.deleteMany({
+
+  where: {
+    reservation_id:
+      reservationId,
+  },
+
+})
 
   await prisma.reservation_rooms.deleteMany({
 

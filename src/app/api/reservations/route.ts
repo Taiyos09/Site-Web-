@@ -250,47 +250,59 @@ dinner:
    //Réservation crée avec succès
 
     /* =========================
-       BLOQUER LES DATES
-    ========================= */
+   BLOQUER LES DATES
+========================= */
 
-    const start =
-      new Date(arrival)
+for (const roomId of roomIds) {
 
-    const end =
-      new Date(departure)
+  const room =
+    await prisma.rooms.findUnique({
+      where: {
+        id: roomId,
+      },
+    })
 
-    const current =
-      new Date(start)
+  if (!room) continue
 
-    while (current < end) {
+  const start =
+    new Date(arrival)
 
-      
+  const end =
+    new Date(departure)
 
-      await prisma.blocked_dates.create({
+  const current =
+    new Date(start)
 
-        data: {
+  while (current < end) {
 
-          room_slug:
-            roomSlug,
+    await prisma.blocked_dates.create({
 
-          date:
-            new Date(current),
+      data: {
 
-          reason:
-            "reservation",
+        room_slug:
+          room.slug,
 
-          from_date:
-            new Date(arrival),
+        date:
+          new Date(current),
 
-          to_date:
-            new Date(departure),
-        },
-      })
+        reason:
+          "reservation",
 
-      current.setDate(
-        current.getDate() + 1
-      )
-    }
+        reservation_id: reservation.id,
+
+        from_date:
+          new Date(arrival),
+
+        to_date:
+          new Date(departure),
+      },
+    })
+
+    current.setDate(
+      current.getDate() + 1
+    )
+  }
+}
 
     /* =========================
        LIAISON CHAMBRES
