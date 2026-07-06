@@ -186,7 +186,7 @@ const litParapluiePrice =
       path.join(
         process.cwd(),
         "public",
-        "logo2.png"
+        "logo2.webp"
       )
 
      
@@ -985,7 +985,7 @@ const unitPrice =
       .fillColor("#666")
 
     doc.text(
-      "SARL Auberge de Saint Aubin - Capital social : 5 000 € - SIRET : XXXXXXXX - TVA Intracom : FRXXXXXXXX",
+      "SARL Auberge de Saint-Aubin - Capital social : 1 000 € - SIRET : XXXXXXXX - TVA Intracom : FRXXXXXXXX",
       10,
       782,
       {

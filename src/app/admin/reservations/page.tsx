@@ -907,6 +907,55 @@ litParapluie:
           )
         )
       : 0
+      
+   /* =========================
+   SERVICES
+========================= */
+
+let breakfastDays = 0
+let lunchDays = 0
+let dinnerDays = 0
+
+if (
+  startDate &&
+  endDate
+) {
+
+  breakfastDays = nights
+
+  const current =
+    new Date(startDate)
+
+  while (
+    current < endDate
+  ) {
+
+    const day =
+      current.getDay()
+
+    // soir :
+    // jour arrivée inclus
+    // dimanche exclu
+    if (day !== 0) {
+      dinnerDays++
+    }
+
+    // midi :
+    // pas le jour d'arrivée
+    // pas le dimanche
+    if (
+      current.getTime() !==
+        startDate.getTime() &&
+      day !== 0
+    ) {
+      lunchDays++
+    }
+
+    current.setDate(
+      current.getDate() + 1
+    )
+  }
+}
 
   let roomsTotal = 0
 
@@ -947,25 +996,25 @@ const breakfastTotal =
           )
         +
         manualReservation.children * 6
-      ) * nights
+      ) * breakfastDays
     : 0
 
 const lunchTotal =
   manualReservation.lunch
     ? occupancy *
       Number(
-        hotelSettings.lunch || 0
+        hotelSettings.lunch || 15
       ) *
-      nights
+      lunchDays
     : 0
 
 const dinnerTotal =
   manualReservation.dinner
     ? occupancy *
       Number(
-        hotelSettings.dinner || 0
+        hotelSettings.dinner || 20
       ) *
-      nights
+      dinnerDays
     : 0
 
 const petsTotal =
@@ -1006,14 +1055,14 @@ const litParapluieTotal =
     : 0
 
 const totalPrice =
-    roomsTotal +
-    extraBedTotal +
-    breakfastTotal +
-    lunchTotal +
-    dinnerTotal +
-    petsTotal +
-    touristTax +
-    litParapluieTotal
+  roomsTotal +
+  extraBedTotal +
+  breakfastTotal +
+  lunchTotal +
+  dinnerTotal +
+  petsTotal +
+  touristTax +
+  litParapluieTotal
 
   const getStatusStyle = (
   status: string
