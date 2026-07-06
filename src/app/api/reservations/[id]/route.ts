@@ -26,32 +26,66 @@ export async function PUT(
 
       data: {
 
-        ...(body.status !== undefined && {
-          status: body.status,
-        }),
+  ...(body.status !== undefined && {
+    status: body.status,
+  }),
 
-        ...(body.depositRequired !== undefined && {
-          depositRequired:
-            body.depositRequired,
-        }),
+  // REMISE
 
-        ...(body.depositAmount !== undefined && {
-          depositAmount:
-            body.depositAmount,
-        }),
+  ...(body.subtotal !== undefined && {
+    subtotal: body.subtotal,
+  }),
 
-        ...(body.depositPaid !== undefined && {
-          depositPaid:
-            body.depositPaid,
-        }),
+  ...(body.discountType !== undefined && {
+    discountType:
+      body.discountType,
+  }),
 
-        ...(body.depositPaidAt && {
-          depositPaidAt:
-            new Date(
-              body.depositPaidAt
-            ),
-        }),
-      },
+  ...(body.discountValue !== undefined && {
+    discountValue:
+      body.discountValue,
+  }),
+
+  ...(body.discountAmount !== undefined && {
+    discountAmount:
+      body.discountAmount,
+  }),
+
+  ...(body.discountReason !== undefined && {
+    discountReason:
+      body.discountReason,
+  }),
+
+  // TOTAL APRÈS REMISE
+
+  ...(body.total !== undefined && {
+    total: body.total,
+  }),
+
+  // ACOMPTE
+
+  ...(body.depositRequired !== undefined && {
+    depositRequired:
+      body.depositRequired,
+  }),
+
+  ...(body.depositAmount !== undefined && {
+    depositAmount:
+      body.depositAmount,
+  }),
+
+  ...(body.depositPaid !== undefined && {
+    depositPaid:
+      body.depositPaid,
+  }),
+
+  ...(body.depositPaidAt && {
+    depositPaidAt:
+      new Date(
+        body.depositPaidAt
+      ),
+  }),
+},
     })
 
     if (body.status === "rejected") {

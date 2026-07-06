@@ -281,11 +281,49 @@ ${
 }
 
   <div style="
-    margin-top:25px;
-    background:#2f241d;
-    color:white;
-    border-radius:20px;
-    padding:20px;
+  margin-top:25px;
+  background:#2f241d;
+  color:white;
+  border-radius:20px;
+  padding:25px;
+">
+
+  ${
+    body.discountAmount > 0
+      ? `
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        margin-bottom:10px;
+      ">
+        <span>Sous-total</span>
+        <span>
+          ${body.subtotal.toFixed(2)}€
+        </span>
+      </div>
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        color:#ffb3b3;
+        margin-bottom:15px;
+      ">
+        <span>Remise</span>
+        <span>
+          -${body.discountAmount.toFixed(2)}€
+        </span>
+      </div>
+
+      <hr style="
+        border:none;
+        border-top:1px solid rgba(255,255,255,.2);
+        margin:15px 0;
+      ">
+      `
+      : ""
+  }
+
+  <div style="
     text-align:center;
   ">
 
@@ -297,7 +335,7 @@ ${
     </p>
 
     <h2 style="
-      margin:10px 0 0;
+      margin:10px 0;
       font-size:38px;
       color:#d6b17a;
     ">
@@ -305,6 +343,52 @@ ${
     </h2>
 
   </div>
+
+  ${
+    body.depositRequired
+      ? `
+      <hr style="
+        border:none;
+        border-top:1px solid rgba(255,255,255,.2);
+        margin:20px 0;
+      ">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        color:#9be59b;
+      ">
+        <span>
+          Acompte demandé
+        </span>
+
+        <span>
+          -${body.depositAmount.toFixed(2)}€
+        </span>
+      </div>
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        font-weight:bold;
+        margin-top:15px;
+      ">
+        <span>
+          Reste à payer
+        </span>
+
+        <span>
+          ${(
+            body.total -
+            body.depositAmount
+          ).toFixed(2)}€
+        </span>
+      </div>
+      `
+      : ""
+  }
+
+</div>
 
 </div>
 

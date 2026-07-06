@@ -186,7 +186,7 @@ const litParapluiePrice =
       path.join(
         process.cwd(),
         "public",
-        "logo2.webp"
+        "logo2.png"
       )
 
      
@@ -498,7 +498,10 @@ const litParapluiePrice =
   )
 
 const roomTTC =
-  reservation.total -
+  (
+    reservation.subtotal ||
+    reservation.total
+  ) -
   optionsTotal
 
 const roomHT =
@@ -958,22 +961,122 @@ const unitPrice =
 
     currentY += 20
 
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(16)
-      .fillColor(brown)
+doc
+  .font("Helvetica-Bold")
+  .fontSize(16)
+  .fillColor(brown)
 
-    doc.text(
-      "TOTAL TTC :",
-      340,
-      currentY
-    )
+doc.text(
+  "TOTAL TTC :",
+  340,
+  currentY
+)
 
-    doc.text(
-      `${totalTTC.toFixed(2)} €`,
-      450,
-      currentY
-    )
+doc.text(
+  `${totalTTC.toFixed(2)} €`,
+  450,
+  currentY
+)
+
+/* =========================
+   REMISE
+========================= */
+
+if (
+  reservation.discountAmount &&
+  reservation.discountAmount > 0
+) {
+
+  currentY += 30
+
+  doc
+    .font("Helvetica")
+    .fontSize(12)
+    .fillColor("#000")
+
+  doc.text(
+    "Sous-total :",
+    340,
+    currentY
+  )
+
+  doc.text(
+    `${reservation.subtotal.toFixed(2)} €`,
+    450,
+    currentY
+  )
+
+  currentY += 20
+
+  doc
+    .fillColor("#cc0000")
+
+  doc.text(
+  reservation.discountReason
+    ? `Remise (${reservation.discountReason}) :`
+    : "Remise :",
+  340,
+  currentY
+)
+
+  doc.text(
+  reservation.discountType === "percent"
+    ? `-${reservation.discountAmount.toFixed(2)} € (${reservation.discountValue}%)`
+    : `-${reservation.discountAmount.toFixed(2)} €`,
+  450,
+  currentY
+)
+}
+  
+/* =========================
+   ACOMPTE
+========================= */
+
+if (
+  reservation.depositAmount > 0
+) {
+
+  currentY += 30
+
+  doc
+    .font("Helvetica")
+    .fontSize(12)
+    .fillColor("#008000")
+
+  doc.text(
+    "Acompte reçu :",
+    340,
+    currentY
+  )
+
+  doc.text(
+    `-${reservation.depositAmount.toFixed(2)} €`,
+    450,
+    currentY
+  )
+
+  currentY += 20
+
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(14)
+    .fillColor(brown)
+
+  doc.text(
+    "Reste à payer :",
+    340,
+    currentY
+  )
+
+  doc.text(
+    `${(
+      reservation.total -
+      reservation.depositAmount
+    ).toFixed(2)} €`,
+    450,
+    currentY
+  )
+}
 
     /* =========================
        FOOTER
@@ -1045,4 +1148,4 @@ const unitPrice =
       }
     )
   }
-}
+  }

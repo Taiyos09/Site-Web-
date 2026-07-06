@@ -62,6 +62,14 @@ model reservations {
   babies          Int                 @default(0)
   litParapluie    Boolean             @default(false)
   total           Float
+  subtotal         Float?    @default(0)
+  discountType     String?   
+  discountValue    Float?    @default(0)
+  discountAmount   Float?    @default(0)
+  discountReason   String?
+  depositRequested Float?    @default(0)
+  depositPaid      Float?    @default(0)
+  depositPaidAt    DateTime?
   status          String              @default("pending")
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
@@ -70,9 +78,6 @@ model reservations {
   pets            Boolean             @default(false)
   breakfast       Boolean             @default(false)
   depositAmount   Float               @default(0)
-  depositPaid     Boolean             @default(false)
-  depositPaidAt   DateTime?
-  depositRequired Boolean             @default(false)
   rooms           reservation_rooms[]
 }
 

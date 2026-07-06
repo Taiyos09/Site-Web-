@@ -22,6 +22,16 @@ type Reservation = {
   arrival: string
   departure: string
 
+  subtotal?: number
+
+  discountType?: string
+
+  discountValue?: number
+
+  discountAmount?: number
+
+  discountReason?: string
+
   adults: number
   children: number
   babies: number
@@ -63,6 +73,20 @@ const [
 ] = useState<Reservation | null>(
   null
 )
+
+const [discountEnabled, setDiscountEnabled] =
+  useState(false)
+
+const [discountType, setDiscountType] =
+  useState<"amount" | "percent">(
+    "amount"
+  )
+
+const [discountValue, setDiscountValue] =
+  useState(0)
+
+const [discountReason, setDiscountReason] =
+  useState("")
 
   const [reservations, setReservations] =
     useState<Reservation[]>([])
@@ -184,37 +208,80 @@ async (
   askDeposit = false
 ) => {
 
-    try {
+  try {
 
-      console.log("RESERVATION EMAIL", reservation)
+    console.log(
+      "RESERVATION EMAIL",
+      reservation
+    )
 
-      await fetch(
-        `/api/reservations/${reservation.id}`,
-        {
-          method: "PUT",
+    const subtotal =
+      reservation.total
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+    const discountAmount =
+      discountEnabled
+        ? discountType === "percent"
+          ? subtotal *
+            (
+              discountValue / 100
+            )
+          : discountValue
+        : 0
 
-          body: JSON.stringify({
-  ...reservation,
-  status,
+    const finalTotal =
+      subtotal -
+      discountAmount
 
-  depositRequired:
-  askDeposit,
+    await fetch(
+      `/api/reservations/${reservation.id}`,
+      {
+        method: "PUT",
 
-depositAmount:
-  askDeposit
-    ? reservation.total *
-      (hotelSettings.deposit_percent / 100)
-    : 0,
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
 
-depositPaid: false,
-}),
-        }
-      )
+        body: JSON.stringify({
+
+          ...reservation,
+
+          subtotal,
+
+          discountType:
+            discountEnabled
+              ? discountType
+              : null,
+
+          discountValue:
+            discountEnabled
+              ? discountValue
+              : 0,
+
+          discountAmount,
+
+          discountReason,
+
+          total: finalTotal,
+
+          status,
+
+          depositRequired:
+            askDeposit,
+
+          depositAmount:
+            askDeposit
+              ? finalTotal *
+                (
+                  hotelSettings.deposit_percent /
+                  100
+                )
+              : 0,
+
+          depositPaid: false,
+        }),
+      }
+    )
 
       await fetch(
   "/api/send-status-email",
@@ -227,21 +294,41 @@ depositPaid: false,
     },
 
     body: JSON.stringify({
-      ...reservation,
 
-      status,
+  ...reservation,
 
-      depositRequired:
-        askDeposit,
+  subtotal,
 
-      depositAmount:
-        askDeposit
-          ? (
-              reservation.total *
-              0.20
-            )
-          : 0,
-    }),
+  discountType:
+    discountEnabled
+      ? discountType
+      : null,
+
+  discountValue:
+    discountEnabled
+      ? discountValue
+      : 0,
+
+  discountAmount,
+
+  discountReason,
+
+  total: finalTotal,
+
+  status,
+
+  depositRequired:
+    askDeposit,
+
+  depositAmount:
+    askDeposit
+      ? finalTotal *
+        (
+          hotelSettings.deposit_percent /
+          100
+        )
+      : 0,
+})
   }
 )
 
@@ -261,16 +348,22 @@ depositPaid: false,
       ? {
           ...r,
           status,
-
+          subtotal,
+          discountType,
+          discountValue,
+          discountAmount,
+          discountReason,
+          total: finalTotal,
           depositRequired:
             askDeposit,
-
           depositAmount:
             askDeposit
-              ? reservation.total *
-                (hotelSettings.deposit_percent / 100)
+              ? finalTotal *
+                (
+                  hotelSettings.deposit_percent /
+                  100
+                )
               : 0,
-
           depositPaid: false,
         }
       : r
@@ -797,66 +890,6 @@ const reservationData =
   await response.json()
         
 
-        await fetch(
-  "/api/send-status-email",
-  {
-    method: "POST",
-
-    headers: {
-      "Content-Type":
-        "application/json",
-    },
-
-    body: JSON.stringify({
-
-      status: "confirmed",
-
-      email:
-        manualReservation.email,
-
-      first_name:
-        manualReservation.first_name,
-
-      last_name:
-        manualReservation.last_name,
-
-      roomName:
-        manualReservation.rooms.join(", "),
-
-      arrival:
-        manualReservation.arrival,
-
-      departure:
-        manualReservation.departure,
-
-      total,
-
-      adults:
-  manualReservation.adults,
-
-children:
-  manualReservation.children,
-
-babies:
-  manualReservation.babies,
-
-litParapluie:
-  manualReservation.litParapluie,
-
-      breakfast:
-        manualReservation.breakfast,
-      lunch:
-        manualReservation.lunch,
-
-      dinner:
-        manualReservation.dinner,
-
-      pets:
-        manualReservation.pets,
-    }),
-  }
-)
-
         alert(
           "Réservation ajoutée"
         )
@@ -1169,6 +1202,38 @@ const filteredReservations =
       )
     }
   )
+
+  /* =====================
+   REMISE CONFIRMATION
+===================== */
+
+const discountAmount =
+  discountEnabled &&
+  reservationToConfirm
+
+    ? discountType === "percent"
+
+      ? (
+          reservationToConfirm.total *
+          discountValue
+        ) / 100
+
+      : discountValue
+
+    : 0
+
+const finalTotal =
+  reservationToConfirm
+
+    ? Math.max(
+        0,
+        reservationToConfirm.total -
+          discountAmount
+      )
+
+    : 0
+
+/* ===================== */
 
   return (
 
@@ -1959,44 +2024,137 @@ const filteredReservations =
 
         {/* TOTAL */}
 
-        <div
-          className="
-            rounded-3xl
-            bg-[#2f241d]
-            p-6
-            text-white
-
-            lg:col-span-3
-          "
-        >
-
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-            "
-          >
-
-            <span className="text-xl">
-              Total réservation
-            </span>
-
-            <span
+<div
   className="
-    text-5xl
-    font-black
-    text-[#d6b98c]
+    rounded-3xl
+    bg-[#2f241d]
+    p-6
+    text-white
+    lg:col-span-3
   "
 >
-  {reservation.total.toFixed(2)}€
-</span>
 
-          </div>
+  {reservation.discountAmount &&
+   reservation.discountAmount > 0 && (
 
-        </div>
+    <>
 
+      <div className="
+        mb-3
+        flex
+        justify-between
+        text-lg
+        text-gray-300
+      ">
+        <span>
+          Sous-total
+        </span>
+
+        <span>
+          {reservation.subtotal?.toFixed(2)}€
+        </span>
       </div>
+
+      <div className="
+        mb-5
+        flex
+        justify-between
+        text-lg
+        text-red-300
+      ">
+        <span>
+          Remise
+          {reservation.discountReason &&
+            ` (${reservation.discountReason})`}
+        </span>
+
+        <span>
+          -{
+            reservation.discountAmount.toFixed(2)
+          }€
+        </span>
+      </div>
+
+      <hr className="
+        mb-5
+        border-white/20
+      "/>
+
+    </>
+
+  )}
+
+  <div className="
+    flex
+    items-center
+    justify-between
+  ">
+
+    <span className="text-xl">
+      Total réservation
+    </span>
+
+    <span
+      className="
+        text-5xl
+        font-black
+        text-[#d6b98c]
+      "
+    >
+      {reservation.total.toFixed(2)}€
+    </span>
+
+  </div>
+
+  {reservation.depositAmount > 0 && (
+
+    <>
+
+      <div className="
+        mt-5
+        flex
+        justify-between
+        text-green-300
+      ">
+        <span>
+          Acompte
+        </span>
+
+        <span>
+          -{
+            reservation.depositAmount.toFixed(2)
+          }€
+        </span>
+      </div>
+
+      <div className="
+        mt-3
+        flex
+        justify-between
+        border-t
+        border-white/20
+        pt-3
+        text-xl
+        font-bold
+      ">
+        <span>
+          Reste à payer
+        </span>
+
+        <span>
+          {(
+            reservation.total -
+            reservation.depositAmount
+          ).toFixed(2)}€
+        </span>
+      </div>
+
+    </>
+
+  )}
+
+</div>
+
 
       {/* ACTIONS */}
 
@@ -2269,14 +2427,17 @@ const filteredReservations =
           "
         >
           Facture PDF
-        </button>
+                </button>
 
-      </div>
+      </div> {/* ACTIONS */}
+
+      </div> {/* BODY */}
 
     </div>
 
   )
 )}
+
 
           </div>
 
@@ -3232,6 +3393,122 @@ const filteredReservations =
               €
             </strong>
           </p>
+
+          <div className="mt-6">
+
+  <label className="flex items-center gap-3">
+    <input
+      type="checkbox"
+      checked={discountEnabled}
+      onChange={(e) =>
+        setDiscountEnabled(
+          e.target.checked
+        )
+      }
+    />
+
+    Appliquer une remise
+  </label>
+
+  {discountEnabled && (
+
+    <div className="mt-4 space-y-3">
+
+      <select
+        value={discountType}
+        onChange={(e) =>
+          setDiscountType(
+            e.target.value as
+            "amount" |
+            "percent"
+          )
+        }
+        className="
+          w-full
+          rounded-xl
+          border
+          p-3
+        "
+      >
+        <option value="amount">
+          Montant (€)
+        </option>
+
+        <option value="percent">
+          Pourcentage (%)
+        </option>
+      </select>
+
+      <input
+        type="number"
+        value={discountValue}
+        onChange={(e) =>
+          setDiscountValue(
+            Number(
+              e.target.value
+            )
+          )
+        }
+        className="
+          w-full
+          rounded-xl
+          border
+          p-3
+        "
+      />
+
+      <input
+        type="text"
+        placeholder="Motif"
+        value={discountReason}
+        onChange={(e) =>
+          setDiscountReason(
+            e.target.value
+          )
+        }
+        className="
+          w-full
+          rounded-xl
+          border
+          p-3
+        "
+      />
+
+      <div className="
+        rounded-xl
+        bg-green-50
+        p-4
+      ">
+
+        <p>
+          Remise :
+          <strong>
+            {" "}
+            -{
+              discountAmount
+                .toFixed(2)
+            }€
+          </strong>
+        </p>
+
+        <p>
+          Nouveau total :
+          <strong>
+            {" "}
+            {
+              finalTotal
+                .toFixed(2)
+            }€
+          </strong>
+        </p>
+
+      </div>
+
+    </div>
+
+  )}
+
+</div>
 
         </div>
 
