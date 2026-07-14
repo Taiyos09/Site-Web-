@@ -278,7 +278,7 @@ const litParapluiePrice =
       .font("Helvetica")
 
     doc.text(
-      "Auberge de Saint Aubin",
+      "SARL Auberge de Saint-Aubin",
       55,
       285
     )
@@ -1088,7 +1088,7 @@ if (
       .fillColor("#666")
 
     doc.text(
-      "SARL Auberge de Saint-Aubin - Capital social : 1 000 € - SIRET : XXXXXXXX - TVA Intracom : FRXXXXXXXX",
+      "SARL Auberge de Saint-Aubin - Capital social : 1 000 € - SIRET : 107 243 289 00017  - TVA Intracom : FRXXXXXXXX",
       10,
       782,
       {

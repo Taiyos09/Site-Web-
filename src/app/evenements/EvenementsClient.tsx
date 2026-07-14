@@ -129,7 +129,7 @@ console.log(
       </h1>
 
       <p className="mx-auto mt-6 max-w-2xl text-xl text-white/90">
-        Karaokés, repas à thème, soirées musicales
+        Concerts, repas à thème, soirées musicales
         et événements conviviaux à l'Auberge de St Aubin.
       </p>
 

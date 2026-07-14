@@ -92,7 +92,7 @@ export default function InfoBar() {
     </h3>
 
     <p className="mt-1 text-sm text-[#5a4c42]">
-      Karaokés, repas à thème et animations
+      Concerts, repas à thème, soirées musicales et autres événements
     </p>
   </div>
 </div>

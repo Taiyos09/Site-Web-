@@ -150,7 +150,7 @@ export default function Footer() {
                   Du lundi au Samedi
                 </p>
                 <p>
-                  8h - 20h
+                  8h - 22h
                 </p>
 
               </div>

@@ -401,7 +401,7 @@ const [
                   🍺 Bar
                   <br />
                   lundi au Samedi : 
-                  08h30 - 22h00
+                  08h - 22h00
                 </p>
               </div>
             </div>
