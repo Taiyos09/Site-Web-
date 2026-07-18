@@ -92,7 +92,7 @@ export default function InfoBar() {
     </h3>
 
     <p className="mt-1 text-sm text-[#5a4c42]">
-      Concerts, repas à thème, soirées musicales et autres événements
+      Concerts, repas à thème et autres événements
     </p>
   </div>
 </div>

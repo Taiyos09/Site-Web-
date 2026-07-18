@@ -280,7 +280,7 @@ const [
 >
 
           <img
-  src="/logo/logo1.webp"
+  src="/logo/test4.png"
   alt="Logo Auberge"
   className="
     mb-6

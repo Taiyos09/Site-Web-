@@ -35,13 +35,7 @@ export default function Footer() {
 
           <div>
 
-            <Image
-              src="/logo/logo1.webp"
-              alt="Auberge de St Aubin"
-              width={180}
-              height={180}
-              className="mb-4"
-            />
+            
 
             <p
               className="
@@ -49,7 +43,7 @@ export default function Footer() {
                 text-white/80
               "
             >
-              Bar • Restaurant • Hôtel
+              
             </p>
 
           </div>

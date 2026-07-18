@@ -91,7 +91,7 @@ export default function Navbar() {
         >
 
           <Image
-  src="/logo/logo2.webp"
+  src="/logo/test4.png"
   alt="Auberge Saint Aubin"
   width={52}
   height={52}
@@ -109,14 +109,14 @@ export default function Navbar() {
   className="
     font-serif
     text-base sm:text-lg
-    md:text-2xl
+    md:text-1xl
     leading-none
     text-white
   "
 >
               Auberge
               <br />
-              de St Aubin
+              de Saint-Aubin
             </div>
 
           </div>

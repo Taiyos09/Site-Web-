@@ -176,7 +176,7 @@ export default function RestaurantPage() {
     {/* LOGO */}
 
     <Image
-  src="/logo/logo1.webp"
+  src="/logo/test4.png"
   alt="Logo Auberge St Aubin"
   width={208}
   height={208}
@@ -1075,7 +1075,7 @@ export default function RestaurantPage() {
             >
 
               <p>
-                📍 Auberge de St Aubin
+                📍 Auberge de Saint-Aubin
                 <br />
                 21 Rue Saint-Barnabé
                 <br />

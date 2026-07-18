@@ -70,13 +70,13 @@ export default function HeroSection() {
               font-bold
               leading-none
               text-white
-              md:text-7xl
+              md:text-6xl
               lg:text-[7rem]
             "
           >
             Auberge
             <br />
-            de St Aubin
+            de Saint-Aubin
           </h1>
 
           <p

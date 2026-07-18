@@ -79,7 +79,7 @@ export default function WelcomeSection() {
   >
     Bienvenue à
     l’Auberge de
-    St Aubin
+    Saint-Aubin
   </h2>
 
   <p
