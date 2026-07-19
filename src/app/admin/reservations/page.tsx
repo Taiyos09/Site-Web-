@@ -67,6 +67,15 @@ export default function ReservationsPage() {
   setShowConfirmModal,
 ] = useState(false)
 
+const [showInvoiceModal, setShowInvoiceModal] =
+  useState(false)
+
+const [invoiceReservation, setInvoiceReservation] =
+  useState<Reservation | null>(null)
+
+const [touristTaxAdults, setTouristTaxAdults] =
+  useState(0)
+
 const [
   reservationToConfirm,
   setReservationToConfirm,
@@ -123,7 +132,7 @@ const [statusFilter, setStatusFilter] =
   lunch: false,
   dinner: false,
   breakfast: false,
-  pets: false,
+  petCount: 0,
 
   litParapluie: false,
 
@@ -137,7 +146,6 @@ const [statusFilter, setStatusFilter] =
     dinner: 0,
     breakfast: 0,
     pet: 0,
-    tourist_tax: 0,
     extra_bed: 0,
     lit_parapluie: 0,
     deposit_percent: 20,
@@ -623,9 +631,9 @@ const existingReservations =
         const roomCapacities:
   Record<string, number> = {
 
-  "Chambre Double Standard": 3,
+  "Chambre Twin": 2,
 
-  "Chambre Confort": 4,
+  "Chambre Confort": 3,
 
   "Chambre Familiale": 4,
 }
@@ -772,9 +780,14 @@ if (
 ) {
 
   total +=
-    occupancy *
-    (hotelSettings.lunch || 0) *
-    nights
+    (
+      manualReservation.adults *
+        Number(hotelSettings.lunch || 0)
+      +
+      manualReservation.children *
+        lunchChildPrice
+    ) *
+    lunchDays
 }
 
 if (
@@ -799,26 +812,25 @@ if (
 ) {
 
   total +=
-    occupancy *
-    (hotelSettings.dinner || 0) *
-    nights
+    (
+      manualReservation.adults *
+        Number(hotelSettings.dinner || 0)
+      +
+      manualReservation.children *
+        dinnerChildPrice
+    ) *
+    dinnerDays
 }
 
-if (
-  manualReservation.pets
-) {
+if (manualReservation.petCount > 0) {
 
   total +=
-    (hotelSettings.pet || 0) *
+    manualReservation.petCount *
+    Number(hotelSettings.pet || 0) *
     nights
 }
 
 /* TAXE DE SÉJOUR */
-
-total +=
-  (hotelSettings.tourist_tax || 0) *
-  manualReservation.adults *
-  nights
 
 const firstRoom =
   roomsData.find(
@@ -924,6 +936,18 @@ const reservationData =
           manualReservation.departure
         )
       : null
+
+  
+
+const lunchChildPrice =
+  Number(
+    hotelSettings.lunch_child ?? 9
+  )
+
+const dinnerChildPrice =
+  Number(
+    hotelSettings.dinner_child ?? 10
+  )
 
   const nights =
     startDate && endDate
@@ -1034,27 +1058,32 @@ const breakfastTotal =
 
 const lunchTotal =
   manualReservation.lunch
-    ? occupancy *
-      Number(
-        hotelSettings.lunch || 15
+    ? (
+        manualReservation.adults *
+          Number(hotelSettings.lunch || 15)
+        +
+        manualReservation.children *
+          lunchChildPrice
       ) *
       lunchDays
     : 0
 
 const dinnerTotal =
   manualReservation.dinner
-    ? occupancy *
-      Number(
-        hotelSettings.dinner || 20
+    ? (
+        manualReservation.adults *
+          Number(hotelSettings.dinner || 20)
+        +
+        manualReservation.children *
+          dinnerChildPrice
       ) *
       dinnerDays
     : 0
 
 const petsTotal =
-  manualReservation.pets
-    ? Number(
-        hotelSettings.pet || 0
-      ) *
+  manualReservation.petCount > 0
+    ? manualReservation.petCount *
+      Number(hotelSettings.pet || 0) *
       nights
     : 0
 
@@ -1069,13 +1098,6 @@ const extraBedTotal =
   Number(
     hotelSettings.extra_bed || 0
   ) *
-  nights
-
-const touristTax =
-  Number(
-    hotelSettings.tourist_tax || 0
-  ) *
-  manualReservation.adults *
   nights
 
 const litParapluieTotal =
@@ -1094,7 +1116,6 @@ const totalPrice =
   lunchTotal +
   dinnerTotal +
   petsTotal +
-  touristTax +
   litParapluieTotal
 
   const getStatusStyle = (
@@ -2353,69 +2374,17 @@ const finalTotal =
         </button>
 
         <button
-          onClick={async () => {
+          onClick={() => {
 
-            try {
+  setInvoiceReservation(reservation)
 
-              const response =
-                await fetch(
-                  "/api/generate-invoice",
-                  {
-                    method: "POST",
+  setTouristTaxAdults(
+    reservation.adults
+  )
 
-                    headers: {
-                      "Content-Type":
-                        "application/json",
-                    },
+  setShowInvoiceModal(true)
 
-                    body: JSON.stringify({
-
-                      ...reservation,
-
-                      rooms:
-                        reservation.reservation_rooms || [],
-                    }),
-                  }
-                )
-
-              if (!response.ok) {
-
-                throw new Error(
-                  "Erreur génération PDF"
-                )
-              }
-
-              const blob =
-                await response.blob()
-
-              const url =
-                window.URL.createObjectURL(blob)
-
-              const a =
-                document.createElement("a")
-
-              a.href = url
-
-              a.download =
-                `facture-${reservation.id}.pdf`
-
-              document.body.appendChild(a)
-
-              a.click()
-
-              a.remove()
-
-              window.URL.revokeObjectURL(url)
-
-            } catch (error) {
-
-              console.error(error)
-
-              alert(
-                "Erreur génération facture"
-              )
-            }
-          }}
+}}
 
           className="
             rounded-xl
@@ -2729,7 +2698,7 @@ const finalTotal =
         <div className="space-y-4">
 
           {[
-            "Chambre Double Standard",
+            "Chambre Twin",
             "Chambre Confort",
             "Chambre Familiale",
           ].map((room) => {
@@ -2881,23 +2850,24 @@ const finalTotal =
 
   </label>
 
-  <label className="
-    flex items-center gap-3
+  <label
+  className="
+    flex flex-col gap-3
     rounded-2xl
     bg-[#f5f1ea]
     p-4
-  ">
+  "
+>
+
+  <label className="flex items-center gap-3">
 
     <input
       type="checkbox"
-      checked={
-        manualReservation.pets
-      }
+      checked={manualReservation.petCount > 0}
       onChange={(e) =>
         setManualReservation({
           ...manualReservation,
-          pets:
-            e.target.checked,
+          petCount: e.target.checked ? 1 : 0,
         })
       }
     />
@@ -2905,6 +2875,30 @@ const finalTotal =
     Animal
 
   </label>
+
+  {manualReservation.petCount > 0 && (
+
+    <input
+      type="number"
+      min={1}
+      value={manualReservation.petCount}
+      onChange={(e) =>
+        setManualReservation({
+          ...manualReservation,
+          petCount: Number(e.target.value),
+        })
+      }
+      className="
+        rounded-xl
+        border
+        p-3
+      "
+      placeholder="Nombre d'animaux"
+    />
+
+  )}
+
+</label>
 
   <label
   className="
@@ -3093,34 +3087,63 @@ const finalTotal =
 
 {/* MIDI */}
 
-<div className="
-  flex justify-between
-  border-b
-  pb-3
-">
+{/* MIDI */}
+
+<div
+  className="
+    flex justify-between
+    border-b
+    pb-3
+  "
+>
 
   <span>
     Repas midi
 
     {manualReservation.lunch && (
+
       <span className="text-[#6b5b4f]">
+
+        {manualReservation.adults > 0 && (
+          <>
+            {manualReservation.adults}
+            {" "}adulte(s)
+            × {Number(hotelSettings.lunch || 15)}€
+            {" "}
+          </>
+        )}
+
+        {manualReservation.children > 0 && (
+          <>
+            {manualReservation.children}
+            {" "}enfant(s)
+            × {lunchChildPrice}€
+            {" "}
+          </>
+        )}
+
+        {manualReservation.babies > 0 && (
+          <>
+            {manualReservation.babies}
+            {" "}bébé(s)
+            gratuits
+            {" "}
+          </>
+        )}
+
+        × {lunchDays}
         {" "}
-        (
-        {Number(hotelSettings.lunch || 0)}€
-        {" "}×{" "}
-        {occupancy}
-        {" "}personnes
-        {" "}×{" "}
-        {nights}
-        {" "}nuits
-        )
+        repas
+
       </span>
+
     )}
+
   </span>
 
   <span>
     {manualReservation.lunch
-      ? `${lunchTotal}€`
+      ? `${lunchTotal.toFixed(2)}€`
       : "Non"}
   </span>
 
@@ -3128,34 +3151,63 @@ const finalTotal =
 
 {/* SOIR */}
 
-<div className="
-  flex justify-between
-  border-b
-  pb-3
-">
+{/* SOIR */}
+
+<div
+  className="
+    flex justify-between
+    border-b
+    pb-3
+  "
+>
 
   <span>
     Repas soir
 
     {manualReservation.dinner && (
+
       <span className="text-[#6b5b4f]">
+
+        {manualReservation.adults > 0 && (
+          <>
+            {manualReservation.adults}
+            {" "}adulte(s)
+            × {Number(hotelSettings.dinner || 20)}€
+            {" "}
+          </>
+        )}
+
+        {manualReservation.children > 0 && (
+          <>
+            {manualReservation.children}
+             {" "}enfant(s)
+            × {dinnerChildPrice}€
+            {" "}
+          </>
+        )}
+
+        {manualReservation.babies > 0 && (
+          <>
+            {manualReservation.babies}
+            {" "}bébé(s)
+            gratuits
+            {" "}
+          </>
+        )}
+
+        × {dinnerDays}
         {" "}
-        (
-        {hotelSettings?.dinner || 0}€
-        {" "}×{" "}
-        {occupancy}
-        {" "}personnes
-        {" "}×{" "}
-        {nights}
-        {" "}nuits
-        )
+        repas
+
       </span>
+
     )}
+
   </span>
 
   <span>
     {manualReservation.dinner
-      ? `${dinnerTotal}€`
+      ? `${dinnerTotal.toFixed(2)}€`
       : "Non"}
   </span>
 
@@ -3172,58 +3224,37 @@ const finalTotal =
   <span>
     Animal
 
-    {manualReservation.pets && (
-      <span className="text-[#6b5b4f]">
-        {" "}
-        (
-        {hotelSettings?.pet || 0}€
-        {" "}×{" "}
-        {nights}
-        {" "}nuits
-        )
-      </span>
-    )}
+{manualReservation.petCount > 0 && (
+
+  <span className="text-[#6b5b4f]">
+
+    {manualReservation.petCount}
+    {" "}
+    animal(s)
+
+    ×
+
+    {hotelSettings.pet || 0}€
+
+    ×
+
+    {nights}
+    nuits
+
+  </span>
+
+)}
   </span>
 
   <span>
-    {manualReservation.pets
+    {manualReservation.petCount
       ? `${petsTotal}€`
       : "Non"}
   </span>
 
 </div>
 
-{/* TAXE DE SÉJOUR */}
 
-<div className="
-  flex justify-between
-  border-b
-  pb-3
-">
-
-  <span>
-    Taxe de séjour
-
-    <span className="text-[#6b5b4f]">
-      {" "}
-      (
-      {hotelSettings?.tourist_tax || 0}€
-      {" "}×{" "}
-      {manualReservation.adults}
-      {" "}adultes
-      {" "}×{" "}
-      {nights}
-      {" "}nuits
-      )
-    </span>
-
-  </span>
-
-  <span>
-    {touristTax.toFixed(2)}€
-  </span>
-
-</div>
 
 <div className="flex justify-between border-b pb-3">
   <span>👨 Adultes</span>
@@ -3592,6 +3623,95 @@ const finalTotal =
     </div>
   )
 }
+
+{showInvoiceModal && invoiceReservation && (
+
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+
+    <div className="w-full max-w-md rounded-3xl bg-white p-8">
+
+      <h2 className="text-2xl font-bold">
+        Taxe de séjour
+      </h2>
+
+      <p className="mt-4">
+        Nombre de personnes concernées :
+      </p>
+
+      <input
+        type="number"
+        min={0}
+        max={invoiceReservation.adults}
+        value={touristTaxAdults}
+        onChange={(e) =>
+          setTouristTaxAdults(Number(e.target.value))
+        }
+        className="mt-4 w-full rounded-xl border p-3"
+      />
+
+      <div className="mt-6 flex justify-end gap-3">
+
+        <button
+          onClick={() =>
+            setShowInvoiceModal(false)
+          }
+        >
+          Annuler
+        </button>
+
+        <button
+          className="rounded-xl bg-[#c89b5f] px-5 py-3 font-bold text-white"
+          onClick={async () => {
+
+            const response =
+              await fetch("/api/generate-invoice", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+
+                  ...invoiceReservation,
+
+                  rooms:
+                    invoiceReservation.reservation_rooms || [],
+
+                  touristTaxAdults,
+
+                }),
+              })
+
+            const blob =
+              await response.blob()
+
+            const url =
+              window.URL.createObjectURL(blob)
+
+            const a =
+              document.createElement("a")
+
+            a.href = url
+            a.download =
+              `facture-${invoiceReservation.id}.pdf`
+
+            a.click()
+
+            window.URL.revokeObjectURL(url)
+
+            setShowInvoiceModal(false)
+
+          }}
+        >
+          Générer la facture
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
 
     </main>
   )

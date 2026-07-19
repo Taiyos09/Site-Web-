@@ -109,7 +109,8 @@ export default function Navbar() {
   className="
     font-serif
     text-base sm:text-lg
-    md:text-1xl
+    md:text-sm
+    ml-3
     leading-none
     text-white
   "

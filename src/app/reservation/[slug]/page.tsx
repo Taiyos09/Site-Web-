@@ -343,7 +343,59 @@ console.log(room)
 
   </div>
 
+     <div
+  className="
+    rounded-[28px]
+    bg-white
+    p-6
+    shadow-lg
+  "
+>
+
+  <h3
+    className="
+      mb-4
+      font-serif
+      text-2xl
+      font-bold
+    "
+  >
+    Informations pratiques
+  </h3>
+
+  <div className="space-y-3 text-[#5a4c42]">
+
+    <div className="flex items-center gap-3">
+      <span>🍽️</span>
+      <span>
+        Petit-déjeuner :
+        <strong> 7h00 à 9h00</strong>
+      </span>
+    </div>
+
+    <div className="flex items-center gap-3">
+      <span>🟢</span>
+      <span>
+        Arrivée dès
+        <strong> 16h00</strong>
+      </span>
+    </div>
+
+    <div className="flex items-center gap-3">
+      <span>🔴</span>
+      <span>
+        Départ avant
+        <strong> 11h00</strong>
+      </span>
+    </div>
+
+  </div>
+
 </div>
+
+</div>
+
+
 
           {/* DROITE */}
 

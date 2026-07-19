@@ -1071,13 +1071,13 @@ const filteredRooms =
       >
 
         <div>
-          <u><strong>Arrivée</strong></u>
-          <p>À partir de 16h</p>
+          <u><strong>Arrivée  |  Départ</strong></u>
+          <p>Après 16h00  |  Avant 11h00</p>
         </div>
 
         <div>
-          <u><strong>Départ</strong></u>
-          <p>Avant 11h</p>
+          <u><strong>Horaire Petit Déjeuner</strong></u>
+          <p>De 7h00 à 9h00</p>
         </div>
 
         <div>

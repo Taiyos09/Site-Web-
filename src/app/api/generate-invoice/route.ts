@@ -51,6 +51,12 @@ const settings =
   (reservation.adults || 0) +
   (reservation.children || 0)
 
+  const touristTaxAdults =
+  Number(
+    reservation.touristTaxAdults ??
+    reservation.adults
+  )
+
     /* =========================
        SETTINGS
     ========================= */
@@ -186,7 +192,8 @@ const litParapluiePrice =
       path.join(
         process.cwd(),
         "public",
-        "logo2.png"
+        "logo",
+        "test5.png"
       )
 
      
@@ -202,7 +209,7 @@ const litParapluiePrice =
           10,
           5,
           {
-            width: 180,
+            width: 130,
           }
         )
 
@@ -493,7 +500,7 @@ const litParapluiePrice =
   +
   (
     touristTaxPrice *
-    reservation.adults *
+    touristTaxAdults *
     nights
   )
 
@@ -744,24 +751,24 @@ const unitPrice =
   },
 
   {
-    label:
-      "Taxe de séjour",
+  label: "Taxe de séjour",
 
-    enabled: true,
+  enabled:
+    touristTaxAdults > 0,
 
-    persons:
-      reservation.adults,
+  persons:
+    touristTaxAdults,
 
-    unitPrice:
-      touristTaxPrice,
+  unitPrice:
+    touristTaxPrice,
 
-    total:
-      touristTaxPrice *
-      reservation.adults *
-      nights,
+  total:
+    touristTaxPrice *
+    touristTaxAdults *
+    nights,
 
-    noTVA: true,
-  },
+  noTVA: true,
+},
 ]
 
     invoiceOptions.forEach(

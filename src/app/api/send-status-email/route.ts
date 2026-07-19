@@ -115,48 +115,39 @@ console.log(
           ">
 
             <div style="
-              background:${color};
-              padding:35px;
-              text-align:center;
-            ">
-
-           <div style="
-  width:190px;
-  height:150px;
-  margin:0 auto 1px;
-  border-radius:12px;
-  background-image:url('https://image.noelshack.com/fichiers/2026/23/6/1780702412-logo1.jpg');
-  background-size:contain;
-  background-repeat:no-repeat;
-  background-position:center;
-  position:relative;
+  background:${color};
+  padding:35px;
+  text-align:center;
 ">
-  <div style="
-    position:absolute;
-    inset:0;
-    background:transparent;
-  "></div>
+
+  <img
+    src="https://image.noelshack.com/fichiers/2026/29/7/1784468781-test5.png"
+    alt="Logo Auberge de Saint Aubin"
+    width="180"
+    style="
+      display:block;
+      margin:0 auto 20px;
+      border:0;
+    "
+  >
+
+  <h1 style="
+    color:#ffffff;
+    margin:0;
+    font-size:38px;
+  ">
+    L'Auberge de Saint Aubin
+  </h1>
+
+  <p style="
+    color:#ffffff;
+    margin-top:10px;
+    font-size:20px;
+  ">
+    ${title}
+  </p>
+
 </div>
-
-
-
-              <h1 style="
-                color:white;
-                margin:0;
-                font-size:38px;
-              ">
-                L'Auberge de Saint Aubin
-              </h1>
-
-              <p style="
-                color:white;
-                margin-top:1px;
-                font-size:20px;
-              ">
-                ${title}
-              </p>
-
-            </div>
 
             <div style="
               padding:20px;
@@ -241,9 +232,17 @@ ${
   </h3>
 
   <p>
+    Taxe de Séjour : 1.30€ par majeur par nuit | A régler sur place à l'arrivée
+  </p>
+
+  <p>
   Petit déjeuner :
   <strong>${body.breakfast ? "Oui" : "Non"}
     </strong>
+</p>
+
+<p>
+Horaire : De 7h00 à 9h00
 </p>
 
   <p>

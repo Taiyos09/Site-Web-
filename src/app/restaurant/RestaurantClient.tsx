@@ -176,7 +176,7 @@ export default function RestaurantPage() {
     {/* LOGO */}
 
     <Image
-  src="/logo/test4.png"
+  src="/logo/test5.png"
   alt="Logo Auberge St Aubin"
   width={208}
   height={208}

@@ -375,7 +375,23 @@ for (const roomId of roomIds) {
   <div style="max-width:700px;margin:auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.08);">
 
 
-<div style="background:#2f241d;padding:40px;text-align:center;">
+
+<div style="
+  background-color:#2f241d;
+  padding:35px;
+  text-align:center;
+">
+
+  <img
+    src="https://image.noelshack.com/fichiers/2026/29/7/1784468781-test5.png"
+    alt="Logo Auberge de Saint Aubin"
+    width="180"
+    style="
+      display:block;
+      margin:0 auto 20px;
+      border:0;
+    "
+  >
   <h1 style="color:white;margin:0;">
     Réservation reçue
   </h1>
@@ -417,6 +433,7 @@ for (const roomId of roomIds) {
 
     <hr style="border:none;border-top:1px solid #ddd;margin:15px 0;">
 
+    <p>Taxe de Séjour : 1.30€ par majeur par nuit | A régler sur place à l'arrivée </p>
     <p><strong>🍽 Petit Déjeuner :</strong> ${breakfast ? "Oui" : "Non"}</p>
     <p><strong>🍽 Repas midi :</strong> ${lunch ? "Oui" : "Non"}</p>
     <p><strong>🌙 Repas soir :</strong> ${dinner ? "Oui" : "Non"}</p>

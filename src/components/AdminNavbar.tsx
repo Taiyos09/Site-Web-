@@ -50,22 +50,12 @@ export default function AdminSidebar() {
       <div className="p-8">
         
         <Image
-  src="/images/logo2.webp"
+  src="/logo/test5.png"
   alt="Auberge"
-  width={48}
-  height={48}
+  width={200}
+  height={200}
   className="h-12 w-auto"
 />
-
-        <h1
-          className="
-            font-serif
-            text-3xl
-            font-bold
-          "
-        >
-          Auberge
-        </h1>
 
         <p
           className="

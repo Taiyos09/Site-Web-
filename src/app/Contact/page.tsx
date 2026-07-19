@@ -280,7 +280,7 @@ const [
 >
 
           <img
-  src="/logo/test4.png"
+  src="/logo/test5.png"
   alt="Logo Auberge"
   className="
     mb-6

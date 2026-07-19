@@ -6,6 +6,9 @@ import type { DateRange } from "react-day-picker"
 import { differenceInDays, format } from "date-fns"
 import { fr } from "date-fns/locale"
 import { useRouter } from "next/navigation"
+import {
+  RESTAURANT_CONFIG,
+} from "@/data/restaurant"
 
 import "react-day-picker/dist/style.css"
 
@@ -34,8 +37,12 @@ export default function BookingCalendar({
   const [range, setRange] =
     useState<DateRange | undefined>()
 
-  const [pets, setPets] =
-    useState(false)
+  const [petCount, setPetCount] = useState(0)
+
+    const [
+    restaurantConfig,
+    setRestaurantConfig,
+  ] = useState(RESTAURANT_CONFIG)
 
   const [litParapluie, setLitParapluie] =
     useState(false)
@@ -432,10 +439,9 @@ if (
     nights
 
   const petTotal =
-    pets
-      ? (settings?.pet ?? 5) *
-        nights
-      : 0
+  petCount *
+  (settings?.pet || 5) *
+  nights
 
   const litParapluieTotal =
   litParapluie
@@ -444,11 +450,15 @@ if (
       nights
     : 0
 
+  const lunchChildPrice =
+  restaurantConfig.menuEnfant.price
+
   const lunchTotal =
   lunch
-    ? occupancy *
-      (settings?.lunch ?? 15) *
-      lunchDays
+    ? (
+        adults * (settings?.lunch ?? 15) +
+        children * lunchChildPrice
+      ) * lunchDays
     : 0
 
   const breakfastTotal =
@@ -460,17 +470,15 @@ if (
       ) * breakfastDays
     : 0
 
-  const dinnerTotal =
-  dinner
-    ? occupancy *
-      (settings?.dinner ?? 20) *
-      dinnerDays
-    : 0
+  const dinnerChildPrice = 10
 
-  const touristTaxTotal =
-  nights *
-  adults *
-  (settings?.tourist_tax ?? 1.3)
+const dinnerTotal =
+  dinner
+    ? (
+        adults * (settings?.dinner ?? 20) +
+        children * dinnerChildPrice
+      ) * dinnerDays
+    : 0
 
   /* =========================
      TOTAL
@@ -483,7 +491,6 @@ if (
   breakfastTotal +
   lunchTotal +
   dinnerTotal +
-  touristTaxTotal +
   litParapluieTotal
 
 console.log(
@@ -1123,7 +1130,7 @@ console.log(
   <div>
 
     <label className="mb-1 block text-sm font-medium">
-      Adultes
+      Adultes (13 ans +)
     </label>
 
     <select
@@ -1160,7 +1167,7 @@ console.log(
   <div>
 
     <label className="mb-1 block text-sm font-medium">
-      Enfants (2 ans +)
+      Enfants (3 - 12 )
     </label>
 
     <select
@@ -1195,7 +1202,7 @@ console.log(
   <div>
 
     <label className="mb-1 block text-sm font-medium">
-      Bébés (- 2 ans)
+      Bébés (- 3 ans)
     </label>
 
     <select
@@ -1258,7 +1265,7 @@ console.log(
     text-[#7a6a5d]
   "
 >
-  - Les bébés de moins de 2 ans sont accueillis gratuitement.
+  - Les bébés de moins de 3 ans sont accueillis gratuitement.
 </p>
 
           {/* OPTIONS */}
@@ -1345,8 +1352,9 @@ console.log(
       </p>
 
       <p className="text-xs text-[#7a6a5d]">
-        +{settings?.lunch || 15}€
-        / personne
+        Adulte : {settings?.lunch || 15}€
+        • Enfant : {restaurantConfig.menuEnfant.price}€
+        • Bébé : gratuit
       </p>
 
       {lunch && lunchDays > 0 && (
@@ -1398,8 +1406,9 @@ console.log(
       </p>
 
       <p className="text-xs text-[#7a6a5d]">
-        +{settings?.dinner || 20}€
-        / personne
+        Adulte : {settings?.dinner || 20}€
+        • Enfant : 10€
+        • Bébé : gratuit
       </p>
 
       {dinner && dinnerDays > 0 && (
@@ -1454,30 +1463,47 @@ console.log(
       p-5
     "
   >
-
     <div>
 
-      <p className="text-sm font-semibold">
-        🐶 Animal
-      </p>
+    <p className="text-sm font-semibold">
+      🐶 Animal
+    </p>
 
-      <p className="text-xs text-[#7a6a5d]">
-        +{settings?.pet || 5}€
-        / nuit
-      </p>
+    <p className="text-xs text-[#7a6a5d]">
+      +{settings?.pet || 5}€ / animal / nuit
+    </p>
 
-    </div>
+  </div>
+
+  <div className="flex items-center gap-3">
 
     <input
       type="checkbox"
-      checked={pets}
-      onChange={(e) =>
-        setPets(
-          e.target.checked
-        )
-      }
+      checked={petCount > 0}
+      onChange={(e) => {
+        if (e.target.checked) {
+          setPetCount(1)
+        } else {
+          setPetCount(0)
+        }
+      }}
       className="h-5 w-5"
     />
+
+    {petCount > 0 && (
+      <input
+        type="number"
+        min={1}
+        max={10}
+        value={petCount}
+        onChange={(e) =>
+          setPetCount(Number(e.target.value))
+        }
+        className="w-16 rounded border px-2 py-1 text-center"
+      />
+    )}
+
+  </div>
 
   </label>
 
@@ -1655,7 +1681,7 @@ console.log(
         "yyyy-MM-dd"
       )}&roomName=${roomName}&roomSlug=${roomSlug}&roomIds=${JSON.stringify(
         [roomId]
-      )}&adults=${adults}&children=${children}&babies=${babies}&pets=${pets}&breakfast=${breakfast}&lunch=${lunch}&dinner=${dinner}&litParapluie=${litParapluie}&roomPrice=${roomPrice}
+      )}&adults=${adults}&children=${children}&babies=${babies}&petCount=${petCount}&breakfast=${breakfast}&lunch=${lunch}&dinner=${dinner}&litParapluie=${litParapluie}&roomPrice=${roomPrice}
 &roomTotal=${roomTotal}&total=${total}`
 
     )

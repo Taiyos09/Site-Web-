@@ -65,10 +65,10 @@ model reservations {
   subtotal         Float?    @default(0)
   discountType     String?   
   discountValue    Float?    @default(0)
-  discountAmount   Float?    @default(0)
   discountReason   String?
-  depositRequested Float?    @default(0)
-  depositPaid      Float?    @default(0)
+  depositRequested Boolean    @default(false)
+  discountAmount   Float?    @default(0)
+  depositPaid      Boolean    @default(false)
   depositPaidAt    DateTime?
   status          String              @default("pending")
   createdAt       DateTime            @default(now())

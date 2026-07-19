@@ -28,8 +28,7 @@ type ReservationData = {
   adults: number
   children: number
   babies: number
-  touristTaxTotal: number
-  pets: boolean
+  petCount: number
   breakfast: boolean
   lunch: boolean
   dinner: boolean
@@ -46,6 +45,12 @@ function CheckoutContent() {
 
   const [settings, setSettings] =
   useState<any>(null)
+
+  const lunchChildPrice =
+  settings?.lunch_child ?? 9
+
+const dinnerChildPrice =
+  settings?.dinner_child ?? 10
 
 useEffect(() => {
 
@@ -118,10 +123,10 @@ const babies =
     ) || 0
   )
 
-      const pets =
-        searchParams.get(
-          "pets"
-        ) === "true"
+      const petCount =
+  Number(
+    searchParams.get("petCount") || 0
+  )
 
       const breakfast =
         searchParams.get(
@@ -248,18 +253,21 @@ const breakfastTotal =
       breakfastDays
     : 0;
 
+
 const lunchTotal =
   lunch
-    ? occupancy *
-      (settings?.lunch ?? 18) *
-      lunchDays
+    ? (
+        adults * (settings?.lunch ?? 18) +
+        children * lunchChildPrice
+      ) * lunchDays
     : 0;
 
 const dinnerTotal =
   dinner
-    ? occupancy *
-      (settings?.dinner ?? 18) *
-      dinnerDays
+    ? (
+        adults * (settings?.dinner ?? 18) +
+        children * dinnerChildPrice
+      ) * dinnerDays
     : 0;
 
       return {
@@ -292,12 +300,7 @@ const dinnerTotal =
         children,
         babies,
 
-        touristTaxTotal:
-         adults *
-         nights *
-         1.3,
-
-        pets,
+        petCount,
         lunch,
         dinner,
         litParapluie,
@@ -398,8 +401,8 @@ const dinnerTotal =
         nights:
           reservation.nights,
 
-        pets:
-          reservation.pets,
+        petCount:
+          reservation.petCount,
 
         adults:
            reservation.adults,
@@ -421,9 +424,6 @@ const dinnerTotal =
 
         dinner:
           reservation.dinner,
-
-        tourist_tax:
-          reservation.touristTaxTotal,
 
         total:
           reservation.total,
@@ -1018,7 +1018,7 @@ const dinnerTotal =
             >
 
               <span>
-                Arrivée
+                Arrivée le
               </span>
 
               <span>
@@ -1043,7 +1043,7 @@ const dinnerTotal =
             >
 
               <span>
-                Départ
+                Départ le
               </span>
 
               <span>
@@ -1068,7 +1068,7 @@ const dinnerTotal =
             >
 
               <span>
-                Nuits
+                Nombre de Nuits
               </span>
 
               <span>
@@ -1087,7 +1087,7 @@ const dinnerTotal =
     pb-3
   "
 >
-  <span>Adultes</span>
+  <span>Nombre d'Adultes</span>
   <span>{reservation.adults}</span>
 </div>
 
@@ -1099,7 +1099,7 @@ const dinnerTotal =
     pb-3
   "
 >
-  <span>Enfants</span>
+  <span>Nombre d'Enfants</span>
   <span>{reservation.children}</span>
 </div>
 
@@ -1240,42 +1240,13 @@ const dinnerTotal =
     "
   >
 
-    <div>
-      {reservation.adults}
-      {" "}
-      adulte
-      {
-        reservation.adults > 1
-          ? "s"
-          : ""
-      }
-      ×
-      {" "}
-      {settings?.tourist_tax || 1.3}€
-    </div>
-
-    <div>
-      ×
-      {" "}
-      {reservation.nights}
-      {" "}
-      nuit
-      {
-        reservation.nights > 1
-          ? "s"
-          : ""
-      }
-    </div>
+      
 
     <div className="mt-2 font-semibold">
-      =
+      
       {" "}
-      {
-        reservation
-          .touristTaxTotal
-          .toFixed(2)
-      }
-      €
+      
+      1,30 € par majeur par nuit a payer sur place !
     </div>
 
   </span>
@@ -1381,11 +1352,11 @@ const dinnerTotal =
 
   {reservation.children > 0 && (
     <div>
-      {reservation.children}
-      {" "}
-      enfant(s)
-      × 10€
-    </div>
+  {reservation.children}
+  {" "}
+  enfant(s)
+  × {lunchChildPrice}€
+</div>
   )}
 
   {reservation.babies > 0 && (
@@ -1450,11 +1421,11 @@ const dinnerTotal =
 
   {reservation.children > 0 && (
     <div>
-      {reservation.children}
-      {" "}
-      enfant(s)
-      × 10€
-    </div>
+  {reservation.children}
+  {" "}
+  enfant(s)
+  × {dinnerChildPrice}€
+</div>
   )}
 
   {reservation.babies > 0 && (
@@ -1490,28 +1461,50 @@ const dinnerTotal =
             )}
 
 
-            {reservation.pets && (
+            {reservation.petCount > 0 && (
 
-              <div
-                className="
-                  flex
-                  justify-between
-                  border-b
-                  pb-3
-                "
-              >
+  <div
+    className="
+      flex
+      justify-between
+      border-b
+      pb-3
+    "
+  >
 
-                <span>
-                  Animal
-                </span>
+    <span>
+      Animaux
+    </span>
 
-                <span>
-                  Oui
-                </span>
+    <span className="text-right">
 
-              </div>
+      <div>
+        {reservation.petCount}
+        {" "}
+        animal
+        {reservation.petCount > 1 ? "x" : ""}
+      </div>
 
-            )}
+      <div>
+        × {settings?.pet || 5}€
+      </div>
+
+      <div>
+        × {reservation.nights}
+        {" "}
+        nuit
+        {reservation.nights > 1 ? "s" : ""}
+      </div>
+
+      <div className="mt-2 font-semibold">
+        = {(reservation.petCount * (settings?.pet || 5) * reservation.nights).toFixed(2)}€
+      </div>
+
+    </span>
+
+  </div>
+
+)}
 
             <div
               className="
@@ -1543,11 +1536,9 @@ const dinnerTotal =
 
       </div>
 
-      {/* FOOTER */}
-      
-            <Footer />
-
     </main>
+
+    <Footer />
 
   </>
 )

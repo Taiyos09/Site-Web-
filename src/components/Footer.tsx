@@ -31,11 +31,17 @@ export default function Footer() {
           "
         >
 
-          {/* LOGO */}
+           {/* LOGO */}
 
           <div>
 
-            
+            <Image
+              src="/logo/test5.png"
+              alt="Auberge de St Aubin"
+              width={220}
+              height={220}
+              className="mb-4"
+            />
 
             <p
               className="
@@ -47,6 +53,7 @@ export default function Footer() {
             </p>
 
           </div>
+
 
           {/* CONTACT */}
 
