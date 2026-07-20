@@ -1,1 +1,26 @@
-{}
+{
+  "navbar": {
+    "home": "Home",
+    "hotel": "Hotel",
+    "restaurant": "Restaurant",
+    "events": "Evenementen",
+    "contact": "Contact",
+    "region": "Omgeving",
+    "book": "Boek een kamer"
+  },
+  
+"home": {
+    "heroSubtitle": "BAR • RESTAURANT • HOTEL",
+    "heroTitle": "Auberge",
+    "heroTitle1": "de Saint-Aubin",
+    "heroDescription": "Een authentieke herberg in het hart van de Bourbonnais-regio. Comfortabele kamers, een gezellig restaurant en het hele jaar door georganiseerde avonden.",
+    "titlebar": "Bar",
+    "descriptbar": "Gezellige bar met een warme sfeer.",
+    "titleresto": "Restaurant",
+    "descriptresto": "Traditionele gerechten en lokale producten",
+    "titlehotel": "Hotel",
+    "descripthotel": "Comfortabele kamers voor uw verblijf",
+    "titleevent": "Evenementen",
+    "descriptevent": "Concerten, themadiners en andere evenementen."
+  }
+}

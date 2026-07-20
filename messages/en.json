@@ -1,1 +1,58 @@
-{}
+{
+"navbar": {
+    "home": "Home",
+    "hotel": "Hotel",
+    "restaurant": "Restaurant",
+    "events": "Events",
+    "contact": "Contact",
+    "region": "Local Area",
+    "book": "Book a Room"
+},
+ 
+"home": {
+  "heroSubtitle": "BAR • RESTAURANT • HOTEL",
+  "heroTitle": "Auberge",
+  "heroTitle1": "de Saint-Aubin",
+  "heroDescription": "A charming country inn in the heart of the Bourbonnais. Comfortable rooms, a welcoming restaurant and events throughout the year.",
+
+  "titlebar": "Bar",
+  "descriptbar": "A welcoming bar with a friendly atmosphere.",
+
+  "titleresto": "Restaurant",
+  "descriptresto": "Traditional cuisine and locally sourced ingredients.",
+
+  "titlehotel": "Hotel",
+  "descripthotel": "Comfortable rooms for a relaxing stay.",
+
+  "titleevent": "Events",
+  "descriptevent": "Concerts, themed dinners and many other events.",
+
+  "titreBienvenue": "Welcome",
+  "titreBienvenue2": "Welcome to Auberge de Saint-Aubin",
+
+  "descript1": "For many years, our inn has welcomed travellers, families and business guests in a warm and friendly atmosphere.",
+
+  "descript2": "Enjoy traditional cuisine, comfortable rooms and a peaceful setting in the heart of the Bourbonnais countryside.",
+
+  "boutonalentour": "Things to Do Nearby",
+
+  "decouvrir": "Discover",
+
+  "NosUnivers": "Our Experiences",
+
+  "DescripUniver": "Auberge de Saint-Aubin welcomes you with three unique experiences: accommodation, traditional dining and memorable events.",
+
+  "carteResto": "Restaurant",
+  "carteResto2": "Traditional Cuisine",
+  "carteRestoDescrip": "Fresh local produce, daily specials and a warm, friendly atmosphere.",
+
+  "carteHotel": "Hotel",
+  "carteHotel2": "Comfortable Stay",
+  "carteHotelDescrip": "Cosy rooms in the heart of the Bourbonnais region.",
+
+  "carteEvent": "Events",
+  "carteEvent2": "Evenings & Entertainment",
+  "carteEventDescrip": "Karaoke, themed dinners and events organised throughout the year.",
+  "boutonDecouvrir": "Discover"
+}
+}

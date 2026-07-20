@@ -2,36 +2,38 @@
 
 import Link from "next/link"
 
-const services = [
-  {
-    title: "Restaurant",
-    subtitle: "Cuisine traditionnelle",
-    description:
-      "Produits locaux, menu du jour et ambiance conviviale.",
-    image: "/restaurant/resto1.webp",
-    link: "/restaurant",
-  },
-
-  {
-    title: "Hôtel",
-    subtitle: "Séjour confortable",
-    description:
-      "Des chambres chaleureuses au cœur du Bourbonnais.",
-    image: "/rooms/room1.webp",
-    link: "/hotel",
-  },
-
-  {
-    title: "Événements",
-    subtitle: "Soirées & animations",
-    description:
-      "Karaoké, repas à thème et soirées organisées toute l'année.",
-    image: "/images/evenement.webp",
-    link: "/evenements",
-  },
-]
+import {useTranslations} from "next-intl";
 
 export default function ServicesSection() {
+
+  const t = useTranslations("home");
+
+const services = [
+    {
+      title: t("carteResto"),
+      subtitle: t("carteResto2"),
+      description: t("carteRestoDescrip"),
+      image: "/restaurant/resto1.webp",
+      link: "/restaurant",
+    },
+
+    {
+      title: t("carteHotel"),
+      subtitle: t("carteHotel2"),
+      description: t("carteHotelDescrip"),
+      image: "/rooms/room1.webp",
+      link: "/hotel",
+    },
+
+    {
+      title: t("carteEvent"),
+      subtitle: t("carteEvent2"),
+      description: t("carteEventDescrip"),
+      image: "/images/evenement.webp",
+      link: "/evenements",
+    }
+  ];
+  
   return (
     <section
       className="
@@ -59,7 +61,7 @@ export default function ServicesSection() {
               text-[#c89b5f]
             "
           >
-            Découvrez
+            {t("decouvrir")}
           </p>
 
           <h2
@@ -70,7 +72,7 @@ export default function ServicesSection() {
               text-[#2f241d]
             "
           >
-            Nos Univers
+            {t("NosUnivers")}
           </h2>
 
           <p
@@ -82,10 +84,7 @@ export default function ServicesSection() {
               text-[#5a4c42]
             "
           >
-            L'Auberge de St Aubin vous accueille
-            autour de trois expériences :
-            l'hébergement, la restauration
-            et les événements.
+            {t("DescripUniver")}
           </p>
 
         </div>
@@ -210,7 +209,7 @@ export default function ServicesSection() {
                       text-[#2f241d]
                     "
                   >
-                    Découvrir →
+                    {t("boutonDecouvrir")} →
                   </Link>
 
                 </div>

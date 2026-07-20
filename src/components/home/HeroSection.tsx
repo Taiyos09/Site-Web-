@@ -1,8 +1,12 @@
 "use client"
 
 import Link from "next/link"
+import {useTranslations} from "next-intl";
 
 export default function HeroSection() {
+
+  const t = useTranslations("home");
+
   return (
     <section
       className="
@@ -60,7 +64,7 @@ export default function HeroSection() {
               text-[#d6b98c]
             "
           >
-            Bar • Restaurant • Hôtel
+            {t("heroSubtitle")}
           </p>
 
           <h1
@@ -74,9 +78,9 @@ export default function HeroSection() {
               lg:text-[7rem]
             "
           >
-            Auberge
+            {t("heroTitle")}
             <br />
-            de Saint-Aubin
+            {t("heroTitle1")}
           </h1>
 
           <p
@@ -88,10 +92,7 @@ export default function HeroSection() {
               text-white/90
             "
           >
-            Une auberge authentique au cœur du
-            Bourbonnais. Chambres confortables,
-            restaurant convivial et soirées
-            organisées toute l'année.
+            {t("heroDescription")}
           </p>
 
           <div

@@ -1,8 +1,12 @@
 "use client"
 
 import Link from "next/link"
+import {useTranslations} from "next-intl";
 
 export default function WelcomeSection() {
+
+  const t = useTranslations("home");
+
   return (
     <section
       className="
@@ -64,7 +68,7 @@ export default function WelcomeSection() {
       text-[#c89b5f]
     "
   >
-    Bienvenue
+    {t("titreBienvenue")}
   </p>
 
   <h2
@@ -77,9 +81,7 @@ export default function WelcomeSection() {
       text-[#2f241d]
     "
   >
-    Bienvenue à
-    l’Auberge de
-    Saint-Aubin
+    {t("titreBienvenue2")}
   </h2>
 
   <p
@@ -90,12 +92,7 @@ export default function WelcomeSection() {
       text-[#5a4c42]
     "
   >
-    Depuis plusieurs années,
-    l'établissement accueille
-    voyageurs, familles et
-    professionnels dans une
-    ambiance chaleureuse et
-    conviviale.
+    {t("descript1")}
   </p>
 
   <p
@@ -106,11 +103,7 @@ export default function WelcomeSection() {
       text-[#5a4c42]
     "
   >
-    Profitez d’une cuisine
-    traditionnelle, de chambres
-    confortables et d’un cadre
-    calme au cœur de la campagne
-    bourbonnaise.
+    {t("descript2")}
   </p>
 
   <Link
@@ -128,7 +121,7 @@ export default function WelcomeSection() {
       hover:bg-[#43352c]
     "
   >
-    Activités aux Alentours
+    {t("boutonalentour")}
   </Link>
 
 </div>

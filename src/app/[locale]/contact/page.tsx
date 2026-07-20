@@ -1,7 +1,7 @@
 "use client"
 
 import Navbar from "@/components/Navbar"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation";
 import { useState } from "react"
 import Footer from "@/components/Footer"
 

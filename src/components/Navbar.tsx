@@ -1,9 +1,13 @@
 "use client"
 
 import Image from "next/image"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
+import {
+  Link,
+  usePathname
+} from "@/i18n/navigation";
 import { useEffect, useState } from "react"
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import {useTranslations} from "next-intl";
 
 export default function Navbar() {
 
@@ -14,6 +18,8 @@ export default function Navbar() {
   useState(false)
 
   const pathname = usePathname()
+
+  const t = useTranslations("navbar");
 
   useEffect(() => {
 
@@ -147,7 +153,7 @@ export default function Navbar() {
     hover:text-[#d6b98c]
   "
 >
-  Accueil
+  {t("home")}
 
   {pathname === "/" && (
     <span
@@ -173,7 +179,7 @@ export default function Navbar() {
     hover:text-[#d6b98c]
   "
 >
-  Hôtel
+  {t("hotel")}
 
   {(
   pathname.startsWith("/hotel") ||
@@ -202,7 +208,7 @@ export default function Navbar() {
     hover:text-[#d6b98c]
   "
           >
-            Restaurant
+            {t("restaurant")}
 
             {pathname.startsWith("/restaurant") && (
     <span
@@ -228,7 +234,7 @@ export default function Navbar() {
     hover:text-[#d6b98c]
   "
           >
-            Événements
+            {t("events")}
 
             {pathname.startsWith("/evenements") && (
     <span
@@ -254,7 +260,7 @@ export default function Navbar() {
     hover:text-[#d6b98c]
   "
           >
-            Contact
+            {t("contact")}
 
             {pathname.startsWith("/contact") && (
     <span
@@ -280,7 +286,7 @@ export default function Navbar() {
     hover:text-[#d6b98c]
   "
           >
-            Notre Region
+            {t("region")}
 
             {pathname.startsWith("/notre-region") && (
     <span
@@ -363,9 +369,10 @@ export default function Navbar() {
       hover:bg-[#b98746]
     "
   >
-    Réserver une chambre
+    {t("book")}
   </Link>
 </div>
+<LanguageSwitcher />
 </div>
 
     {/* MENU MOBILE */}

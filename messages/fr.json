@@ -1,1 +1,46 @@
-{}
+{
+  "navbar": {
+    "home": "Accueil",
+    "hotel": "Hôtel",
+    "restaurant": "Restaurant",
+    "events": "Événements",
+    "contact": "Contact",
+    "region": "Notre Région",
+    "book": "Réserver une chambre"
+},
+
+  "home": {
+    "heroSubtitle": "BAR • RESTAURANT • HÔTEL",
+    "heroTitle": "Auberge",
+    "heroTitle1": "de Saint-Aubin",
+    "heroDescription": "Une auberge authentique au cœur du Bourbonnais. Chambres confortables, restaurant convivial et soirées organisées toute l'année.",
+    "titlebar": "Bar",
+    "descriptbar": "Bar chaleureux et une l'ambiance conviviale.",
+    "titleresto": "Restaurant",
+    "descriptresto": "Plats traditionnels et produits locaux",
+    "titlehotel": "Hôtel",
+    "descripthotel": "Des chambres confortables pour votre séjour",
+    "titleevent": "Evenement",
+    "descriptevent": "Concerts, dîners à thème et autres événements.",
+    "titreBienvenue": "Bienvenue",
+    "titreBienvenue2": "Bienvenue à l’Auberge de Saint-Aubin",
+    "descript1": "Depuis plusieurs années, l'établissement accueille voyageurs, familles et professionnels dans une ambiance chaleureuse et conviviale.",
+    "descript2": "Profitez d’une cuisine traditionnelle, de chambres confortables et d’un cadre calme au cœur de la campagne bourbonnaise.",
+    "boutonalentour": "Activités aux Alentours",
+    "decouvrir": "Découvrez",
+    "NosUnivers": "Nos Univers",
+    "DescripUniver": "L'Auberge de St Aubin vous accueille autour de trois expériences : l'hébergement, la restauration et les événements.",
+    "carteResto": "Restaurant",
+    "carteResto2": "Cuisine traditionnelle",
+    "carteRestoDescrip": "Produits locaux, menu du jour et ambiance conviviale.",
+    "carteHotel": "Hôtel",
+    "carteHotel2": "Séjour confortable",
+    "carteHotelDescrip": "Des chambres chaleureuses au cœur du Bourbonnais.",
+    "carteEvent": "Événements",
+    "carteEvent2": "Soirées & animations",
+    "carteEventDescrip": "Karaoké, repas à thème et soirées organisées toute l'année.",
+    "boutonDecouvrir": "Découvrir"
+  }
+}
+
+{t("heroSubtitle")}

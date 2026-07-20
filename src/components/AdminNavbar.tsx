@@ -143,7 +143,7 @@ export default function AdminSidebar() {
         </Link>
 
         <Link
-          href="/"
+          href="/fr"
           className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-[#3c2d24]"
         >
           <Settings size={20} />

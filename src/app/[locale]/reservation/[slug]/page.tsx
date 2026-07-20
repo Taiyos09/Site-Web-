@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation"
 import BookingCalendar from "@/components/hotel/BookingCalendar"
 import { useEffect, useState } from "react"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation";
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
 import RoomGallery from "@/components/RoomGallery";

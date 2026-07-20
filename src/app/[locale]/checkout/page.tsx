@@ -7,7 +7,7 @@ import {
   useEffect,
 } from "react"
 
-import Link from "next/link"
+import { Link } from "@/i18n/navigation";
 import Footer from "@/components/Footer"
 import { useSearchParams } from "next/navigation"
 

@@ -5,7 +5,7 @@ import { DayPicker } from "react-day-picker"
 import type { DateRange } from "react-day-picker"
 import { differenceInDays, format } from "date-fns"
 import { fr } from "date-fns/locale"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "@/i18n/navigation";
 import {
   RESTAURANT_CONFIG,
 } from "@/data/restaurant"

@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import { Link } from "@/i18n/navigation";
 import Image from "next/image"
 import { tourismCategories } from "@/lib/tourism-categories"
 

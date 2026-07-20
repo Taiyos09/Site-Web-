@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
+import { Link } from "@/i18n/navigation";
 
 export default function CookiesPage() {
 

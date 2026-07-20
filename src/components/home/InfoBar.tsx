@@ -7,7 +7,12 @@ import {
   CalendarDays,
 } from "lucide-react"
 
+import {useTranslations} from "next-intl";
+
 export default function InfoBar() {
+
+    const t = useTranslations("home");
+
   return (
     <section className="relative z-20">
       <div
@@ -37,11 +42,11 @@ export default function InfoBar() {
 
   <div>
     <h3 className="font-semibold text-[#2f241d]">
-      Bar
+      {t("titlebar")}
     </h3>
 
     <p className="mt-1 text-sm text-[#5a4c42]">
-      Bar convivial et ambiance chaleureuse
+      {t("descriptbar")}
     </p>
   </div>
 </div>
@@ -54,11 +59,11 @@ export default function InfoBar() {
 
   <div>
     <h3 className="font-semibold text-[#2f241d]">
-      Restaurant
+      {t("titleresto")}
     </h3>
 
     <p className="mt-1 text-sm text-[#5a4c42]">
-      Cuisine traditionnelle et produits locaux
+      {t("descriptresto")}
     </p>
   </div>
 </div>
@@ -71,11 +76,11 @@ export default function InfoBar() {
 
   <div>
     <h3 className="font-semibold text-[#2f241d]">
-      Hôtel
+      {t("titlehotel")}
     </h3>
 
     <p className="mt-1 text-sm text-[#5a4c42]">
-      Chambres confortables pour vos séjours
+      {t("descripthotel")}
     </p>
   </div>
 </div>
@@ -88,11 +93,11 @@ export default function InfoBar() {
 
   <div>
     <h3 className="font-semibold text-[#2f241d]">
-      Événements
+      {t("titleevent")}
     </h3>
 
     <p className="mt-1 text-sm text-[#5a4c42]">
-      Concerts, repas à thème et autres événements
+      {t("descriptevent")}
     </p>
   </div>
 </div>
