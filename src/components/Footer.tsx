@@ -2,8 +2,12 @@
 
 import Image from "next/image"
 import { Link } from "@/i18n/navigation";
+import {useTranslations} from "next-intl";
 
 export default function Footer() {
+
+const t = useTranslations("home");
+
 
   return (
 
@@ -66,7 +70,7 @@ export default function Footer() {
                 font-bold
               "
             >
-             <u> Nous contacter</u>
+             <u> {t("NousContacter")}</u>
             </h3>
 
             <div
@@ -107,7 +111,7 @@ export default function Footer() {
                 font-bold
               "
             >
-              <u>Horaires</u>
+              <u>{t("Horaire")}</u>
             </h3>
 
             <div
@@ -124,7 +128,7 @@ export default function Footer() {
                 </p>
 
                 <p>
-                  Du Lundi au Jeudi
+                  {t("LauJ")}
                 </p>
                 
                 <p>
@@ -132,7 +136,7 @@ export default function Footer() {
                 </p>
 
                 <p>
-                  Vendredi & Samedi
+                  {t("VetS")}
                 </p>
 
                 <p>
@@ -148,7 +152,7 @@ export default function Footer() {
                 </p>
 
                 <p>
-                  Du lundi au Samedi
+                  {t("LauS")}
                 </p>
                 <p>
                   8h - 22h
@@ -171,7 +175,7 @@ export default function Footer() {
                 font-bold
               "
             >
-              <u>Navigation</u>
+              <u>{t("Navigation")}</u>
             </h3>
 
             <div
@@ -183,23 +187,23 @@ export default function Footer() {
             >
 
               <Link href="/">
-                Accueil
+                {t("home")}
               </Link>
 
               <Link href="/hotel">
-                Hôtel
+                {t("hotel")}
               </Link>
 
               <Link href="/restaurant">
-                Restaurant
+                {t("restaurant")}
               </Link>
 
               <Link href="/events">
-                Événements
+                {t("events")}
               </Link>
 
               <Link href="/contact">
-                Contact
+                {t("contact")}
               </Link>
 
             </div>
@@ -257,11 +261,11 @@ export default function Footer() {
           >
 
             <Link href="/mentions-legales">
-              Mentions légales
+              {t("Mention")}
             </Link>
 
             <Link href="/confidentialite">
-              Politique de confidentialité
+              {t("politique")}
             </Link>
 
           </div>

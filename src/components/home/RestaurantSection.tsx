@@ -2,8 +2,13 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import {useTranslations} from "next-intl";
 
 export default function RestaurantSection() {
+
+    const t = useTranslations("home");
+
+
   return (
     <section
   className="
@@ -30,7 +35,7 @@ export default function RestaurantSection() {
               text-[#c89b5f]
             "
           >
-            Restaurant
+            {t("RestoTitre")}
           </p>
 
           <h2
@@ -42,9 +47,9 @@ export default function RestaurantSection() {
               leading-tight
             "
           >
-            Une cuisine simple,
+            {t("Restosubtitre")}
             <br />
-            généreuse et authentique.
+            {t("Restosubtitre2")}
           </h2>
 
         </div>
@@ -85,10 +90,7 @@ export default function RestaurantSection() {
                   text-[#5a4c42]
                 "
               >
-                Découvrez notre carte,
-                nos menus et nos spécialités
-                dans une ambiance chaleureuse
-                et conviviale.
+                {t("RestoDescript")}
               </p>
 
               <div
@@ -110,7 +112,7 @@ export default function RestaurantSection() {
                     font-medium
                   "
                 >
-                  🍽 Cuisine traditionnelle
+                  🍽 {t("RestoBadge")}
                 </div>
 
                 <div
@@ -123,7 +125,7 @@ export default function RestaurantSection() {
                     font-medium
                   "
                 >
-                  🍷 Bar convivial
+                  🍷 {t("RestoBadge2")}
                 </div>
 
                 <div
@@ -136,7 +138,7 @@ export default function RestaurantSection() {
                     font-medium
                   "
                 >
-                  📋 Menu du jour
+                  📋 {t("RestoBadge3")}
                 </div>
 
               </div>
@@ -157,7 +159,7 @@ export default function RestaurantSection() {
                   hover:bg-[#b98746]
                 "
               >
-                Voir la carte
+                {t("Boutoncarte")}
               </Link>
 
             </div>

@@ -2,8 +2,13 @@
 
 import { Link } from "@/i18n/navigation";
 import { useEffect, useState } from "react"
+import {useTranslations} from "next-intl";
+import { useLocale } from "next-intl";
 
 export default function RoomsSection() {
+
+   const t = useTranslations("home");
+   const locale = useLocale();
 
   const [rooms, setRooms] = useState<any[]>([])
 
@@ -54,7 +59,7 @@ export default function RoomsSection() {
                 text-[#c89b5f]
               "
             >
-              Nos chambres
+              {t("RoomTitre")}
             </p>
 
             <h2
@@ -65,7 +70,7 @@ export default function RoomsSection() {
                 text-[#2f241d]
               "
             >
-              Chambres en vedette
+              {t("RoomTitre2")}
             </h2>
 
           </div>
@@ -86,7 +91,7 @@ export default function RoomsSection() {
               font-semibold
             "
           >
-            Voir toutes les chambres
+            {t("RoomSubBouton")}
           </Link>
 
         </div>
@@ -101,7 +106,23 @@ export default function RoomsSection() {
           "
         >
 
-          {rooms.slice(0, 3).map((room) => (
+          {rooms.slice(0, 3).map((room) => {
+
+  const roomName =
+    locale === "en"
+      ? room.nameEn || room.nameFr
+      : locale === "nl"
+      ? room.nameNl || room.nameFr
+      : room.nameFr;
+
+  const roomDescription =
+    locale === "en"
+      ? room.descriptionEn || room.descriptionFr
+      : locale === "nl"
+      ? room.descriptionNl || room.descriptionFr
+      : room.descriptionFr;
+
+  return (
 
             <div
               key={room.id}
@@ -122,7 +143,7 @@ export default function RoomsSection() {
 
                 <img
                   src={room.images?.[0]}
-                  alt={room.name}
+                  alt={roomName}
                   className="
                     h-full
                     w-full
@@ -144,7 +165,7 @@ export default function RoomsSection() {
                     font-bold
                   "
                 >
-                  {room.name}
+                  {roomName}
                 </h3>
 
                 <p
@@ -155,7 +176,7 @@ export default function RoomsSection() {
                     line-clamp-1
                   "
                 >
-                  {room.description}
+                  {roomDescription}
                 </p>
 
                 <div
@@ -171,7 +192,7 @@ export default function RoomsSection() {
                     text-[#8a6330]
                   "
                 >
-                  👤 Jusqu'à {room.capacity} personne{room.capacity > 1 ? "s" : ""}
+                  👤 {t("Jusque")} {room.capacity} {t("Personne")}{room.capacity > 1 ? "s" : ""}
                 </div>
 
                 <div
@@ -200,7 +221,7 @@ export default function RoomsSection() {
                       text-[#7a6a5d]
                     "
                   >
-                    par nuit
+                    {t("night")}
                   </span>
 
                 </div>
@@ -220,14 +241,15 @@ export default function RoomsSection() {
                     hover:bg-[#43352c]
                   "
                 >
-                  Découvrir la chambre
+                  {t("nightbouton")}
                 </Link>
 
               </div>
 
             </div>
 
-          ))}
+            )
+})}
 
         </div>
 

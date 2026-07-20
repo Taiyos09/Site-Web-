@@ -1,21 +1,25 @@
-"use client"
+"use client";
 
-const reviews = [
-  {
-    name: "Arthur D.",
-    text: "Très bel endroit! La cuisine de Marion est superbe! Profitez en pour faire un tour dans ce charmant village également!",
-  },
-  {
-    name: "Alix H.",
-    text: "Un personnel aux petits soins pour notre séjour en famille, prise d'intiative, chaleureux et arrangeants, merci l'équipe! Le cadre est magnifique et les repas excellents, nous reviendrons!",
-  },
-  {
-    name: "Olivier G.",
-    text: "Super endroit où l'on y mange délicieusement et les patrons sont très sympas",
-  },
-]
+import { useTranslations } from "next-intl";
 
 export default function ReviewsSection() {
+
+  const t = useTranslations("home");
+
+  const reviews = [
+  {
+    name: t("Name"),
+    text: t("DescriptAvis"),
+  },
+  {
+    name: t("Name2"),
+    text: t("DescriptAvis2"),
+  },
+  {
+    name: t("Name3"),
+    text: t("DescriptAvis3"),
+  },
+];
 
   return (
 
@@ -49,7 +53,7 @@ export default function ReviewsSection() {
               text-[#c89b5f]
             "
           >
-            Avis Clients
+            {t("TitreAvis")}
           </p>
 
           <h2
@@ -59,7 +63,7 @@ export default function ReviewsSection() {
               text-[#2f241d]
             "
           >
-            Ils ont séjourné chez nous
+            {t("TexteAvis")}
           </h2>
 
         </div>
@@ -154,7 +158,7 @@ export default function ReviewsSection() {
       </div>
 
       <div className="text-sm font-medium">
-        Voir tous les avis sur Google
+        {t("AvisGoogle")}
       </div>
     </div>
 
@@ -173,5 +177,7 @@ export default function ReviewsSection() {
 
 </div>
     </section>
+
   )
+
 }

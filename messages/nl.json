@@ -21,6 +21,82 @@
     "titlehotel": "Hotel",
     "descripthotel": "Comfortabele kamers voor uw verblijf",
     "titleevent": "Evenementen",
-    "descriptevent": "Concerten, themadiners en andere evenementen."
+    "descriptevent": "Concerten, themadiners en andere evenementen.",
+    "titreBienvenue": "Welkom",
+    "titreBienvenue2": "Welkom bij Herberg Saint-Aubin",
+    "descript1": "Al jarenlang verwelkomen wij reizigers, gezinnen en zakenmensen in een warme en vriendelijke sfeer.",
+    "descript2": "Geniet van traditionele gerechten, comfortabele kamers en een rustige omgeving in het hart van het Bourbonnais.",
+
+    "boutonalentour": "Activiteiten in de Omgeving",
+
+    "decouvrir": "Ontdek",
+    "NosUnivers": "Onze Wereld",
+    "DescripUniver": "Herberg Saint-Aubin verwelkomt u met drie ervaringen: overnachten, gastronomie en evenementen.",
+
+    "carteResto": "Restaurant",
+    "carteResto2": "Traditionele keuken",
+    "carteRestoDescrip": "Lokale producten, dagmenu's en een gezellige sfeer.",
+
+    "carteHotel": "Hotel",
+    "carteHotel2": "Comfortabel Verblijf",
+    "carteHotelDescrip": "Gezellige kamers in het hart van de Bourbonnais.",
+
+    "carteEvent": "Evenementen",
+    "carteEvent2": "Avonden & Entertainment",
+    "carteEventDescrip": "Karaoke, thema-avonden en evenementen het hele jaar door.",
+
+    "boutonDecouvrir": "Ontdekken",
+
+    "RoomTitre": "Onze Kamers",
+    "RoomTitre2": "Uitgelichte Kamers",
+    "RoomSubBouton": "Bekijk Alle Kamers",
+
+    "Jusque": "Tot",
+    "Personne": "persoon",
+    "night": "per nacht",
+    "nightbouton": "Bekijk Kamer",
+
+    "RestoTitre": "Restaurant",
+    "Restosubtitre": "Eenvoudige,",
+    "Restosubtitre2": "royale en authentieke keuken.",
+    "RestoDescript": "Ontdek onze menukaart, dagmenu's en specialiteiten in een warme en gezellige sfeer.",
+
+    "RestoBadge": "Traditionele keuken",
+    "RestoBadge2": "Gezellige bar",
+    "RestoBadge3": "Dagmenu",
+
+    "Boutoncarte": "Bekijk de Menukaart",
+
+    "TitreEvent": "AANKOMENDE EVENEMENTEN",
+    "BoutonEvent": "Bekijk Alle Evenementen",
+    "BoutonEvent2": "Meer Informatie",
+
+    "Name1": "Arthur D.",
+    "Name2": "Alix H.",
+    "Name3": "Olivier G.",
+
+    "DescriptAvis": "Een prachtige plek! Marion kookt fantastisch! Neem ook zeker de tijd om dit charmante dorp te ontdekken.",
+    "DescriptAvis2": "Het personeel zorgde uitstekend voor ons tijdens ons familieverblijf. Ze waren vriendelijk, behulpzaam en attent. Bedankt aan het hele team! De omgeving is prachtig en het eten was heerlijk. We komen zeker terug!",
+    "DescriptAvis3": "Geweldige plek met heerlijk eten en zeer vriendelijke eigenaren.",
+
+    "TitreAvis": "Gastenbeoordelingen",
+    "TexteAvis": "Zij verbleven bij ons",
+    "AvisGoogle": "Bekijk Alle Google-beoordelingen",
+
+    "NousContacter": "Neem Contact Op",
+
+    "Horaire": "Openingstijden",
+    "LauJ": "Maandag t/m Donderdag",
+    "VetS": "Vrijdag & Zaterdag",
+    "LauS": "Maandag t/m Zaterdag",
+
+    "Navigation": "Navigatie",
+    "Mention": "Juridische Vermelding",
+    "politique": "Privacybeleid",
+    "home": "Home",
+    "hotel": "Hotel",
+    "restaurant": "Restaurant",
+    "events": "Evenementen",
+    "contact": "Contact"
   }
 }

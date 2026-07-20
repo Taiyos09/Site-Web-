@@ -1,4 +1,6 @@
+
 export const HOTEL_CONFIG = {
+
   roomPrices: {
     onePerson: 88,
     twoPeople: 98,

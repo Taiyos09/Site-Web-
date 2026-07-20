@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import {useTranslations} from "next-intl";
 
 export default function EventsSection() {
+
+  const t = useTranslations("home");
 
   const [events, setEvents] = useState<any[]>([])
 
@@ -94,7 +97,7 @@ const upcomingEvents =
                 text-sm
               "
             >
-              ÉVÉNEMENTS À VENIR
+              {t("TitreEvent")}
             </p>
 
           </div>
@@ -115,7 +118,7 @@ const upcomingEvents =
               hover:text-white
             "
           >
-            Voir tous les événements
+            {t("BoutonEvent")}
           </Link>
 
         </div>
@@ -283,7 +286,7 @@ const upcomingEvents =
                       text-[#d6b98c]
                     "
                   >
-                    En savoir plus →
+                    {t("BoutonEvent2")} →
                   </Link>
 
                 </div>

@@ -96,10 +96,15 @@ model events {
 
 model rooms {
   id              Int                 @id @default(autoincrement())
-  name            String
   slug            String              @unique
   size            String
-  description     String
+  nameFr String?
+  nameEn String?
+  nameNl String?
+
+  descriptionFr String? @db.Text
+  descriptionEn String? @db.Text
+  descriptionNl String? @db.Text
   images          String
   priceOnePerson  Int
   priceTwoPeople  Int

@@ -4,11 +4,18 @@ import { useEffect, useState } from "react"
 
 type Room = {
   id: string
-  name: string
-  slug: string
-  description: string
-  size: string
 
+  nameFr: string
+  nameEn: string
+  nameNl: string
+
+  slug: string
+
+  descriptionFr: string
+  descriptionEn: string
+  descriptionNl: string
+
+  size: string
   capacity: number
 
   priceOnePerson: number
@@ -210,23 +217,23 @@ setRooms(formattedRooms)
           },
 
           body: JSON.stringify({
-            name: room.name,
-            description:
-              room.description,
-            size: room.size,
+  nameFr: room.nameFr,
+  nameEn: room.nameEn,
+  nameNl: room.nameNl,
 
-            capacity: room.capacity,
+  descriptionFr: room.descriptionFr,
+  descriptionEn: room.descriptionEn,
+  descriptionNl: room.descriptionNl,
 
-            one_person_price:
-              room.priceOnePerson,
+  size: room.size,
+  capacity: room.capacity,
+  one_person_price: room.priceOnePerson,
+  two_people_price: room.priceTwoPeople,
 
-            two_people_price:
-              room.priceTwoPeople,
-
-            image_1: room.image_1,
-            image_2: room.image_2,
-            image_3: room.image_3,
-          }),
+  image_1: room.image_1,
+  image_2: room.image_2,
+  image_3: room.image_3
+}),
         }
       )
 
@@ -819,7 +826,7 @@ setTimeout(() => {
                     font-bold
                   "
                 >
-                  {room.name}
+                  {room.nameFr}
                 </h2>
 
                 <p className="mt-1 text-sm text-[#6b5b4f]">
@@ -915,7 +922,7 @@ setTimeout(() => {
               <div>
                 <img
                   src={room.image_1}
-                  alt={room.name}
+                  alt={room.nameFr}
                   className="
                     h-[400px]
                     w-full
@@ -930,26 +937,30 @@ setTimeout(() => {
               <div className="space-y-5">
                 <div>
                   <label className="mb-2 block font-bold">
-                    Nom
+                    Nom (FR)
                   </label>
-
                   <input
-                    type="text"
-                    value={room.name}
-                    onChange={(e) =>
-                      handleRoomChange(
-                        room.id,
-                        "name",
-                        e.target.value
-                      )
-                    }
-                    className="
-                      w-full
-                      rounded-2xl
-                      border
-                      p-4
-                    "
-                  />
+  value={room.nameFr || ""}
+  onChange={(e) =>
+    handleRoomChange(room.id, "nameFr", e.target.value)
+  }
+/>
+
+<label>Nom (EN)</label>
+<input
+  value={room.nameEn || ""}
+  onChange={(e) =>
+    handleRoomChange(room.id, "nameEn", e.target.value)
+  }
+/>
+
+<label>Nom (NL)</label>
+<input
+  value={room.nameNl || ""}
+  onChange={(e) =>
+    handleRoomChange(room.id, "nameNl", e.target.value)
+  }
+/>
                 </div>
 
                 <div>
@@ -1001,29 +1012,40 @@ setTimeout(() => {
 
                 <div>
                   <label className="mb-2 block font-bold">
-                    Description
-                  </label>
+  Description (FR)
+</label>
 
-                  <textarea
-                    value={
-                      room.description || ""
-                    }
-                    onChange={(e) =>
-                      handleRoomChange(
-                        room.id,
-                        "description",
-                        e.target.value
-                      )
-                    }
-                    className="
-                      min-h-[160px]
-                      w-full
-                      rounded-2xl
-                      border
-                      p-4
-                    "
-                  />
-                </div>
+<textarea
+  value={room.descriptionFr || ""}
+  onChange={(e) =>
+    handleRoomChange(room.id, "descriptionFr", e.target.value)
+  }
+  className="min-h-[160px] w-full rounded-2xl border p-4"
+/>
+
+<label className="mb-2 mt-4 block font-bold">
+  Description (EN)
+</label>
+
+<textarea
+  value={room.descriptionEn || ""}
+  onChange={(e) =>
+    handleRoomChange(room.id, "descriptionEn", e.target.value)
+  }
+  className="min-h-[160px] w-full rounded-2xl border p-4"
+/>
+
+<label className="mb-2 mt-4 block font-bold">
+  Description (NL)
+</label>
+
+<textarea
+  value={room.descriptionNl || ""}
+  onChange={(e) =>
+    handleRoomChange(room.id, "descriptionNl", e.target.value)
+  }
+  className="min-h-[160px] w-full rounded-2xl border p-4"
+/>            </div>
 
                 <div
                   className="

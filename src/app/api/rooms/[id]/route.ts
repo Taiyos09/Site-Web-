@@ -30,28 +30,30 @@ export async function PUT(
 
     data: {
 
-      name: body.name,
+  nameFr: body.nameFr,
+  nameEn: body.nameEn,
+  nameNl: body.nameNl,
 
-      description:
-        body.description,
+  descriptionFr: body.descriptionFr,
+  descriptionEn: body.descriptionEn,
+  descriptionNl: body.descriptionNl,
 
-      size: body.size,
-      
-      capacity: Number(body.capacity),
+  size: body.size,
 
+  capacity: Number(body.capacity),
 
-      priceOnePerson:
-        body.one_person_price,
+  priceOnePerson:
+    body.one_person_price,
 
-      priceTwoPeople:
-        body.two_people_price,
+  priceTwoPeople:
+    body.two_people_price,
 
-      images: JSON.stringify([
-  body.image_1,
-  body.image_2,
-  body.image_3,
-]),
-    },
+  images: JSON.stringify([
+    body.image_1,
+    body.image_2,
+    body.image_3,
+  ]),
+},
   })
 
   return NextResponse.json(room)

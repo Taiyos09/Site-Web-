@@ -1,58 +1,107 @@
 {
-"navbar": {
+  "navbar": {
     "home": "Home",
     "hotel": "Hotel",
     "restaurant": "Restaurant",
     "events": "Events",
     "contact": "Contact",
-    "region": "Local Area",
+    "region": "Our Region",
     "book": "Book a Room"
-},
- 
-"home": {
-  "heroSubtitle": "BAR • RESTAURANT • HOTEL",
-  "heroTitle": "Auberge",
-  "heroTitle1": "de Saint-Aubin",
-  "heroDescription": "A charming country inn in the heart of the Bourbonnais. Comfortable rooms, a welcoming restaurant and events throughout the year.",
+  },
 
-  "titlebar": "Bar",
-  "descriptbar": "A welcoming bar with a friendly atmosphere.",
+  "home": {
+    "heroSubtitle": "BAR • RESTAURANT • HOTEL",
+    "heroTitle": "Auberge",
+    "heroTitle1": "de Saint-Aubin",
+    "heroDescription": "An authentic inn in the heart of the Bourbonnais region. Comfortable rooms, a welcoming restaurant, and events throughout the year.",
 
-  "titleresto": "Restaurant",
-  "descriptresto": "Traditional cuisine and locally sourced ingredients.",
+    "titlebar": "Bar",
+    "descriptbar": "A warm bar with a friendly atmosphere.",
 
-  "titlehotel": "Hotel",
-  "descripthotel": "Comfortable rooms for a relaxing stay.",
+    "titleresto": "Restaurant",
+    "descriptresto": "Traditional dishes made with local products.",
 
-  "titleevent": "Events",
-  "descriptevent": "Concerts, themed dinners and many other events.",
+    "titlehotel": "Hotel",
+    "descripthotel": "Comfortable rooms for your stay.",
 
-  "titreBienvenue": "Welcome",
-  "titreBienvenue2": "Welcome to Auberge de Saint-Aubin",
+    "titleevent": "Events",
+    "descriptevent": "Concerts, themed dinners and many other events.",
 
-  "descript1": "For many years, our inn has welcomed travellers, families and business guests in a warm and friendly atmosphere.",
+    "titreBienvenue": "Welcome",
+    "titreBienvenue2": "Welcome to the Saint-Aubin Inn",
+    "descript1": "For many years, our establishment has welcomed travelers, families and professionals in a warm and friendly atmosphere.",
+    "descript2": "Enjoy traditional cuisine, comfortable rooms and a peaceful setting in the heart of the Bourbonnais countryside.",
 
-  "descript2": "Enjoy traditional cuisine, comfortable rooms and a peaceful setting in the heart of the Bourbonnais countryside.",
+    "boutonalentour": "Things to Do Nearby",
 
-  "boutonalentour": "Things to Do Nearby",
+    "decouvrir": "Discover",
+    "NosUnivers": "Our World",
+    "DescripUniver": "The Saint-Aubin Inn welcomes you with three experiences: accommodation, dining and events.",
 
-  "decouvrir": "Discover",
+    "carteResto": "Restaurant",
+    "carteResto2": "Traditional Cuisine",
+    "carteRestoDescrip": "Local products, daily specials and a friendly atmosphere.",
 
-  "NosUnivers": "Our Experiences",
+    "carteHotel": "Hotel",
+    "carteHotel2": "Comfortable Stay",
+    "carteHotelDescrip": "Cozy rooms in the heart of the Bourbonnais region.",
 
-  "DescripUniver": "Auberge de Saint-Aubin welcomes you with three unique experiences: accommodation, traditional dining and memorable events.",
+    "carteEvent": "Events",
+    "carteEvent2": "Evenings & Entertainment",
+    "carteEventDescrip": "Karaoke nights, themed dinners and events throughout the year.",
 
-  "carteResto": "Restaurant",
-  "carteResto2": "Traditional Cuisine",
-  "carteRestoDescrip": "Fresh local produce, daily specials and a warm, friendly atmosphere.",
+    "boutonDecouvrir": "Discover",
 
-  "carteHotel": "Hotel",
-  "carteHotel2": "Comfortable Stay",
-  "carteHotelDescrip": "Cosy rooms in the heart of the Bourbonnais region.",
+    "RoomTitre": "Our Rooms",
+    "RoomTitre2": "Featured Rooms",
+    "RoomSubBouton": "View All Rooms",
 
-  "carteEvent": "Events",
-  "carteEvent2": "Evenings & Entertainment",
-  "carteEventDescrip": "Karaoke, themed dinners and events organised throughout the year.",
-  "boutonDecouvrir": "Discover"
-}
+    "Jusque": "Up to",
+    "Personne": "person",
+    "night": "per night",
+    "nightbouton": "View Room",
+
+    "RestoTitre": "Restaurant",
+    "Restosubtitre": "Simple,",
+    "Restosubtitre2": "generous and authentic cuisine.",
+    "RestoDescript": "Discover our menu, daily specials and regional dishes in a warm and welcoming atmosphere.",
+
+    "RestoBadge": "Traditional Cuisine",
+    "RestoBadge2": "Friendly Bar",
+    "RestoBadge3": "Daily Menu",
+
+    "Boutoncarte": "View Menu",
+
+    "TitreEvent": "UPCOMING EVENTS",
+    "BoutonEvent": "View All Events",
+    "BoutonEvent2": "Learn More",
+
+    "Name1": "Arthur D.",
+    "Name2": "Alix H.",
+    "Name3": "Olivier G.",
+
+    "DescriptAvis": "A wonderful place! Marion's cooking is outstanding! Be sure to take a stroll through this charming village as well!",
+    "DescriptAvis2": "The staff took excellent care of our family during our stay. They were thoughtful, welcoming and accommodating. Thank you to the whole team! The setting is beautiful and the meals were excellent. We'll definitely be back!",
+    "DescriptAvis3": "A fantastic place with delicious food and very friendly owners.",
+
+    "TitreAvis": "Guest Reviews",
+    "TexteAvis": "They stayed with us",
+    "AvisGoogle": "View All Google Reviews",
+
+    "NousContacter": "Contact Us",
+
+    "Horaire": "Opening Hours",
+    "LauJ": "Monday to Thursday",
+    "VetS": "Friday & Saturday",
+    "LauS": "Monday to Saturday",
+
+    "Navigation": "Navigation",
+    "Mention": "Legal Notice",
+    "politique": "Privacy Policy",
+    "home": "Home",
+    "hotel": "Hotel",
+    "restaurant": "Restaurant",
+    "events": "Events",
+    "contact": "Contact"
+  }
 }
