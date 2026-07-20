@@ -2,16 +2,16 @@
 
 const reviews = [
   {
-    name: "Marie D.",
-    text: "Excellent accueil, chambre confortable et très propre. Nous avons passé un agréable séjour.",
+    name: "Arthur D.",
+    text: "Très bel endroit! La cuisine de Marion est superbe! Profitez en pour faire un tour dans ce charmant village également!",
   },
   {
-    name: "Jean P.",
-    text: "Très bon restaurant avec une cuisine généreuse. Personnel sympathique et service rapide.",
+    name: "Alix H.",
+    text: "Un personnel aux petits soins pour notre séjour en famille, prise d'intiative, chaleureux et arrangeants, merci l'équipe! Le cadre est magnifique et les repas excellents, nous reviendrons!",
   },
   {
-    name: "Sophie L.",
-    text: "Une auberge authentique dans un cadre calme. Nous reviendrons avec plaisir.",
+    name: "Olivier G.",
+    text: "Super endroit où l'on y mange délicieusement et les patrons sont très sympas",
   },
 ]
 
@@ -121,6 +121,57 @@ export default function ReviewsSection() {
 
       </div>
 
+    <div className="mt-12 flex justify-center">
+
+  <a
+    href="https://www.google.com/travel/search?gsas=1&ts=GhwSGhIUCgcI6g8QCBgDEgcI6g8QCBgEGAEyAhAA&qs=MjJDaUVJZ0xxZHFyYXl3SVFjRU9penZaT2dwYXVlSVJvTEwyY3ZNWFJvWkRWZmVuY1FBUTgC&ap=ugEHcmV2aWV3cw&ictx=111&rlz=1C1VDKB_frFR1211FR1211&biw=1920&bih=919&ved=0CAAQ5JsGahcKEwiQ8d6EgOGVAxUAAAAAHQAAAAAQAw"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      group
+      inline-flex
+      items-center
+      gap-4
+      rounded-full
+      border
+      border-[#c89b5f]
+      bg-white
+      px-8
+      py-4
+      text-[#2f241d]
+      shadow-lg
+      transition-all
+      duration-300
+      hover:-translate-y-1
+      hover:border-[#b9894f]
+      hover:bg-[#c89b5f]
+      hover:text-white
+    "
+  >
+    <div className="leading-none">
+      <div className="text-lg text-[#d4a24c] group-hover:text-white">
+        ★★★★★
+      </div>
+
+      <div className="text-sm font-medium">
+        Voir tous les avis sur Google
+      </div>
+    </div>
+
+    <span
+      className="
+        text-xl
+        transition-transform
+        duration-300
+        group-hover:translate-x-1
+      "
+    >
+      →
+    </span>
+
+  </a>
+
+</div>
     </section>
   )
 }
