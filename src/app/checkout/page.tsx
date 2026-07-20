@@ -47,10 +47,10 @@ function CheckoutContent() {
   useState<any>(null)
 
   const lunchChildPrice =
-  settings?.lunch_child ?? 9
+  Number(settings?.lunch_child ?? 9)
 
 const dinnerChildPrice =
-  settings?.dinner_child ?? 10
+  Number(settings?.dinner_child ?? 10)
 
 useEffect(() => {
 
@@ -66,9 +66,11 @@ useEffect(() => {
         await response.json()
 
       setSettings(data)
+      console.log("HOTEL SETTINGS", data)
     }
 
   loadSettings()
+  
 
 }, [])
 
@@ -265,7 +267,7 @@ const lunchTotal =
 const dinnerTotal =
   dinner
     ? (
-        adults * (settings?.dinner ?? 18) +
+        adults * (settings?.dinner ?? 20) +
         children * dinnerChildPrice
       ) * dinnerDays
     : 0;

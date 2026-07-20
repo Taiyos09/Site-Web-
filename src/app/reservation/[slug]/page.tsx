@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
+import RoomGallery from "@/components/RoomGallery";
 
 type Room = {
   id: number
@@ -238,44 +239,11 @@ console.log(room)
 
   {/* GALERIE */}
 
-  <div className="grid gap-4">
-
-    <img
-      src={room.images?.[0]}
-      alt={room.name}
-      className="
-        h-[420px]
-        w-full
-        rounded-[32px]
-        object-cover
-        shadow-xl
-      "
-    />
-
-    <div className="grid grid-cols-2 gap-4">
-
-      {room.images?.slice(1, 3).map(
-        (img, index) => (
-
-          <img
-            key={index}
-            src={img}
-            alt={room.name}
-            className="
-              h-[180px]
-              w-full
-              rounded-[24px]
-              object-cover
-              shadow-lg
-            "
-          />
-
-        )
-      )}
-
-    </div>
-
-  </div>
+  <RoomGallery
+  title={room.name}
+  images={room.images}
+  roomName={room.name}
+/>
 
   {/* FICHE CHAMBRE */}
 

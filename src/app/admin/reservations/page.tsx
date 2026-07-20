@@ -143,7 +143,9 @@ const [statusFilter, setStatusFilter] =
   useState({
 
     lunch: 0,
+    lunch_child: 9,
     dinner: 0,
+    dinner_child: 10,
     breakfast: 0,
     pet: 0,
     extra_bed: 0,
