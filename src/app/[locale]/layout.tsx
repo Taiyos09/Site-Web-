@@ -8,7 +8,7 @@ import CookieBanner from "@/components/CookieBanner";
 
 export const metadata: Metadata = {
   title: "L'Auberge de St Aubin",
-  description: "Bar - Restaurant - Chambres d'hôtes",
+  description: "Bar - Restaurant - Hôtel",
 };
 
 export default async function LocaleLayout({
@@ -26,10 +26,13 @@ export default async function LocaleLayout({
 
   return (
     <>
-      <NextIntlClientProvider messages={messages}>
-        {children}
-        <CookieBanner />
-      </NextIntlClientProvider>
+      <NextIntlClientProvider
+  locale={locale}
+  messages={messages}
+>
+  {children}
+  <CookieBanner />
+</NextIntlClientProvider>
 
       <Script
         type="application/ld+json"

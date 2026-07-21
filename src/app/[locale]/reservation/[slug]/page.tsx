@@ -7,19 +7,27 @@ import { Link } from "@/i18n/navigation";
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
 import RoomGallery from "@/components/RoomGallery";
+import {useLocale, useTranslations} from "next-intl";
 
 type Room = {
-  id: number
-  name: string
-  slug: string
-  size: string
-  description: string
-  capacity: number
+  id: number;
+  slug: string;
 
-  priceOnePerson: number
-  priceTwoPeople: number
+  nameFr: string;
+  nameEn: string;
+  nameNl: string;
 
-  images: string[]
+  descriptionFr: string;
+  descriptionEn: string;
+  descriptionNl: string;
+
+  size: string;
+  capacity: number;
+
+  priceOnePerson: number;
+  priceTwoPeople: number;
+
+  images: string[];
 }
 
 export default function ReservationPage({
@@ -30,6 +38,9 @@ export default function ReservationPage({
 
   const [slug, setSlug] =
     useState("")
+
+  const locale = useLocale();
+  const t = useTranslations("reservation");
 
   const [room, setRoom] =
     useState<Room | null>(null)
@@ -131,6 +142,21 @@ console.log(room)
   )
 }
 console.log(room)
+
+const roomName =
+  locale === "en"
+    ? room.nameEn ?? room.nameFr
+    : locale === "nl"
+      ? room.nameNl ?? room.nameFr
+      : room.nameFr;
+
+const roomDescription =
+  locale === "en"
+    ? room.descriptionEn ?? room.descriptionFr
+    : locale === "nl"
+      ? room.descriptionNl ?? room.descriptionFr
+      : room.descriptionFr;
+
   return (
 
 
@@ -154,7 +180,7 @@ console.log(room)
 >
   <img
     src={room.images?.[0]}
-    alt={room.name}
+    alt={roomName}
     className="
       absolute
       inset-0
@@ -200,7 +226,7 @@ console.log(room)
           text-white
         "
       >
-        Réserver votre séjour
+        {t("reserv")}
       </h1>
 
       <p
@@ -209,7 +235,7 @@ console.log(room)
           text-white/90
         "
       >
-        {room.name} • {room.size}
+        {roomName} • {room.size}
       </p>
 
     </div>
@@ -240,9 +266,9 @@ console.log(room)
   {/* GALERIE */}
 
   <RoomGallery
-  title={room.name}
+  title={roomName}
   images={room.images}
-  roomName={room.name}
+  roomName={roomName}
 />
 
   {/* FICHE CHAMBRE */}
@@ -283,7 +309,7 @@ console.log(room)
           text-[#8a6330]
         "
       >
-        Jusqu'à {room.capacity} personnes
+        {t("Jusque")} {room.capacity} {t("Personne")}
       </span>
 
     </div>
@@ -296,7 +322,7 @@ console.log(room)
         font-bold
       "
     >
-      {room.name}
+      {roomName}
     </h2>
 
     <p
@@ -306,7 +332,7 @@ console.log(room)
         text-[#5a4c42]
       "
     >
-      {room.description}
+      {roomDescription}
     </p>
 
   </div>
@@ -328,7 +354,7 @@ console.log(room)
       font-bold
     "
   >
-    Informations pratiques
+    {t("infopra")}
   </h3>
 
   <div className="space-y-3 text-[#5a4c42]">
@@ -336,24 +362,24 @@ console.log(room)
     <div className="flex items-center gap-3">
       <span>🍽️</span>
       <span>
-        Petit-déjeuner :
-        <strong> 7h00 à 9h00</strong>
+        {t("petitdej")}
+        <strong> {t("heurePetDej")}</strong>
       </span>
     </div>
 
     <div className="flex items-center gap-3">
       <span>🟢</span>
       <span>
-        Arrivée dès
-        <strong> 16h00</strong>
+        {t("Arrive")}
+        <strong> {t("ArriveHeure")}</strong>
       </span>
     </div>
 
     <div className="flex items-center gap-3">
       <span>🔴</span>
       <span>
-        Départ avant
-        <strong> 11h00</strong>
+        {t("Depart")}
+        <strong> {t("departheure")}</strong>
       </span>
     </div>
 
@@ -385,7 +411,7 @@ console.log(room)
     room.priceTwoPeople
   }
 
-  roomName={room.name}
+  roomName={roomName}
 
   roomSlug={room.slug}
   

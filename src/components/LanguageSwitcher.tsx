@@ -38,13 +38,20 @@ const languages = [
 export default function LanguageSwitcher() {
 
   const locale = useLocale();
+const pathname = usePathname();
+const router = useRouter();
 
-  const pathname = usePathname();
-
-  const router = useRouter();
+console.log("Locale:", locale);
+console.log("Pathname:", pathname);
 
   const current =
     languages.find((l) => l.code === locale)!;
+
+  console.log({
+  locale,
+  pathname,
+  current
+});
 
   return (
 

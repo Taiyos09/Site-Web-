@@ -4,6 +4,10 @@ import Image from "next/image"
 import Navbar from "@/components/Navbar"
 import RoomGallery from "@/components/RoomGallery";
 import { prisma } from "@/lib/prisma"
+import {
+  getTranslations,
+  getLocale,
+} from "next-intl/server";
 
 import {
   Wifi,
@@ -19,13 +23,28 @@ import Footer from "@/components/Footer"
 
 type Props = {
   params: Promise<{
-    slug: string
-  }>
+    locale: string;
+    slug: string;
+  }>;
 }
 
 export default async function RoomPage({
   params,
 }: Props) {
+
+  const {
+  slug,
+  locale
+} = await params;
+
+  const t = await getTranslations({
+  locale,
+  namespace: "room"
+});
+
+console.log("Param locale :", locale);
+console.log("t(info) =", t("info"));
+console.log("t(Wifi1) =", t("Wifi1"));
 
   
   const breakfast =
@@ -38,22 +57,19 @@ export default async function RoomPage({
       })
     )?.value ?? 12
   )
-  
-  const { slug } =
-    await params
 
-  const response =
-  await fetch(
-
-    `http://localhost:3000/api/rooms`,
-
-    {
-      cache: "no-store",
+  const rooms = await prisma.rooms.findMany({
+  include: {
+    reservations: {
+      include: {
+        reservation: true
+      }
     }
-  )
-
-const rooms =
-  await response.json()
+  },
+  orderBy: {
+    nameFr: "asc"
+  }
+});
 
 const room =
   rooms.find(
@@ -66,15 +82,38 @@ if (!room) {
   notFound()
 }
 
-  const images =
-  Array.isArray(room.images)
-    ? room.images.map(
-        (img: string) =>
-          img
-            .trim()
-            .replace(/\\/g, "/")
-      )
-    : []
+const images =
+  typeof room.images === "string"
+    ? JSON.parse(room.images)
+    : Array.isArray(room.images)
+      ? room.images
+      : [];
+
+const cleanImages = images.map((img: string) =>
+  img.trim().replace(/\\/g, "/")
+);
+
+  const roomName =
+  locale === "en"
+    ? room.nameEn ?? room.nameFr ?? ""
+    : locale === "nl"
+    ? room.nameNl ?? room.nameFr ?? ""
+    : room.nameFr ?? "";
+
+  const roomDescription =
+  locale === "en"
+    ? room.descriptionEn ?? room.descriptionFr ?? ""
+    : locale === "nl"
+    ? room.descriptionNl ?? room.descriptionFr ?? ""
+    : room.descriptionFr ?? "";
+
+  console.log("Locale:", locale);
+console.log("Room EN:", room.nameEn);
+console.log("Room Name:", roomName);
+console.log({
+  roomImages: room.images,
+  parsedImages: images
+});
 
   return (
 
@@ -96,8 +135,8 @@ if (!room) {
 >
 
         <Image
-          src={images[0]}
-          alt={room.name}
+          src={cleanImages[0]}
+          alt={roomName}
           fill
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -107,7 +146,7 @@ if (!room) {
         <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white">
 
   <h1 className="font-serif text-6xl font-bold">
-    {room.name}
+    {roomName}
   </h1>
 
   <p className="mt-4 text-xl text-white/90">
@@ -131,9 +170,9 @@ if (!room) {
             {/* GALERIE */}
 
             <RoomGallery
-  title={room.name}
-  images={room.images}
-  roomName={room.name}
+  title={roomName}
+  images={cleanImages}
+  roomName={roomName}
 />
 
             {/* DESCRIPTION */}
@@ -141,13 +180,13 @@ if (!room) {
             <div className="mt-20">
 
               <h2 className="mb-8 font-serif text-5xl font-bold">
-                {room.name}
+                {roomName}
               </h2>
 
               <div className="mt-5 flex flex-wrap gap-3">
 
   <span className="rounded-full bg-[#c89b5f]/20 px-4 py-2">
-    {room.capacity} personnes
+    {room.capacity} {t("pers")}
   </span>
 
   <span className="rounded-full bg-[#2f241d]/10 px-4 py-2">
@@ -159,7 +198,7 @@ if (!room) {
               <div className="space-y-6 text-lg leading-relaxed text-[#5a4c42]">
 
                 <p>
-                  {room.description}
+                  {roomDescription}
                 </p>
 
               </div>
@@ -183,7 +222,7 @@ if (!room) {
                 <div>
 
                   <h3 className="mb-4 text-2xl font-bold">
-                    Informations
+                    {t("info")}
                   </h3>
 
                   <div className="space-y-4 text-[#5a4c42]">
@@ -207,7 +246,7 @@ if (!room) {
     />
 
     <span>
-      Surface
+      {t("surface")}
     </span>
 
   </div>
@@ -237,12 +276,12 @@ if (!room) {
     />
 
     <span>
-      Wi-Fi
+      {t("Wifi")}
     </span>
 
   </div>
 
-  <span> Inclus
+  <span> {t("Wifi1")}
   </span>
 
 </div>
@@ -266,12 +305,12 @@ if (!room) {
     />
 
     <span>
-      Petit Déjeuner
+      {t("PetitDej")}
     </span>
 
   </div>
 
-  <span> {breakfast}€ / personnes
+  <span> {breakfast}€ {t("PetitDej1")}
   </span>
 
 </div>
@@ -295,12 +334,12 @@ if (!room) {
     />
 
     <span>
-      Salle de Bain
+      {t("SDB")}
     </span>
 
   </div>
 
-  <span> Privative
+  <span> {t("SDB1")}
   </span>
 
 </div>
@@ -324,12 +363,12 @@ if (!room) {
     />
 
     <span>
-      Toilette
+      {t("Toilette")}
     </span>
 
   </div>
 
-  <span> Privative
+  <span> {t("Toilette1")}
   </span>
 
 </div>
@@ -353,12 +392,12 @@ if (!room) {
     />
 
     <span>
-      Rangement
+      {t("Range")}
     </span>
 
   </div>
 
-  <span> Oui
+  <span> {t("Range1")}
   </span>
 
 </div>
@@ -382,12 +421,12 @@ if (!room) {
     />
 
     <span>
-      Télévision
+      {t("Tele")}
     </span>
 
   </div>
 
-  <span> Oui
+  <span> {t("Tele1")}
   </span>
 
 </div>
@@ -411,12 +450,12 @@ if (!room) {
     />
 
     <span>
-      Parking
+      {t("parking")}
     </span>
 
   </div>
 
-  <span> Gratuit
+  <span> {t("parking1")}
   </span>
 
 </div>
@@ -441,7 +480,7 @@ if (!room) {
                     hover:bg-[#d6aa70]
                   "
                 >
-                  Réserver cette chambre
+                  {t("boutoninfo")}
                 </Link>
 
               </div>
@@ -467,7 +506,7 @@ if (!room) {
       font-bold
     "
   >
-    Autres chambres
+    {t("Autre")}
   </h2>
 
   <div
@@ -480,66 +519,75 @@ if (!room) {
   >
 
     {rooms
-      .filter(
-        (r: any) =>
-          r.slug !== room.slug
-      )
-      .slice(0, 3)
-      .map((otherRoom: any) => (
+  .filter(
+    (r: any) =>
+      r.slug !== room.slug
+  )
+  .slice(0, 3)
+  .map((otherRoom: any) => {
 
-        <Link
-          key={otherRoom.id}
-          href={`/chambres/${otherRoom.slug}`}
-          className="
-            overflow-hidden
-            rounded-[32px]
-            bg-white
-            shadow-xl
-            transition-all
-            duration-300
-            hover:-translate-y-2
-            hover:shadow-2xl
-          "
-        >
+    const otherRoomName =
+  locale === "en"
+    ? otherRoom.nameEn ?? otherRoom.nameFr ?? ""
+    : locale === "nl"
+    ? otherRoom.nameNl ?? otherRoom.nameFr ?? ""
+    : otherRoom.nameFr ?? "";
 
-          <div className="relative h-64">
+    const otherRoomImages =
+  typeof otherRoom.images === "string"
+    ? JSON.parse(otherRoom.images)
+    : Array.isArray(otherRoom.images)
+      ? otherRoom.images
+      : [];
 
-            <Image
-              src={
-                otherRoom.images?.[0]
-              }
-              alt={otherRoom.name}
-              fill
-              className="object-cover"
-            />
+const firstImage =
+  otherRoomImages.length > 0
+    ? otherRoomImages[0].trim().replace(/\\/g, "/")
+    : "/placeholder-room.jpg";
 
-          </div>
+    return (
+      <Link
+        key={otherRoom.id}
+        href={`/chambres/${otherRoom.slug}`}
+        className="
+          overflow-hidden
+          rounded-[32px]
+          bg-white
+          shadow-xl
+          transition-all
+          duration-300
+          hover:-translate-y-2
+          hover:shadow-2xl
+        "
+      >
+        <div className="relative h-64">
+          <Image
+  src={firstImage}
+  alt={otherRoomName}
+  fill
+  className="object-cover"
+/>
+        </div>
 
-          <div className="p-6">
+        <div className="p-6">
+          <h3
+            className="
+              mb-3
+              font-serif
+              text-3xl
+              font-bold
+            "
+          >
+            {otherRoomName}
+          </h3>
 
-            <h3
-              className="
-                mb-3
-                font-serif
-                text-3xl
-                font-bold
-              "
-            >
-              {otherRoom.name}
-            </h3>
-
-            <p className="text-[#6b5b4f]">
-              À partir de
-              {" "}
-              {otherRoom.priceOnePerson}€
-              / nuit
-            </p>
-
-          </div>
-
-        </Link>
-
-      ))}
+          <p className="text-[#6b5b4f]">
+            {t("partir")} {otherRoom.priceOnePerson}€ {t("nuit")}
+          </p>
+        </div>
+      </Link>
+    );
+  })}
 
   </div>
 

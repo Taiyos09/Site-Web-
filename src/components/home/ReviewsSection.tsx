@@ -8,7 +8,7 @@ export default function ReviewsSection() {
 
   const reviews = [
   {
-    name: t("Name"),
+    name: t("Name1"),
     text: t("DescriptAvis"),
   },
   {

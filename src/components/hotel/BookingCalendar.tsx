@@ -6,6 +6,7 @@ import type { DateRange } from "react-day-picker"
 import { differenceInDays, format } from "date-fns"
 import { fr } from "date-fns/locale"
 import { useRouter, usePathname } from "@/i18n/navigation";
+import {useLocale, useTranslations} from "next-intl";
 import {
   RESTAURANT_CONFIG,
 } from "@/data/restaurant"
@@ -36,6 +37,9 @@ export default function BookingCalendar({
 
   const [range, setRange] =
     useState<DateRange | undefined>()
+
+  const locale = useLocale();
+  const t = useTranslations("reservation");
 
   const [petCount, setPetCount] = useState(0)
 
@@ -544,7 +548,7 @@ console.log(
           font-bold
         "
       >
-        Information restauration
+        {t("inforesto")}
       </h2>
 
       <p
@@ -554,25 +558,19 @@ console.log(
           text-[#6b5b4d]
         "
       >
-        Votre séjour comprend
-        un ou plusieurs dimanches.
+        {t("inforestoD")}
 
         <br /><br />
 
-        L'Auberge de Saint-Aubin
-        ne propose pas de service
-        de restauration le dimanche
-        midi et le dimanche soir.
+        {t("inforestoD2")}
 
         <br /><br />
 
-        Nous vous invitons à prévoir
-        vos repas à l'extérieur.
+        {t("inforestoD3")}
 
         <br /><br />
 
-        Les petits-déjeuners restent
-        servis normalement.
+        {t("inforestoD4")}
       </p>
 
       <div
@@ -623,7 +621,7 @@ console.log(
           text-white
         "
       >
-        J'ai compris
+        {t("infoboutonresto")}
       </button>
 
     </div>
@@ -675,7 +673,7 @@ console.log(
           text-[#2f241d]
         "
       >
-        Arrivée indisponible
+        {t("ArrIndis")}
       </h2>
 
       <p
@@ -685,15 +683,12 @@ console.log(
           text-[#6b5b4d]
         "
       >
-        Les arrivées le dimanche ne sont
-        pas possibles à l'Auberge de
-        Saint-Aubin.
+        {t("ArrIndis2")}
 
         <br />
         <br />
 
-        Merci de sélectionner une autre
-        date d'arrivée.
+        {t("ArrIndis3")}
       </p>
 
       <button
@@ -711,7 +706,7 @@ console.log(
           hover:bg-[#b88d4f]
         "
       >
-        Compris
+        {t("infoboutonresto")}
       </button>
 
     </div>
@@ -752,17 +747,14 @@ console.log(
     font-bold
   "
 >
-  ⚠️ Information
+  ⚠️ {t("info")}
 </h2>
 
 <p className="mb-6">
 
-  Des événements sont prévus
-  durant votre séjour.
+  {t("infoD")}
 
-  Ceux-ci peuvent provoquer
-  du bruit ou une fréquentation
-  plus importante.
+  {t("infoD2")}
 
 </p>
 
@@ -853,8 +845,7 @@ console.log(
     }
   />
 
-  J'ai pris connaissance
-  des informations.
+  {t("infoD3")}
 
 </label>
 
@@ -886,7 +877,7 @@ console.log(
     py-3
   "
 >
-  Changer mes dates
+  {t("changedate")}
 </button>
 
 <button
@@ -905,7 +896,7 @@ console.log(
     disabled:opacity-50
   "
 >
-  Continuer
+  {t("continuer")}
 </button>
 
 </div>
@@ -937,11 +928,11 @@ console.log(
             text-[#2f241d]
           "
         >
-          Réserver
+          {t("Reserv")}
         </h2>
 
         <p className="text-[#6b5b4f]">
-          Sélectionnez vos dates de séjour.
+          {t("ReservT")}
         </p>
 
       </div>
@@ -1122,7 +1113,7 @@ console.log(
               font-semibold
             "
           >
-            Nombre de personnes
+            {t("Npers")}
           </label>
 
           <div className="grid grid-cols-3 gap-3">
@@ -1130,7 +1121,7 @@ console.log(
   <div>
 
     <label className="mb-1 block text-sm font-medium">
-      Adultes (13 ans +)
+      {t("Adulte")}
     </label>
 
     <select
@@ -1167,7 +1158,7 @@ console.log(
   <div>
 
     <label className="mb-1 block text-sm font-medium">
-      Enfants (3 - 12 )
+      {t("Enfant")}
     </label>
 
     <select
@@ -1202,7 +1193,7 @@ console.log(
   <div>
 
     <label className="mb-1 block text-sm font-medium">
-      Bébés (- 3 ans)
+      {t("Bebe")}
     </label>
 
     <select
@@ -1249,10 +1240,8 @@ console.log(
       text-[#7a6a5d]
     "
   >
-    - Au-delà de 2 personnes,
-    un supplément de {settings?.extra_bed || 15} €
-    par personne et par nuit
-    est appliqué.
+    {t("infobed")}{settings?.extra_bed || 15} €
+    {t("infobed1")}
   </p>
 
 )}
@@ -1265,7 +1254,7 @@ console.log(
     text-[#7a6a5d]
   "
 >
-  - Les bébés de moins de 3 ans sont accueillis gratuitement.
+  {t("infobebe")}
 </p>
 
           {/* OPTIONS */}
@@ -1291,16 +1280,15 @@ console.log(
     <div>
 
       <p className="text-sm font-semibold">
-        🥐 Petit Déjeuner
+        🥐 {t("PetDej")}
       </p>
 
       <p className="text-xs text-[#7a6a5d]">
-  Adulte :
+  {t("Adult")} :
   {settings?.breakfast || 12}€
-  • Enfant :
+  • {t("Enfants")} :
   6€
-  • Bébé :
-  gratuit
+  • {t("Bebes")}
 </p>
 
 {breakfast && breakfastDays > 0 && (
@@ -1348,13 +1336,13 @@ console.log(
     <div>
 
       <p className="text-sm font-semibold">
-        🍽️ Repas midi
+        🍽️ {t("RepasMidi")}
       </p>
 
       <p className="text-xs text-[#7a6a5d]">
-        Adulte : {settings?.lunch || 15}€
-        • Enfant : {restaurantConfig.menuEnfant.price}€
-        • Bébé : gratuit
+        {t("Adult")} : {settings?.lunch || 15}€
+        • {t("Enfants")} : {restaurantConfig.menuEnfant.price}€
+        • {t("Bebes")}
       </p>
 
       {lunch && lunchDays > 0 && (
@@ -1402,13 +1390,13 @@ console.log(
     <div>
 
       <p className="text-sm font-semibold">
-        🌙 Repas soir
+        🌙 {t("RepasSoir")}
       </p>
 
       <p className="text-xs text-[#7a6a5d]">
-        Adulte : {settings?.dinner || 20}€
-        • Enfant : 10€
-        • Bébé : gratuit
+        {t("Adult")} : {settings?.dinner || 20}€
+        • {t("Enfants")} : 10€
+        • {t("Bebes")}
       </p>
 
       {dinner && dinnerDays > 0 && (
@@ -1444,8 +1432,7 @@ console.log(
     text-[#7a6a5d]
   "
 >
-  * Les repas du midi et du soir
-  ne sont pas servis le dimanche.
+  {t("infoRepas")}
 </p>
 
   {/* ANIMAUX */}
@@ -1466,11 +1453,11 @@ console.log(
     <div>
 
     <p className="text-sm font-semibold">
-      🐶 Animal
+      🐶 {t("Pet")}
     </p>
 
     <p className="text-xs text-[#7a6a5d]">
-      +{settings?.pet || 5}€ / animal / nuit
+      +{settings?.pet || 5}€ {t("petinfo")}
     </p>
 
   </div>
@@ -1526,7 +1513,7 @@ console.log(
     <div>
 
       <p className="text-sm font-semibold">
-        👶 Lit parapluie
+        👶 {t("litP")}
       </p>
 
       <p className="text-xs text-[#7a6a5d]">
@@ -1581,27 +1568,27 @@ console.log(
     <p className="text-sm font-semibold">
   🛏️ {
     extraPeople > 1
-      ? "Personnes supplémentaires"
-      : "Personne supplémentaire"
+      ? t("P+")
+      : t("P+S")
   }
 </p>
 
     <p className="mt-1">
   {extraPeople} {
     extraPeople > 1
-      ? "personnes supplémentaires"
-      : "personne supplémentaire"
+      ? t("P+")
+      : t("P+S")
   } ×
   {settings?.extra_bed || 15}€
   × {nights} {
     nights > 1
-      ? "nuits"
-      : "nuit"
+      ? t("N+S")
+      : t("N+")
   }
 </p>
 
     <p className="mt-2 font-bold">
-      Supplément :
+      {t("Supp")}
       {extraBedTotal.toFixed(2)}€
     </p>
   </div>
@@ -1617,7 +1604,7 @@ console.log(
     "
   >
 
-    <span>Total</span>
+    <span>{t("total")}</span>
 
     <span
       className="
@@ -1633,7 +1620,7 @@ console.log(
   {occupancy > maxPeople && (
 
   <p className="mb-4 text-red-600 font-medium">
-    Cette chambre peut accueillir au maximum {maxPeople} personnes.
+    {t("infototo")}{maxPeople}{t("infototo1")}
   </p>
 
 )}
@@ -1660,7 +1647,7 @@ console.log(
     ) {
 
       alert(
-        "Veuillez sélectionner vos dates"
+        t("infodate")
       )
 
       return
@@ -1710,7 +1697,7 @@ console.log(
   }
 `}
 >
-  Réserver
+  {t("Reservation")}
 </button>
 
 </div>
