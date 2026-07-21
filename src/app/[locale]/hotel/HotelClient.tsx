@@ -14,6 +14,7 @@ import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
+import { useTranslations, useLocale } from "next-intl";
 
 
 function HotelContent() {
@@ -60,6 +61,9 @@ function HotelContent() {
 
   const [loading, setLoading] =
     useState(false)
+
+  const t = useTranslations("hotel");
+  const locale = useLocale();
 
   /* ====================================== */
   /* ANIMATION */
@@ -450,7 +454,7 @@ const filteredRooms =
       text-3xl sm:text-4xl md:text-5xl lg:text-7xl
     "
   >
-    Nos Chambres
+    {t("TitreHotel")}
   </h1>
 
   <p
@@ -463,9 +467,7 @@ const filteredRooms =
       md:text-2xl
     "
   >
-    Profitez d'un séjour calme et confortable
-    au cœur du Bourbonnais dans l'une de nos
-    chambres de caractère.
+    {t("DescripHotel")}
   </p>
 
   <div
@@ -479,7 +481,7 @@ const filteredRooms =
       backdrop-blur
     "
   >
-    À partir de 88€ / nuit
+    {t("PrixHotel")}
   </div>
 
   <div className="mt-8">
@@ -504,7 +506,7 @@ const filteredRooms =
         hover:scale-105
       "
     >
-      Voir nos chambres
+      {t("BoutonHotel")}
     </button>
 
   </div>
@@ -564,7 +566,7 @@ const filteredRooms =
 
       <div className="flex flex-col gap-2">
   <label className="text-sm font-medium text-[#5a4c42] text-center">
-    Date d'arrivée
+    {t("Arriver")}
   </label>
 
   <input
@@ -585,7 +587,7 @@ const filteredRooms =
 
 <div className="flex flex-col gap-2">
   <label className="text-sm font-medium text-[#5a4c42] text-center">
-    Date de départ
+    {t("Départ")}
   </label>
 
   <input
@@ -606,7 +608,7 @@ const filteredRooms =
 
 <div className="flex flex-col gap-2">
   <label className="text-sm font-medium text-[#5a4c42] text-center">
-    Nombre de personnes
+    {t("NombrePers")}
   </label>
       <input
   type="number"
@@ -642,7 +644,7 @@ const filteredRooms =
     text-white
   "
 >
-  Découvrir nos chambres
+  {t("Room2bouton")}
 </button>
 
     </div>
@@ -682,7 +684,7 @@ const filteredRooms =
           text-[#c89b5f]
         "
       >
-        Services inclus
+        {t("Service")}
       </p>
 
       <h2
@@ -693,7 +695,7 @@ const filteredRooms =
           text-[#2f241d]
         "
       >
-        Tout pour votre confort
+        {t("TitreService")}
       </h2>
 
     </div>
@@ -710,22 +712,22 @@ const filteredRooms =
       {[
         {
           icon: "📶",
-          title: "Wifi gratuit",
+          title: t("Wifi"),
         },
 
         {
           icon: "🚿",
-          title: "Salle de bain privative",
+          title: t("sdb"),
         },
 
         {
           icon: "📺",
-          title: "Télévision",
+          title: t("télé"),
         },
 
         {
           icon: "🚗",
-          title: "Parking",
+          title: t("parking"),
         },
       ].map((item) => (
 
@@ -805,7 +807,7 @@ const filteredRooms =
       text-[#c89b5f]
     "
   >
-    Nos chambres
+    {t("TitreHotel")}
   </p>
 
   <h2
@@ -816,7 +818,7 @@ const filteredRooms =
       text-[#2f241d]
     "
   >
-    Trouvez votre chambre idéale
+    {t("Descrip2hotel")}
   </h2>
 
 </div>
@@ -830,22 +832,37 @@ const filteredRooms =
 "
           >
 
-            {filteredRooms.map(
-              (room: any, roomIndex: number) => (
+            {filteredRooms.map((room: any, roomIndex: number) => {
 
-                <div
-                  key={room.id}
-                  className="
-                    overflow-hidden
-                    rounded-[36px]
-                    bg-[#f3ede3]/95
-                    shadow-xl
-                    backdrop-blur-sm
-                    transition-all
-                    duration-300
-                    hover:shadow-[0_18px_40px_rgba(0,0,0,0.12)]
-                  "
-                >
+  const roomName =
+    locale === "en"
+      ? room.nameEn || room.nameFr
+      : locale === "nl"
+      ? room.nameNl || room.nameFr
+      : room.nameFr;
+
+  const roomDescription =
+    locale === "en"
+      ? room.descriptionEn || room.descriptionFr
+      : locale === "nl"
+      ? room.descriptionNl || room.descriptionFr
+      : room.descriptionFr;
+
+  return (
+
+    <div
+      key={room.id}
+      className="
+        overflow-hidden
+        rounded-[36px]
+        bg-[#f3ede3]/95
+        shadow-xl
+        backdrop-blur-sm
+        transition-all
+        duration-300
+        hover:shadow-[0_18px_40px_rgba(0,0,0,0.12)]
+      "
+    >
 
                   {/* diaporama */}
 
@@ -867,7 +884,7 @@ const filteredRooms =
       <img
         key={imgIndex}
         src={img}
-        alt={room.name}
+        alt={roomName}
         className={`
           absolute
           inset-0
@@ -920,7 +937,7 @@ const filteredRooms =
                         font-bold
                       "
                     >
-                      {room.name}
+                      {roomName}
                     </h3>
 
                     <p
@@ -930,7 +947,7 @@ const filteredRooms =
                         text-[#5a4c42]
                       "
                     >
-                      {room.description}
+                      {roomDescription}
                     </p>
 
                     <div
@@ -946,7 +963,7 @@ const filteredRooms =
     text-[#8a6330]
   "
 >
-  👤 Jusqu'à {room.capacity} personne{room.capacity > 1 ? "s" : ""}
+  👤 {t("Jusque")} {room.capacity} {t("Personne")}{room.capacity > 1 ? "s" : ""}
 </div>
                     
 
@@ -977,7 +994,7 @@ const filteredRooms =
                           text-[#7a6a5d]
                         "
                       >
-                        par nuit
+                        {t("night")}
                       </span>
 
                     </div>
@@ -999,15 +1016,15 @@ const filteredRooms =
                         hover:bg-[#43352c]
                       "
                     >
-                      Découvrir la chambre
+                      {t("Roombouton")}
                     </Link>
 
                   </div>
 
                 </div>
 
-              )
-            )}
+                )
+})}
 
           </div>
 
@@ -1047,7 +1064,7 @@ const filteredRooms =
           text-[#c89b5f]
         "
       >
-        Informations pratiques
+        {t("infopra")}
       </p>
 
       <h2
@@ -1058,7 +1075,7 @@ const filteredRooms =
           text-[#2f241d]
         "
       >
-        Préparer votre séjour
+        {t("infodescrip")}
       </h2>
 
       <div
@@ -1071,23 +1088,23 @@ const filteredRooms =
       >
 
         <div>
-          <u><strong>Arrivée  |  Départ</strong></u>
-          <p>Après 16h00  |  Avant 11h00</p>
+          <u><strong>{t("ArrDep")}</strong></u>
+          <p>{t("ArrDepHoraire")}</p>
         </div>
 
         <div>
-          <u><strong>Horaire Petit Déjeuner</strong></u>
-          <p>De 7h00 à 9h00</p>
+          <u><strong>{t("HoraireDej")}</strong></u>
+          <p>{t("Horaire2Dej")}</p>
         </div>
 
         <div>
           <u><strong>Parking</strong></u>
-          <p>Gratuit pour les clients</p>
+          <p>{t("descripDej")}</p>
         </div>
 
         <div>
-          <u><strong>Dimanche</strong></u>
-          <p>Les repas du Midi et soir ne sont pas disponibles</p>
+          <u><strong>{t("Dimanche")}</strong></u>
+          <p>{t("Dimanchetexte")}</p>
         </div>
 
       </div>

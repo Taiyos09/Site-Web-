@@ -103,5 +103,36 @@
     "restaurant": "Restaurant",
     "events": "Events",
     "contact": "Contact"
-  }
+  },
+
+"hotel": {
+  "Jusque": "Up to",
+  "Personne": "person",
+  "Roombouton": "View Room",
+  "TitreHotel": "Our Rooms",
+  "DescripHotel": "Enjoy a peaceful and comfortable stay in the heart of the Bourbonnais in one of our charming rooms.",
+  "PrixHotel": "From 88€ per night",
+  "BoutonHotel": "View Our Rooms",
+  "Arriver": "Check-in Date",
+  "Départ": "Check-out Date",
+  "NombrePers": "Number of Guests",
+  "Room2bouton": "Discover Our Rooms",
+  "Service": "Included Services",
+  "TitreService": "Everything for Your Comfort",
+  "Wifi": "Free Wi-Fi",
+  "sdb": "Private Bathroom",
+  "télé": "Television",
+  "parking": "Parking",
+  "Descrip2hotel": "Find Your Ideal Room",
+  "night": "per night",
+  "infopra": "Practical Information",
+  "infodescrip": "Prepare for Your Stay",
+  "ArrDep": "Check-in | Check-out",
+  "ArrDepHoraire": "After 4:00 PM | Before 11:00 AM",
+  "HoraireDej": "Breakfast Hours",
+  "Horaire2Dej": "From 7:00 AM to 9:00 AM",
+  "descripDej": "Free for guests",
+  "Dimanche": "Sunday",
+  "Dimanchetexte": "Lunch and dinner are not available on Sundays."
+}
 }

@@ -80,7 +80,38 @@
     "restaurant": "Restaurant",
     "events": "Événements",
     "contact": "Contact"
+  },
+
+  "hotel": {
+    "Jusque": "Jusqu'à",
+    "Personne": "personne",
+    "Roombouton": "Découvrir la chambre",
+    "TitreHotel": "Nos Chambres",
+    "DescripHotel": "Profitez d'un séjour calme et confortable au cœur du Bourbonnais dans l'une de nos chambres de caractère.",
+    "PrixHotel": "À partir de 88€ / nuit",
+    "BoutonHotel": "Voir nos chambres",
+    "Arriver": "Date d'arrivée",
+    "Départ": "Date de départ",
+    "NombrePers": "Nombre de personnes",
+    "Room2bouton": "Découvrir nos chambres",
+    "Service": "Services inclus",
+    "TitreService": "Tout pour votre confort",
+    "Wifi": "Wifi gratuit",
+    "sdb": "Salle de bain privative",
+    "télé": "Télévision",
+    "parking": "Parking",
+    "Descrip2hotel": "Trouvez votre chambre idéale",
+    "night": "par nuit",
+    "infopra": "Informations pratiques",
+    "infodescrip":"Préparer votre séjour",
+    "ArrDep":"Arrivée  |  Départ",
+    "ArrDepHoraire": "Après 16h00  |  Avant 11h00",
+    "HoraireDej": "Horaire Petit Déjeuner",
+    "Horaire2Dej": "De 7h00 à 9h00",
+    "descripDej": "Gratuit pour les clients",
+    "Dimanche": "Dimanche",
+    "Dimanchetexte": "Les repas du Midi et soir ne sont pas disponibles"
   }
 }
 
-{t("RoomSubBouton")}
+{t("Roombouton")}

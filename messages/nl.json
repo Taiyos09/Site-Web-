@@ -98,5 +98,36 @@
     "restaurant": "Restaurant",
     "events": "Evenementen",
     "contact": "Contact"
-  }
+  },
+
+"hotel": {
+  "Jusque": "Tot",
+  "Personne": "persoon",
+  "Roombouton": "Bekijk Kamer",
+  "TitreHotel": "Onze Kamers",
+  "DescripHotel": "Geniet van een rustig en comfortabel verblijf in het hart van de Bourbonnais in een van onze karaktervolle kamers.",
+  "PrixHotel": "Vanaf 88€ per nacht",
+  "BoutonHotel": "Bekijk Onze Kamers",
+  "Arriver": "Aankomstdatum",
+  "Départ": "Vertrekdatum",
+  "NombrePers": "Aantal Personen",
+  "Room2bouton": "Ontdek Onze Kamers",
+  "Service": "Inbegrepen Diensten",
+  "TitreService": "Alles voor Uw Comfort",
+  "Wifi": "Gratis Wifi",
+  "sdb": "Eigen Badkamer",
+  "télé": "Televisie",
+  "parking": "Parkeerplaats",
+  "Descrip2hotel": "Vind Uw Ideale Kamer",
+  "night": "per nacht",
+  "infopra": "Praktische Informatie",
+  "infodescrip": "Bereid Uw Verblijf Voor",
+  "ArrDep": "Aankomst | Vertrek",
+  "ArrDepHoraire": "Na 16:00 uur | Voor 11:00 uur",
+  "HoraireDej": "Ontbijttijden",
+  "Horaire2Dej": "Van 07:00 tot 09:00 uur",
+  "descripDej": "Gratis voor gasten",
+  "Dimanche": "Zondag",
+  "Dimanchetexte": "Op zondag zijn lunch en diner niet beschikbaar."
+}
 }
